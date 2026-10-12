@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <title>
+        探索與比較 model |
+        
+        在 Azure 中開發 generative AI 解決方案
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="https://microsoftlearning.github.io/mslearn-ai-studio/assets/css/style.css?v=b702dc2fd9f9411b5eb1f86b9259db6515cd9c48">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">在 Azure 中開發 generative AI 解決方案</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-studio" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;首頁
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-studio">
+                Develop generative AI solutions in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-studio" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="explore-and-compare-models">探索與比較 model</h1>
+
+<p>Microsoft Foundry model catalog 是集中式存放庫，讓您探索及使用各種 model，協助您建置 generative AI 應用情境。在此練習中，您將探索 model catalog、使用 benchmark 比較 model、在 model playground 中測試 model，並使用 synthetic dataset 執行 evaluation。</p>
+
+<p>此練習大約需要 <strong>45</strong> 分鐘。</p>
+
+<blockquote>
+  <p><strong>注意</strong>：此練習使用的部分技術仍處於預覽階段或持續開發中。您可能遇到非預期的行為、警告或錯誤。</p>
+</blockquote>
+
+<h2 id="prerequisites">先決條件</h2>
+
+<p>若要完成此練習，您需要：</p>
+
+<ul>
+  <li>一個 <a href="https://azure.microsoft.com/free/">Azure subscription</a> ，且具有建立 AI resource 的權限。</li>
+</ul>
+
+<h2 id="create-a-microsoft-foundry-project">建立 Microsoft Foundry 專案</h2>
+
+<p>Microsoft Foundry 使用專案來組織開發 AI 解決方案所需的 model、resource、資料及其他資產。</p>
+
+<ol>
+  <li>
+    <p>在網頁瀏覽器中，開啟 <a href="https://ai.azure.com">Microsoft Foundry portal</a> ，網址為 <code>https://ai.azure.com</code> ，開始建置；使用您的 Azure 認證登入。關閉首次登入時開啟的任何提示或快速入門窗格。</p>
+  </li>
+  <li>如果尚未啟用，請在頁面頂端的工具列中啟用 <strong>New Foundry</strong> 選項。接著，如果出現提示，請以唯一的名稱建立新專案；展開 <strong>Advanced options</strong> 區域，為您的專案指定下列設定：
+    <ul>
+      <li><strong>Foundry resource</strong>: <em>使用 resource 的預設名稱（通常為 {project_name}-resource）</em></li>
+      <li><strong>Subscription</strong>: <em>您的 Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>建立或選取 resource group</em></li>
+      <li><strong>Region</strong>：選取 <strong>AI Foundry recommended</strong> 的任一區域，請參閱 <strong target="_blank"><a href="https://learn.microsoft.com/azure/foundry/openai/how-to/responses#region-availability">此清單</a></strong></li>
+    </ul>
+  </li>
+  <li>等候專案建立完成，然後檢視其首頁。</li>
+</ol>
+
+<h2 id="explore-models-in-the-catalog">探索 catalog 中的 model</h2>
+
+<p>Microsoft Foundry Models 提供可供專案使用的 model catalog。您可以瀏覽 catalog 並比較 model，找出符合需求的 model。</p>
+
+<ol>
+  <li>
+    <p>現在您已準備好探索 model。在 <strong>Discover</strong> 頁面中，選取 <strong>Models</strong> 索引標籤，檢視 Microsoft Foundry model catalog。</p>
+
+    <p>Model catalog 列出 Foundry 中所有可用的 model。有些由 Azure 直接提供（透過您的 Azure subscription 計費），其他則由合作夥伴及社群提供。</p>
+
+    <p>請注意，您可以依據 model 名稱、功能及其他條件搜尋及篩選 catalog。</p>
+  </li>
+  <li>搜尋 <code>gpt-5.2</code>。接著，在搜尋結果中選取 <strong>gpt-5.2</strong> model，檢視其 <em>model card</em>。Model card 提供 model 的相關資訊，協助您判斷是否符合需求。</li>
+  <li>閱讀說明，並檢閱 <strong>Details</strong> 頁面上提供的其他資訊。</li>
+  <li>檢視 gpt-5.2 model 的 <strong>Benchmarks</strong> 頁面，瞭解此 model 在一些標準效能 benchmark 中，與類似應用情境所用的其他 model 相比的表現。</li>
+  <li>使用返回箭頭（<strong>←</strong>，位於 <strong>gpt-5.2</strong> 頁面標題旁），返回 model catalog。</li>
+</ol>
+
+<h2 id="compare-models-using-the-model-leaderboard">使用 model leaderboard 比較 model</h2>
+
+<p>現在，讓我們使用 model leaderboard 與並排比較功能，以視覺化方式比較 model。</p>
+
+<ol>
+  <li>在 model catalog 頁面中，選取 <strong>View leaderboard</strong>.</li>
+  <li>在 <strong>Model leaderboard</strong> 頁面中，檢閱依品質、安全性、成本與效能排名的頂尖 model。留意哪些 model 的 AI 品質指標分數最高。</li>
+  <li>向下捲動，使用 <strong>Trade-off chart</strong> 區段，從多個面向比較 model。</li>
+  <li>從下拉式選單中選取 <strong>Benchmark Cost</strong> ，查看 model 品質與成本的關係，然後使用 model 清單比較 <strong>gpt-5.2</strong> 與 <strong>gpt-5-mini</strong>。若想進一步探索，您可以加入其他 model 進行比較。</li>
+  <li>從下拉式選單中選取 <strong>Throughput</strong> 指標，查看這些 model 的品質與 throughput 分數的關係。</li>
+  <li>從下拉式選單中選取 <strong>Safety</strong> 指標，查看這些 model 的品質與安全性分數的關係。</li>
+  <li>您可以在取捨圖表正上方的表格中比較 benchmark。選取 <strong>gpt-5.2</strong> 與 <strong>gpt-5-mini</strong>，也可選取其他想探索的 model，然後使用 <strong>Compare models</strong> 按鈕，並排檢視它們的 benchmark。</li>
+  <li>檢閱下列資料的比較結果：
+    <ul>
+      <li><strong>Performance benchmarks</strong>：品質、安全性與 throughput 分數。</li>
+      <li><strong>Input</strong> 與 <strong>output</strong>：prompt 與回應支援的格式。</li>
+      <li><strong>Context</strong>：對話中可保留及輸出時可產生的 token 數量，以及 model 的訓練時間。</li>
+      <li><strong>Endpoints</strong>：用戶端應用程式可透過哪些 API endpoint 使用此 model，以及 agent 是否可使用它。</li>
+      <li><strong>Supported features</strong>：您的應用情境可能需要的特定功能。</li>
+    </ul>
+  </li>
+  <li>使用返回箭頭（<strong>←</strong>，位於 <strong>gpt-5.2</strong> 頁面標題旁），返回 model catalog。</li>
+</ol>
+
+<h2 id="deploy-models">部署 model</h2>
+
+<p>現在，讓我們部署用於測試及 evaluation 的 model。您需要部署 <strong>gpt-5.2</strong> 與 <strong>gpt-5-mini</strong>.</p>
+
+<h3 id="deploy-the-gpt-52-model">部署 gpt-5.2 model</h3>
+
+<ol>
+  <li>在 model catalog 中搜尋 <code>gpt-5.2</code> 並選取它。</li>
+  <li>
+    <p>在 model 頁面中，選取 <strong>Deploy</strong> ，使用 *預設設定部署 model。</p>
+
+    <p>已部署的 model 會在 model playground 中開啟，並在 <strong>Model</strong> 下拉式清單中處於選取狀態。</p>
+  </li>
+  <li>記下指派給 <strong>gpt-5.2</strong> model 的 deployment 名稱。稍後您需要辨識此 deployment。</li>
+</ol>
+
+<h3 id="deploy-the-gpt-5-mini-model">部署 gpt-5-mini model</h3>
+
+<ol>
+  <li>在 model playground 的 <strong>Model</strong> 清單中，選取 <strong>Browse more models</strong>.</li>
+  <li>
+    <p>搜尋 <code>gpt-5-mini</code>，然後選取並部署它。</p>
+
+    <p>此 model 會完成部署，並在 model playground 中處於選取狀態。</p>
+  </li>
+  <li>記下指派給 <strong>gpt-5-mini</strong> model 的 deployment 名稱。</li>
+</ol>
+
+<h2 id="compare-models-in-the-model-playground">在 model playground 中比較 model</h2>
+
+<p>現在您已有兩個 model deployment，讓我們在 playground 中比較它們。</p>
+
+<ol>
+  <li>在 playground 中，確認 <strong>gpt-5-mini</strong> model 的 deployment 已在 <strong>Models</strong> 清單中選取，然後在頁面右側的 <strong>Compare models</strong> 清單中，選取 <strong>gpt-5.2</strong> model 的 deployment。</li>
+  <li>
+    <p>並排比較檢視會直接開啟，為各個 model 顯示獨立的聊天窗格。為兩個 model 選取 <strong>Chat</strong> 索引標籤，並輸入下列 prompt：</p>
+
+    <pre><code>I have a fox, a chicken, and a bag of grain that I need to take over a river in a boat. I can only take one thing at a time. If I leave the chicken and the grain unattended, the chicken will eat the grain. If I leave the fox and the chicken unattended, the fox will eat the chicken. How can I get all three things across the river without anything being eaten?
+</code></pre>
+  </li>
+  <li>
+    <p>提交 prompt，並檢視兩個 model 的回應。接著輸入下列後續 prompt：</p>
+
+    <pre><code>Explain your reasoning.
+</code></pre>
+  </li>
+  <li>比較各個 model 的回應。留意正確性、推理品質及回應風格的差異。</li>
+</ol>
+
+<h2 id="evaluate-a-model-with-a-synthetic-dataset">使用 synthetic dataset 評估 model</h2>
+
+<p>Model playground 適合進行快速手動測試，但若要系統性地評估 model 對大量輸入的表現，可以執行 evaluation。讓我們使用以合成方式產生的旅遊問題 dataset，評估 <strong>gpt-5.2</strong> model。</p>
+
+<h3 id="step-1-target">步驟 1：Target</h3>
+
+<ol>
+  <li>在 playground 中，選取 <strong>Evaluations</strong> 索引標籤。</li>
+  <li>選取 <strong>Create</strong> ，開啟 <strong>Create new evaluation</strong> 精靈。</li>
+  <li>針對 evaluation target，選取 <strong>Model</strong>.</li>
+  <li>在 model 表格中，取消選取任何預先選取的 deployment，僅保留 <strong>gpt-5.2</strong> 的核取方塊，然後選取 <strong>Next</strong>.</li>
+</ol>
+
+<h3 id="step-2-data">步驟 2：Data</h3>
+
+<p>您將使用 Foundry 的 synthetic data generation 功能自動建立測試 dataset，而不是上傳 dataset。</p>
+
+<ol>
+  <li>
+    <p>在 <strong>Data</strong> 步驟中，於 <strong>Dataset source</strong>下方選取 <strong>Synthetic generation</strong>.</p>
+
+    <p>使用 synthetic generation 時，提交 evaluation 後會使用一個 deployment，為各個 target 自動產生問題。</p>
+  </li>
+  <li>選取 <strong>Generate</strong>，然後設定並確認下列項目：
+    <ul>
+      <li><strong>Name of the new dataset</strong>: <em>保留預設值</em></li>
+      <li><strong>Model</strong>：gpt-5.2</li>
+      <li><strong>Number of rows</strong>: 45</li>
+      <li><strong>Prompt</strong>: <code>Create various travel related questions, and include some content safety and security tests</code></li>
+      <li><strong>Seed data</strong>: <em>保留空白</em></li>
+    </ul>
+  </li>
+  <li>選取 <strong>Next</strong> 以繼續。</li>
+</ol>
+
+<h3 id="step-3-configure-models">步驟 3：Configure models</h3>
+
+<ol>
+  <li>
+    <p>在 <strong>Configure models</strong> 步驟中，設定受評估 model 的 <strong>Developer</strong> prompt：</p>
+
+    <pre><code> You are a helpful travel assistant that provides accurate, detailed, and practical travel advice to help users plan their trips.
+</code></pre>
+  </li>
+  <li>
+    <p>其他值保留預設值，然後選取 <strong>Next</strong>.</p>
+  </li>
+</ol>
+
+<h3 id="step-4-criteria">步驟 4：Criteria</h3>
+
+<ol>
+  <li>在 <strong>Criteria</strong> 步驟中，檢視所有建議的 evaluator。這些 evaluator 使用 AI model 作為評審，評估回應品質。</li>
+  <li>移除 <em>Agents</em> 及 <em>Safety</em>下方的所有 criteria，其他 evaluator 則維持啟用。</li>
+  <li>選取 <strong>Next</strong>.</li>
+</ol>
+
+<h3 id="step-5-review-and-submit">步驟 5：檢閱並提交</h3>
+
+<ol>
+  <li>在 <strong>Review</strong> 步驟中，確認 evaluation 設定，包括 target model、dataset 及選取的 criteria。</li>
+  <li>為 evaluation 提供名稱，例如 <code>travel-assistant-eval</code>.</li>
+  <li>選取 <strong>Submit</strong> 以開始 evaluation run。</li>
+  <li>等候 evaluation 完成。視資料中心的負載而定，可能需要數分鐘。</li>
+</ol>
+
+<h3 id="review-the-results">檢閱結果</h3>
+
+<ol>
+  <li>Evaluation 完成後，選取該 evaluation run，檢視結果頁面上顯示的 evaluation 指標概觀。</li>
+  <li>在 run 頁面的詳細表格中，檢閱各項 evaluation 的分數與結果。向右捲動並檢視其他頁面，您會看到多數值都通過評估。視 model 的回應而定，可能會出現一些未通過的結果。若有，請仔細檢查。</li>
+  <li>選取 <strong>Analyze results</strong> 按鈕，從下拉式選單選取 <strong>gpt-5.2</strong> ，然後選取 <strong>Start analysis</strong>.</li>
+  <li>此頁面會依據失敗原因將未通過的結果分群，讓您查看失敗原因的詳細資料。大多數失敗是因為 model 表示基於問題的性質而無法提供協助；不過，您仍應逐一探索失敗結果，並思考該回應是否符合您的期望。</li>
+  <li>檢閱所有失敗結果及 AI 提出的改善建議。這些指引有助於您調整設定，提升表現。</li>
+</ol>
+
+<h2 id="clean-up">清理</h2>
+
+<p>如果您已完成 Microsoft Foundry 的探索，請刪除此練習中建立的 resource，避免產生不必要的 Azure 費用。</p>
+
+<ol>
+  <li>開啟 <a href="https://portal.azure.com">Azure portal</a> ，檢視您部署此練習所用 resource 的 resource group 內容。</li>
+  <li>在工具列上，選取 <strong>Delete resource group</strong>.</li>
+  <li>輸入 resource group 名稱，並確認您要刪除它。</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">消費者健康隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">使用條款 </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">商標 </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-studio" target="_blank" class="ml-2">
+                    原始碼
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://microsoftlearning.github.io/mslearn-ai-studio/assets/js/script.js?v=b702dc2fd9f9411b5eb1f86b9259db6515cd9c48"></script>
+</body>
+
+
+</html>

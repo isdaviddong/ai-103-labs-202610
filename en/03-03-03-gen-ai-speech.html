@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>
+        Use speech-capable generative AI models |
+        
+        Develop AI Language and Speech solutions on Azure
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="/mslearn-ai-language/assets/css/style.css?v=cea9917802480634f7e437d83201e30f3431ad2a">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">Develop AI Language and Speech solutions on Azure</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-language" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;Home
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-language">
+                Develop AI Language and Speech solutions on Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-language" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="use-speech-capable-generative-ai-models">Use speech-capable generative AI models</h1>
+<p>Increasingly, generative AI model capabilities are evolving beyond text-based language completion to support content in other formats - including audible speech.</p>
+<p>In this exercise, you'll use generative AI models to support two common scenarios:</p>
+<ul>
+<li>Speech synthesis (text-to-speech) - generating speech output.</li>
+<li>Speech recognition (speech-to-text) - transcribing speech input.</li>
+</ul>
+<p>While this exercise is based on Python, you can develop generative AI speech applications using multiple language-specific SDKs; including:</p>
+<ul>
+<li><a href="https://pypi.org/project/openai/">OpenAI SDK for Python</a></li>
+<li><a href="https://www.nuget.org/packages/OpenAI">OpenAI SDK for .NET</a></li>
+<li><a href="https://www.npmjs.com/package/openai">OpenAI SDK for JavaScript</a></li>
+</ul>
+<p>This exercise takes approximately <strong>30</strong> minutes.</p>
+<blockquote>
+<p><strong>Note</strong>: Some of the technologies used in this exercise are in preview or in active development. You may experience some unexpected behavior, warnings, or errors.</p>
+</blockquote>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Before starting this exercise, ensure you have:</p>
+<ul>
+<li>An active <a href="https://azure.microsoft.com/pricing/purchase-options/azure-account">Azure subscription</a></li>
+<li><a href="https://code.visualstudio.com/">Visual Studio Code</a> installed</li>
+<li><a href="https://www.python.org/downloads/release/python-31312/">Python version <strong>3.13.xx</strong></a> installed*</li>
+<li><a href="https://git-scm.com/install/">Git</a> installed and configured</li>
+<li><a href="https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest">Azure CLI</a> installed</li>
+</ul>
+<blockquote>
+<p>* Python 3.14 is available, but some dependencies are not yet compiled for that release. The lab has been successfully tested with Python 3.13.12.</p>
+</blockquote>
+<h2 id="create-a-microsoft-foundry-project">Create a Microsoft Foundry project</h2>
+<p>Microsoft Foundry uses projects to organize models, resources, data, and other assets used to develop an AI solution.</p>
+<ol>
+<li>
+<p>In a web browser, open the <a href="https://ai.azure.com">Microsoft Foundry portal</a> at <code>https://ai.azure.com</code> and sign in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in, and if necessary use the Foundry logo at the top left to navigate to the home page.</p>
+</li>
+<li>
+<p>If it is not already enabled, in the tool bar the top of the page, enable the <strong>New Foundry</strong> option. Then, if prompted, create a new project with a unique name; expanding the <strong>Advanced options</strong> area to specify the following settings for your project:</p>
+<ul>
+<li><strong>Foundry resource</strong>: <em>Use the default name for your resource (usually {project_name}-resource)</em></li>
+<li><strong>Subscription</strong>: <em>Your Azure subscription</em></li>
+<li><strong>Resource group</strong>: <em>Create or select a resource group</em></li>
+<li><strong>Region</strong>: Select <em>East US 2</em> for the model versions and deployment type used in this exercise.</li>
+</ul>
+<blockquote>
+<p><strong>Important</strong>: Model availability depends on the resource region, model version, and deployment type. This exercise uses <code>gpt-4o-mini-tts</code> and <code>gpt-4o-mini-transcribe</code>, version deployments in <strong>East US 2</strong>. Global Standard does not mean that a model can be deployed in every resource region. Deployment also depends on your subscription's quota and available capacity.</p>
+</blockquote>
+</li>
+<li>
+<p>Select <strong>Create</strong>. Wait for your project to be created. Then view its home page.</p>
+</li>
+</ol>
+<h2 id="deploy-models">Deploy models</h2>
+<p>To develop speech-enables apps, we're going to need speech-enabled models. Specifically, we need a model that can perform speech-generation, and a model that can process speech input.</p>
+<h3 id="deploy-a-speech-generation-model">Deploy a speech-generation model</h3>
+<ol>
+<li>
+<p>Now you're ready to <strong>Start building</strong>. Let's <strong>Explore models</strong> (or on the <strong>Discover</strong> page, select the <strong>Models</strong> tab) to view the Microsoft Foundry model catalog.</p>
+</li>
+<li>
+<p>In the model catalog, search for <code>gpt-4o-mini-tts</code> or another text-to-speech model available in your region.</p>
+</li>
+<li>
+<p>Review the model card, and then deploy an available text-to-speech model using the default settings.</p>
+</li>
+<li>
+<p>When the model has been deployed, view its details, noting that the <strong>Endpoint</strong> required to use it are available here (you'll need the Endpoint later).</p>
+<blockquote>
+<p><strong>IMPORTANT</strong>: <code>gpt-4o-mini-tts</code> is a recommended model for this exercise, not a required one. If it is unavailable in your region, deploy a supported text-to-speech model instead.</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="deploy-a-speech-recognition-model">Deploy a speech-recognition model</h3>
+<ol>
+<li>
+<p>In the Foundry portal menu bar, select <strong>Build</strong>; and then view the <strong>Deployments</strong> page. Note that the text-to-speech model you deployed is listed.</p>
+</li>
+<li>
+<p>Select <strong>Deploy a base model</strong>, and search the catalog for <code>gpt-4o-mini-transcribe</code> or another speech-to-text model available in your region.</p>
+</li>
+<li>
+<p>Deploy an available speech-to-text model using the default settings.</p>
+</li>
+<li>
+<p>Return to the <strong>Deployments</strong> page and verify that both of the model you deployed are listed.</p>
+</li>
+<li>
+<p>Select each model to view its <strong>Endpoint</strong> and deployment name for use in your code.</p>
+<blockquote>
+<p><strong>IMPORTANT</strong>: <code>gpt-4o-mini-transcribe</code> is a recommended model for this exercise, not a required one. If it is unavailable in your region, deploy a supported speech-to-text model instead.</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="get-the-application-files-from-github">Get the application files from GitHub</h2>
+<p>The initial application files you'll need to develop speech applications are provided in a GitHub repo.</p>
+<ol>
+<li>
+<p>Open Visual Studio Code.</p>
+</li>
+<li>
+<p>Open the command palette (<em>Ctrl+Shift+P</em>) and use the <code>Git:clone</code> command to clone the <code>https://github.com/microsoftlearning/mslearn-ai-language</code> repo to a local folder (it doesn't matter which one). Then open it.</p>
+<p>You may be prompted to confirm you trust the authors.</p>
+</li>
+<li>
+<p>In Visual Studio Code, view the <strong>Extensions</strong> pane; and if it is not already installed, install the <strong>Python</strong> extension.</p>
+</li>
+<li>
+<p>In the <strong>Command Palette</strong>, use the command <code>python:select interpreter</code>. Then select an existing environment if you have one, or create a new <strong>Venv</strong> environment based on your Python 3.1x installation.</p>
+<blockquote>
+<p><strong>Tip</strong>: If you are prompted to install dependencies, you can install the ones in the <em>requirements.txt</em> file in the <em>/Labfiles/03-gen-ai-speech/Python/generate-speech</em> folder; but it's OK if you don't - we'll install them later!</p>
+</blockquote>
+<blockquote>
+<p><strong>Tip</strong>: If you prefer to use the terminal, you can create your <strong>Venv</strong> environment with <code>python -m venv labenv</code>, then activate it with <code>\labenv\Scripts\activate</code>.</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="create-a-speech-generation-app">Create a speech-generation app</h2>
+<ol>
+<li>After the repo has been cloned, in the Explorer pane, navigate to the folder containing the application code files at <strong>/Labfiles/03-gen-ai-speech/Python/generate-speech</strong>. The application files include:
+<ul>
+<li><strong>.env</strong> (the application configuration file)</li>
+<li><strong>requirements.txt</strong> (the Python package dependencies that need to be installed)</li>
+<li><strong>generate-speech.py</strong> (the code file for the application)</li>
+</ul>
+</li>
+</ol>
+<h3 id="configure-your-application">Configure your application</h3>
+<ol>
+<li>
+<p>In the <strong>Explorer</strong> pane, right-click the <strong>generate-speech</strong> folder containing the application files, and select <strong>Open in integrated terminal</strong> (or open a terminal in the <strong>Terminal</strong> menu and navigate to the <em>/Labfiles/03-gen-ai-speech/Python/generate-speech</em> folder.)</p>
+<blockquote>
+<p><strong>Note</strong>: Opening the terminal in Visual Studio Code will automatically activate the Python environment. You may need to enable running scripts on your system.</p>
+</blockquote>
+</li>
+<li>
+<p>Ensure that the terminal is open in the <strong>generate-speech</strong> folder with the prefix <strong>(.venv)</strong> to indicate that the Python environment you created is active.</p>
+</li>
+<li>
+<p>Install the OpenAI SDK package and other required packages by running the following command:</p>
+<pre><code>pip install -r requirements.txt
+</code></pre></li>
+<li>
+<p>In the <strong>Explorer</strong> pane, in the <strong>generate-speech</strong> folder, select the <strong>.env</strong> file to open it. Then update the configuration values to include the <strong>Endpoint</strong> and deployment name for your <strong>gpt-4o-mini-tts</strong> model.</p>
+<blockquote>
+<p><strong>Tip</strong>: Copy the <strong>Endpoint</strong> from the model deployment details page in the Foundry portal. The <code>AzureOpenAI</code> client used here expects an Azure OpenAI resource endpoint, such as <code>https://&lt;resource-name&gt;.openai.azure.com/</code>, not a Foundry project URL ending in <code>/api/projects/&lt;project-name&gt;</code> or a URL with <code>/openai/v1/</code> appended. Use your deployment name, which may differ from the model name.</p>
+</blockquote>
+<p>Save the modified configuration file.</p>
+</li>
+</ol>
+<h3 id="write-code-to-use-the-model-for-speech-generation">Write code to use the model for speech-generation</h3>
+<ol>
+<li>
+<p>In the <strong>Explorer</strong> pane, in the <strong>generate-speech</strong> folder, select the <strong>generate-speech.py</strong> file to open it.</p>
+</li>
+<li>
+<p>Review the existing code. You will add code to use the OpenAI SDK to access your model.</p>
+<blockquote>
+<p><strong>Tip</strong>: As you add code to the code file, be sure to maintain the correct indentation.</p>
+</blockquote>
+</li>
+<li>
+<p>At the top of the code file, under the existing namespace references, find the comment <strong>Import namespaces</strong> and add the following code to import the namespace you will need to use the OpenAI SDK:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># import namespaces
+</span><span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">AzureOpenAI</span>
+<span class="kn">from</span> <span class="nn">azure.identity</span> <span class="kn">import</span> <span class="n">DefaultAzureCredential</span><span class="p">,</span> <span class="n">get_bearer_token_provider</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>In the <strong>main</strong> function, note that code to load the endpoint from the configuration file has already been provided. Then find the comment <strong>Create the Azure OpenAI client</strong>, and add the following code to create a client for the OpenAI API:</p>
+<pre><code class="language-Python"># Create the Azure OpenAI client
+token_provider = get_bearer_token_provider(                    
+    DefaultAzureCredential(), &quot;https://ai.azure.com/.default&quot;
+)
+
+client = AzureOpenAI(
+    azure_endpoint=endpoint,
+    azure_ad_token_provider = token_provider,
+    api_version=&quot;2025-03-01-preview&quot;
+)
+</code></pre></li>
+<li>
+<p>Find the comment <strong>Generate speech and save to file</strong>, and add the following code to submit a prompt to the speech-generation model save the response as a file.</p>
+<pre><code class="language-Python"># Generate speech and save to file
+with client.audio.speech.with_streaming_response.create(
+            model=model_deployment,
+            voice=&quot;alloy&quot;,
+            input=&quot;My voice is my passport!&quot;,
+            instructions=&quot;Speak in a serious tone.&quot;,
+        ) as response:
+    response.stream_to_file(speech_file_path)
+</code></pre></li>
+<li>
+<p>Save the changes to the code file.</p>
+</li>
+</ol>
+<h3 id="run-the-application">Run the application</h3>
+<ol>
+<li>
+<p>In the terminal pane, use the following command to sign into Azure.</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">az</span><span class="w"> </span><span class="nx">login</span><span class="w">
+</span></code></pre></div></div>
+<blockquote>
+<p><strong>Note</strong>: In most scenarios, just using <em>az login</em> will be sufficient. However, if you have subscriptions in multiple tenants, you may need to specify the tenant by using the <em>--tenant</em> parameter. See <a href="https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively">Sign into Azure interactively using the Azure CLI</a> for details.</p>
+</blockquote>
+</li>
+<li>
+<p>When prompted, follow the instructions to sign into Azure. Then complete the sign in process in the command line, viewing (and confirming if necessary) the details of the subscription containing your Foundry resource.</p>
+</li>
+<li>
+<p>After you have signed in, enter the following command to run the application:</p>
+<pre><code>python generate-speech.py
+</code></pre></li>
+<li>
+<p>Observe the output as the code generates the requested speech and saves it in a file. The code should also play the generated audio file.</p>
+</li>
+</ol>
+<h2 id="create-a-speech-transcription-app">Create a speech-transcription app</h2>
+<ol>
+<li>In the Explorer pane, navigate to the folder containing the application code files at <strong>/Labfiles/03-gen-ai-speech/Python/transcribe-speech</strong>. The application files include:
+<ul>
+<li><strong>.env</strong> (the application configuration file)</li>
+<li><strong>requirements.txt</strong> (the Python package dependencies that need to be installed)</li>
+<li><strong>transcribe-speech.py</strong> (the code file for the application)</li>
+</ul>
+</li>
+</ol>
+<h3 id="configure-your-application-1">Configure your application</h3>
+<ol>
+<li>
+<p>In the <strong>Explorer</strong> pane, right-click the <strong>transcribe-speech</strong> folder containing the application files, and select <strong>Open in integrated terminal</strong> (or in the existing terminal, navigate to the <em>/Labfiles/03-gen-ai-speech/Python/transcribe-speech</em> folder.)</p>
+<blockquote>
+<p><strong>Note</strong>: Opening the terminal in Visual Studio Code will automatically activate the Python environment. You may need to enable running scripts on your system.</p>
+</blockquote>
+</li>
+<li>
+<p>Ensure that the terminal is open in the <strong>transcribe-speech</strong> folder with the prefix <strong>(.venv)</strong> to indicate that the Python environment you created previously is active.</p>
+</li>
+<li>
+<p>Install the OpenAI SDK package and other required packages by running the following command:</p>
+<pre><code>pip install -r requirements.txt
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: This step isn't actually necessary if you completed the previous part of this exercise, as botg apps use the same environment and have the same dependencies - but it won't do any harm!</p>
+</blockquote>
+</li>
+<li>
+<p>In the <strong>Explorer</strong> pane, in the <strong>transcribe-speech</strong> folder, select the <strong>.env</strong> file to open it. Then update the configuration values to include the <strong>Endpoint</strong> and deployment name for your <strong>gpt-4o-mini-transcribe</strong> model.</p>
+<blockquote>
+<p><strong>Tip</strong>: Copy the <strong>Endpoint</strong> from the model deployment details page in the Foundry portal. As with the speech-generation app, use the Azure OpenAI resource endpoint and your deployment name, not a Foundry project URL.</p>
+</blockquote>
+<p>Save the modified configuration file.</p>
+</li>
+</ol>
+<h3 id="write-code-to-use-the-model-for-speech-transcription">Write code to use the model for speech-transcription</h3>
+<ol>
+<li>
+<p>In the <strong>Explorer</strong> pane, in the <strong>transcribe-speech</strong> folder, select the <strong>transcribe-speech.py</strong> file to open it.</p>
+</li>
+<li>
+<p>Review the existing code. You will add code to use the OpenAI SDK to access your model.</p>
+<blockquote>
+<p><strong>Tip</strong>: As you add code to the code file, be sure to maintain the correct indentation.</p>
+</blockquote>
+</li>
+<li>
+<p>At the top of the code file, under the existing namespace references, find the comment <strong>Import namespaces</strong> and add the following code to import the namespace you will need to use the OpenAI SDK:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># import namespaces
+</span><span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">AzureOpenAI</span>
+<span class="kn">from</span> <span class="nn">azure.identity</span> <span class="kn">import</span> <span class="n">DefaultAzureCredential</span><span class="p">,</span> <span class="n">get_bearer_token_provider</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>In the <strong>main</strong> function, note that code to load the endpoint from the configuration file has already been provided. Then find the comment <strong>Create the Azure OpenAI client</strong>, and add the following code to create a client for the OpenAI API:</p>
+<pre><code class="language-Python"># Create the Azure OpenAI client
+token_provider = get_bearer_token_provider(                    
+    DefaultAzureCredential(), &quot;https://ai.azure.com/.default&quot;
+)
+
+client = AzureOpenAI(
+    azure_endpoint=endpoint,
+    azure_ad_token_provider = token_provider,
+    api_version=&quot;2025-03-01-preview&quot;
+)
+</code></pre></li>
+<li>
+<p>Find the comment <strong>Call model to transcribe audio file</strong>, and add the following code to submit an audio file to the speech-transcription model generate a transcript.</p>
+<pre><code class="language-Python"># Call model to transcribe audio file
+audio_file = open(file_path, &quot;rb&quot;)
+transcription = client.audio.transcriptions.create(
+    model=model_deployment,
+    file=audio_file,
+    response_format=&quot;text&quot;
+)
+    
+print(transcription)
+    
+</code></pre></li>
+<li>
+<p>Save the changes to the code file.</p>
+</li>
+</ol>
+<h3 id="run-the-application-1">Run the application</h3>
+<ol>
+<li>
+<p>In the terminal pane, use the following command to sign into Azure.</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">az</span><span class="w"> </span><span class="nx">login</span><span class="w">
+</span></code></pre></div></div>
+<blockquote>
+<p><strong>Note</strong>: In most scenarios, just using <em>az login</em> will be sufficient. However, if you have subscriptions in multiple tenants, you may need to specify the tenant by using the <em>--tenant</em> parameter. See <a href="https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively">Sign into Azure interactively using the Azure CLI</a> for details.</p>
+</blockquote>
+</li>
+<li>
+<p>When prompted, follow the instructions to sign into Azure. Then complete the sign in process in the command line, viewing (and confirming if necessary) the details of the subscription containing your Foundry resource.</p>
+</li>
+<li>
+<p>After you have signed in, enter the following command to run the application:</p>
+<pre><code>python transcribe-speech.py
+</code></pre></li>
+<li>
+<p>Observe the output as the code submits the audio file to the model for transcription and displays the results. The code should also play the audio file.</p>
+</li>
+</ol>
+<h2 id="clean-up">Clean up</h2>
+<p>If you've finished exploring speech-enabled models in Foundry Tools, you should delete the resources you have created in this exercise to avoid incurring unnecessary Azure costs.</p>
+<ol>
+<li>Open the <a href="https://portal.azure.com">Azure portal</a> and view the contents of the resource group where you deployed the resources used in this exercise.</li>
+<li>On the toolbar, select <strong>Delete resource group</strong>.</li>
+<li>Enter the resource group name and confirm that you want to delete it.</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">Trademarks </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-language" target="_blank" class="ml-2">
+                    Source
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="/mslearn-ai-language/assets/js/script.js?v=cea9917802480634f7e437d83201e30f3431ad2a"></script>
+</body>
+
+
+</html>

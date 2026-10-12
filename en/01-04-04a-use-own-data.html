@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>
+        Create a generative AI app that uses tools |
+        
+        Develop generative AI solutions in Azure
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="/mslearn-ai-studio/assets/css/style.css?v=b702dc2fd9f9411b5eb1f86b9259db6515cd9c48">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">Develop generative AI solutions in Azure</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-studio" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;Home
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-studio">
+                Develop generative AI solutions in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-studio" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="create-a-generative-ai-app-that-uses-tools">Create a generative AI app that uses tools</h1>
+
+<p>In this exercise, you’ll use the Microsoft Foundry portal and the Responses API to build an AI chat application. Then you’ll integrate knowledge into your application by using the <em>web_search</em> and <em>file_search</em> tools.</p>
+
+<p>This exercise takes approximately <strong>30</strong> minutes.</p>
+
+<blockquote>
+  <p><strong>Note</strong>: Some of the technologies used in this exercise are in preview or in active development. You may experience some unexpected behavior, warnings, or errors.</p>
+</blockquote>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>Before starting this exercise, ensure you have:</p>
+
+<ul>
+  <li>An active <a href="https://azure.microsoft.com/pricing/purchase-options/azure-account">Azure subscription</a></li>
+  <li><a href="https://code.visualstudio.com/">Visual Studio Code</a> installed</li>
+  <li><a href="https://www.python.org/downloads/release/python-31312/">Python version <strong>3.13.xx</strong></a> installed*</li>
+  <li><a href="https://git-scm.com/install/">Git</a> installed and configured</li>
+  <li><a href="https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest">Azure CLI</a> installed</li>
+</ul>
+
+<blockquote>
+  <p>* Python 3.14 is available, but some dependencies are not yet compiled for that release. The lab has been successfully tested with Python 3.13.12.</p>
+</blockquote>
+
+<h1 id="create-a-microsoft-foundry-project">Create a Microsoft Foundry project</h1>
+
+<p>Microsoft Foundry uses projects to organize models, resources, data, and other assets used to develop an AI solution.</p>
+
+<ol>
+  <li>
+    <p>In a web browser, open the <a href="https://ai.azure.com">Microsoft Foundry portal</a> at <code>https://ai.azure.com</code> to start building; signing in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in.</p>
+  </li>
+  <li>If it is not already enabled, in the tool bar at the top of the page, enable the <strong>New Foundry</strong> option. Then, if prompted, create a new project with a unique name; expanding the <strong>Advanced options</strong> area to specify the following settings for your project:
+    <ul>
+      <li><strong>Foundry resource</strong>: <em>Use the default name for your resource (usually {project_name}-resource)</em></li>
+      <li><strong>Subscription</strong>: <em>Your Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>Create or select a resource group</em></li>
+      <li><strong>Region</strong>: Select any of the <strong>AI Foundry recommended</strong> regions in <strong target="_blank"><a href="https://learn.microsoft.com/azure/foundry/openai/how-to/responses#region-availability">this list</a></strong></li>
+    </ul>
+  </li>
+  <li>Wait for your project to be created. Then view its home page.</li>
+</ol>
+
+<h2 id="deploy-a-model">Deploy a model</h2>
+
+<p>Next, let’s deploy a model that you’ll use in your chat application.</p>
+
+<ol>
+  <li>Now you’re ready to explore models. On the <strong>Discover</strong> page, select the <strong>Models</strong> tab to view the Microsoft Foundry model catalog.</li>
+  <li>In the model catalog, search for <code>gpt-5.2</code>.</li>
+  <li>Review the model card, and then deploy it using the default settings.</li>
+  <li>When the model has been deployed, it will open in the model playground.</li>
+</ol>
+
+<h2 id="experiment-with-tools-in-the-playground">Experiment with tools in the playground</h2>
+
+<p>Before developing a chat application, let’s explore how the model responds in the playground. This will help you understand why grounding data matters.</p>
+
+<ol>
+  <li>After deploying your model, you should be in the playground with that model selected. If not, select <strong>Build</strong> in the top menu bar, then select <strong>Deployments</strong> on the left, and then select the model you deployed.</li>
+  <li>
+    <p>In the model playground, in the pane on the left, ensure that your <strong>gpt-5.2</strong> model is selected.</p>
+  </li>
+  <li>
+    <p>In the <strong>Instructions</strong> field, enter the following prompt:</p>
+
+    <pre><code>You are a travel assistant that provides information on travel services available from Margie's Travel.
+</code></pre>
+  </li>
+  <li>
+    <p>In the chat pane, enter the query <code>What are some recommended tourist activities in New York next month?</code> and review the response.</p>
+
+    <p>The response should be fairly generic — the model provides general knowledge based on its training data, but doesn’t have access to current information about what’s happening in New York next month.</p>
+  </li>
+  <li>
+    <p>In the pane on the left, under the instructions, in the <strong>Tools</strong> section, select <strong>Add</strong> and add the <strong>web_search</strong> tool.</p>
+  </li>
+  <li>
+    <p>In the chat pane, enter the same query <code>What are some recommended tourist activities in New York next month?</code> and review the response.</p>
+
+    <p>This time, the model uses the <em>web_search</em> tool to find current information about activities in New York.</p>
+  </li>
+</ol>
+
+<h2 id="create-an-app-that-uses-tools">Create an app that uses tools</h2>
+
+<p>Now that you’ve seen how tools can extend a model’s capabilities in the playground, let’s build a client application that uses tools to provide travel advice for Margie’s Travel customers.</p>
+
+<h1 id="get-the-endpoint">Get the endpoint</h1>
+
+<p>You’ll need an endpoint to connect to the model from a client application. In this exercise, we’re going to use the OpenAI SDK to chat with the model; and we’ll use the Azure OpenAI endpoint with Entra ID authentication to connect to it.</p>
+
+<blockquote>
+  <p><strong>Note</strong>: As an alternative to Entra ID authentication, you could use the API Key for the project. using Entra ID authentication is preferred whenever possible.</p>
+</blockquote>
+
+<ol>
+  <li>On the menu bar, select the <strong>Home</strong> page.</li>
+  <li>
+    <p>Note the <strong>Azure OpenAI Endpoint</strong> displayed there.</p>
+
+    <blockquote>
+      <p><strong>Tip</strong>: You’ll use the <strong>Azure OpenAI Endpoint</strong> in this exercise, <u>not</u> the project endpoint!</p>
+    </blockquote>
+  </li>
+</ol>
+
+<h3 id="get-the-application-files-from-github">Get the application files from GitHub</h3>
+
+<p>The initial application files you’ll need to develop your chat application are provided in a GitHub repo.</p>
+
+<ol>
+  <li>Open Visual Studio Code.</li>
+  <li>
+    <p>Open the command palette (<em>Ctrl+Shift+P</em>) and use the <code>Git:clone</code> command to clone the <code>https://github.com/microsoftlearning/mslearn-ai-studio</code> repo to a local folder (it doesn’t matter which one). Then open it.</p>
+
+    <p>You may be prompted to confirm you trust the authors.</p>
+  </li>
+</ol>
+
+<h3 id="prepare-the-application-configuration">Prepare the application configuration</h3>
+
+<ol>
+  <li>In Visual Studio Code, view the <strong>Extensions</strong> pane; and if it is not already installed, install the <strong>Python</strong> extension.</li>
+  <li>
+    <p>In the <strong>Command Palette</strong>, use the command <code>python:select interpreter</code>. Then select an existing environment if you have one, or create a new <strong>Venv</strong> environment based on your Python 3.1x installation.</p>
+
+    <blockquote>
+      <p><strong>Tip</strong>: If you are prompted to install dependencies, you can install the ones in the <em>requirements.txt</em> file in the <em>/labfiles/tools/python/tools-app</em> folder; but it’s OK if you don’t - we’ll install them later!</p>
+    </blockquote>
+  </li>
+  <li>In the Explorer pane, navigate to the folder containing the application code files at <strong>/labfiles/tools/python/tools-app</strong>. The application files include:
+    <ul>
+      <li><strong>brochures</strong> (a folder containing Margie’s Travel brochures)</li>
+      <li><strong>.env</strong> (the application configuration file)</li>
+      <li><strong>requirements.txt</strong> (the Python package dependencies that need to be installed)</li>
+      <li><strong>tools-app.py</strong> (the code file for the application)</li>
+    </ul>
+  </li>
+  <li>
+    <p>In the <strong>Explorer</strong> pane, right-click the <strong>tools-app</strong> folder containing the application files, and select <strong>Open in integrated terminal</strong> (or open a terminal in the <strong>Terminal</strong> menu and navigate to the <em>/labfiles/tools/python/tools-app</em> folder.)</p>
+
+    <blockquote>
+      <p><strong>Note</strong>: Opening the terminal in Visual Studio Code will automatically activate the Python environment. You may need to enable running scripts on your system.</p>
+    </blockquote>
+  </li>
+  <li>Ensure that the terminal is open in the <strong>/labfiles/tools/python/tools-app</strong> folder with the prefix <strong>(.venv)</strong> to indicate that the Python environment you created is active.</li>
+  <li>
+    <p>Install the OpenAI SDK, Azure identity, and other required packages by running the following command:</p>
+
+    <pre><code> pip install -r requirements.txt
+</code></pre>
+  </li>
+  <li>
+    <p>In the <strong>Explorer</strong> pane, in the <strong>/labfiles/tools/python/tools-app</strong> folder, select the <strong>.env</strong> file to open it. Then update the configuration values to include the <strong>Azure OpenAI Endpoint</strong> and the name assigned to the deployment for the <strong>gpt-5.2</strong> model.</p>
+
+    <blockquote>
+      <p><strong>Tip</strong>: Copy the <strong>Azure OpenAI Endpoint</strong> (not the project endpoint!) from the project home page in the Foundry portal, and enter the exact deployment name assigned to your deployment in the <code>MODEL_DEPLOYMENT</code> setting.</p>
+    </blockquote>
+
+    <p>Save the modified configuration file.</p>
+  </li>
+</ol>
+
+<h3 id="write-code-to-implement-chat-with-tools">Write code to implement chat with tools</h3>
+
+<ol>
+  <li>In the <strong>Explorer</strong> pane, in the <strong>/labfiles/tools/python/tools-app</strong> folder, select the <strong>tools-app.py</strong> file to open it.</li>
+  <li>
+    <p>Review the existing code. You will add code to use the OpenAI SDK to access your model.</p>
+
+    <blockquote>
+      <p><strong>Tip</strong>: As you add code to the code file, be sure to maintain the correct indentation.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>At the top of the code file, under the existing namespace references, find the comment <strong>Import namespaces</strong> and add the following code to import the namespace you will need to use the OpenAI SDK:</p>
+
+    <pre><code class="language-python"># import namespaces
+from openai import OpenAI
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+</code></pre>
+  </li>
+  <li>
+    <p>In the <strong>main</strong> function, note that code to load the endpoint and key from the configuration file has already been provided. Then find the comment <strong>Initialize the OpenAI client</strong>, and add the following code to create a client for the OpenAI API:</p>
+
+    <pre><code class="language-python"># Initialize the OpenAI client
+token_provider = get_bearer_token_provider(
+     DefaultAzureCredential(), "https://ai.azure.com/.default"
+)
+    
+openai_client = OpenAI(
+     base_url=azure_openai_endpoint,
+     api_key=token_provider
+)
+</code></pre>
+  </li>
+  <li>
+    <p>In the <strong>main</strong> function, find the comment <strong>Create vector store and upload files</strong>, and add the following code:</p>
+
+    <pre><code class="language-python"># Create vector store and upload files
+print("Creating vector store and uploading files...")
+vector_store = openai_client.vector_stores.create(
+     name="travel-brochures"
+)
+file_streams = [open(f, "rb") for f in glob.glob("brochures/*.pdf")]
+if not file_streams:
+     print("No PDF files found in the brochures folder!")
+     return
+file_batch = openai_client.vector_stores.file_batches.upload_and_poll(
+     vector_store_id=vector_store.id,
+     files=file_streams
+)
+for f in file_streams:
+     f.close()
+print(f"Vector store created with {file_batch.file_counts.completed} files.")
+</code></pre>
+
+    <p>This code creates a vector store for your model, and uploads the brochures to it. We’ll use this vector store with the <em>file_search</em> tool.</p>
+  </li>
+  <li>
+    <p>In the <strong>main</strong> function, note that code to request a user prompt until the user quits the app has been provided. Within this loop, find the <strong>Get a response using tools</strong> comment, and add the following code:</p>
+
+    <pre><code class="language-python"># Get a response using tools
+response = openai_client.responses.create(
+     model=model_deployment,
+     instructions="""
+     You are a travel assistant that provides information on travel services available from Margie's Travel.
+     Answer questions about services offered by Margie's Travel using the provided travel brochures.
+     Search the web for general information about destinations or current travel advice.
+     """,
+     input=input_text,
+     previous_response_id=last_response_id,
+     tools=[
+         {
+             "type": "file_search",
+             "vector_store_ids": [vector_store.id]
+         },
+         {
+             "type": "web_search"
+         }
+     ]
+)
+print(response.output_text)
+last_response_id = response.id
+</code></pre>
+
+    <p>This code submits a prompt and specifies that the <em>file_search</em> tool can be used to search the vector store and the <em>web_search</em> tool can be used or general web searches.</p>
+  </li>
+  <li>
+    <p>Save the changes to the code file. Then, in the terminal pane, use the following command to sign into Azure.</p>
+
+    <pre><code class="language-powershell"> az login
+</code></pre>
+
+    <blockquote>
+      <p><strong>Note</strong>: In most scenarios, just using <em>az login</em> will be sufficient. However, if you have subscriptions in multiple tenants, you may need to specify the tenant by using the <em>–tenant</em> parameter. See <a href="https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively">Sign into Azure interactively using the Azure CLI</a> for details.</p>
+    </blockquote>
+  </li>
+  <li>When prompted, follow the instructions to sign into Azure. Then complete the sign in process in the command line, viewing (and confirming if necessary) the details of the subscription containing your Foundry resource.</li>
+  <li>
+    <p>After you have signed in, enter the following command to run the application:</p>
+
+    <pre><code class="language-powershell">python tools-app.py
+</code></pre>
+
+    <p>The program should run in the terminal (if not, resolve any errors and try again).</p>
+  </li>
+  <li>
+    <p>When prompted, enter <code>What's happening in San Francisco next month?</code> and review the response from your generative AI model.</p>
+
+    <p>The response should include information retrieved using the <em>web_search</em> tool.</p>
+  </li>
+  <li>
+    <p>Try this follow-up question: <code>What hotels does Margie's Travel offer there?</code></p>
+
+    <p>The response should include information retrieved using the <em>file_search</em> tool.</p>
+  </li>
+  <li>When you’re finished, enter <code>quit</code> to exit the program.</li>
+</ol>
+
+<h2 id="clean-up">Clean up</h2>
+
+<p>If you’ve finished exploring Microsoft Foundry, you should delete the resources you have created in this exercise to avoid incurring unnecessary Azure costs.</p>
+
+<ol>
+  <li>Open the <a href="https://portal.azure.com">Azure portal</a> and view the contents of the resource group where you deployed the resources used in this exercise.</li>
+  <li>On the toolbar, select <strong>Delete resource group</strong>.</li>
+  <li>Enter the resource group name and confirm that you want to delete it.</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">Trademarks </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-studio" target="_blank" class="ml-2">
+                    Source
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="/mslearn-ai-studio/assets/js/script.js?v=b702dc2fd9f9411b5eb1f86b9259db6515cd9c48"></script>
+</body>
+
+
+</html>

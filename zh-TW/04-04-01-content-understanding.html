@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <title>
+        從多模態內容擷取資訊 |
+        
+        在 Azure 中開發 AI 驅動的資訊擷取解決方案
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="https://microsoftlearning.github.io/mslearn-ai-information-extraction/assets/css/style.css?v=a79b11a76caf9fa547d761e890b732a02bd53e56">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">在 Azure 中開發 AI 驅動的資訊擷取解決方案</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-information-extraction" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;首頁
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-information-extraction">
+                Develop AI-powered information extraction solutions in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-information-extraction" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="extract-information-from-multimodal-content">從多模態內容擷取資訊</h1>
+
+<p>在本練習中，您將使用 Azure Content Understanding 從各種內容類型擷取資訊，包括發票、包含圖表的投影片影像、語音留言錄音，以及電話會議的影片錄影。</p>
+
+<p>本練習大約需要 <strong>40</strong> 分鐘。</p>
+
+<h2 id="create-a-microsoft-foundry-resource-and-project">建立 Microsoft Foundry resource 和 project</h2>
+
+<p>本練習將使用的功能需要 Microsoft Foundry resource 和 project。</p>
+
+<ol>
+  <li>在網頁瀏覽器中，開啟 <a href="https://ai.azure.com">Microsoft Foundry portal</a> ，網址為 <code>https://ai.azure.com</code> ，並使用 Azure 認證登入。關閉首次登入時開啟的所有提示或快速入門窗格。</li>
+  <li>確認 <strong>New Foundry</strong> 切換開關已開啟，以便使用 <strong>Foundry (new)</strong>.</li>
+  <li>如果系統未自動提示建立新的 project，請選取左上角的 project 名稱，然後選取 <strong>Create new project</strong>.</li>
+  <li>為 project 命名，並展開 <strong>Advanced options</strong> 以指定下列設定：
+    <ul>
+      <li><strong>Project name</strong>: <em>為 project 提供有效的名稱</em></li>
+      <li><strong>Foundry resource</strong>: <em>使用預設值</em></li>
+      <li><strong>Region</strong>：選擇下列其中一個支援的區域：*
+        <ul>
+          <li>Australia East</li>
+          <li>East US</li>
+          <li>East US 2</li>
+          <li>Japan East</li>
+          <li>North Europe</li>
+          <li>South Central US</li>
+          <li>Southeast Asia</li>
+          <li>Sweden Central</li>
+          <li>UK South</li>
+          <li>West Europe</li>
+          <li>West US</li>
+          <li>West US 3</li>
+        </ul>
+      </li>
+      <li><strong>Subscription</strong>: <em>您的 Azure 訂用帳戶</em></li>
+      <li><strong>Resource group</strong>: <em>建立或選取 resource group</em></li>
+    </ul>
+
+    <blockquote>
+      <p>*Azure Content Understanding 在特定區域提供服務。最新可用性請參閱 <a href="https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support">區域支援文件</a> 。</p>
+    </blockquote>
+  </li>
+  <li>選取 <strong>Create</strong> ，並等待 project 建立完成。</li>
+</ol>
+
+<h2 id="download-content">下載內容</h2>
+
+<p>您將分析的內容位於 .zip 壓縮檔中。請下載並解壓縮至本機資料夾。</p>
+
+<ol>
+  <li>在新的瀏覽器索引標籤中，下載 <a href="https://github.com/microsoftlearning/mslearn-ai-information-extraction/raw/main/Labfiles/content/content.zip">content.zip</a> ，來源為 <code>https://github.com/microsoftlearning/mslearn-ai-information-extraction/raw/main/Labfiles/content/content.zip</code> ，並將其儲存於本機資料夾。</li>
+  <li>將下載的 <em>content.zip</em> 檔案解壓縮，並檢視其中的檔案。您將在本練習中使用這些檔案，探索 Content Understanding analyzer。</li>
+</ol>
+
+<blockquote>
+  <p><strong>注意</strong>：如果您只想探索特定模態（文件、影像、影片或音訊）的分析，可以直接跳至下方相關工作。為獲得最佳體驗，請依序完成每項工作，了解如何從不同類型的內容擷取資訊。</p>
+</blockquote>
+
+<h2 id="try-prebuilt-analyzers-in-microsoft-foundry">在 Microsoft Foundry 中試用預先建置的 analyzer</h2>
+
+<p>Azure Content Understanding 包含預先建置的 <strong>Read</strong> 和 <strong>Layout</strong> analyzer，可直接從文件擷取文字和結構元素，不需要自訂設定。這些預先建置的 analyzer 在 Foundry (new) portal 中以 AI Services model 的形式直接提供。</p>
+
+<h3 id="use-the-layout-analyzer-in-the-playground">在 playground 中使用 Layout analyzer</h3>
+
+<ol>
+  <li>在 <a href="https://ai.azure.com">Microsoft Foundry portal</a>中，確認 <strong>New Foundry</strong> 切換開關已開啟。</li>
+  <li>選取 <strong>Build</strong> （位於右上角功能表），然後選取 <strong>Services</strong> （位於左側窗格）。</li>
+  <li>確認已選取 <strong>Playgrounds</strong> 索引標籤，以檢視 Foundry Tools 提供的預先建置 model。</li>
+  <li>
+    <p>找出並選取 <strong>Content Understanding - Document Layout Analyzer</strong>.</p>
+
+    <p>這會開啟 Layout analyzer playground 頁面，您可以在其中使用範例資料或自己的檔案測試 layout model。</p>
+  </li>
+  <li>
+    <p>在 playground 中，使用上傳自己資料的選項，從您解壓縮內容檔案的資料夾上傳 <strong>invoice-1234.pdf</strong> 檔案。此檔案包含下列發票：</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/invoice-1234.png" alt="編號 1234 的發票影像。" /></p>
+  </li>
+  <li>執行 analyzer，並等待分析完成。</li>
+  <li>
+    <p>檢閱結果。您可以將擷取的內容以格式化輸出或原始 JSON 資料的形式檢視。留意 Layout analyzer 會從文件擷取文字、表格，以及段落和章節等結構元素。</p>
+
+    <blockquote>
+      <p><strong>注意</strong>：預先建置的 <strong>OCR/Read</strong> 和 <strong>Layout</strong> analyzer 不需要 generative AI model，即可從文件擷取內容。 <strong>OCR/Read</strong> 會擷取文字元素（單字、段落、公式和條碼），而 <strong>Layout</strong> 還會擷取表格、圖形、文件結構、超連結和註釋。這些 analyzer 適合一般用途的內容擷取，但不會擷取發票金額或廠商名稱等特定自訂欄位。</p>
+    </blockquote>
+  </li>
+  <li>您也可以返回 <strong>Services</strong> 索引標籤，使用相同檔案試用 <strong>Azure Content Understanding - OCR/Read</strong> 以比較結果。留意 Read 只擷取文字，不進行版面配置分析。</li>
+</ol>
+
+<h2 id="set-up-content-understanding-studio-for-custom-analyzers">設定 Content Understanding Studio 以建立自訂 analyzer</h2>
+
+<p>若要從內容擷取特定欄位（例如發票金額、來電者姓名或會議參與者），您需要建置自訂 analyzer。自訂 analyzer 是在 <strong>Content Understanding Studio</strong>中建立的；這是一個獨立的網頁工具，可用來建置及測試採用自訂 schema 的 analyzer。</p>
+
+<ol>
+  <li>在新的瀏覽器索引標籤中，開啟 <a href="https://contentunderstanding.ai.azure.com">Content Understanding Studio</a> ，網址為 <code>https://contentunderstanding.ai.azure.com</code>.</li>
+  <li>如果出現提示，請使用登入 Foundry portal 時所用的相同 Azure 認證登入。</li>
+  <li>在 <strong>Settings</strong> 頁面上（或被重新導向至 resource 設定頁面時），選取 <strong>+ Add resource</strong> 按鈕。</li>
+  <li>
+    <p>選取先前建立的 Foundry resource，並依序選取 <strong>Next</strong> &gt; <strong>Save</strong>.</p>
+
+    <blockquote>
+      <p><strong>提示</strong>：確認已勾選 <strong>Enable autodeployment for required models if no defaults are available</strong> 核取方塊。這可確保 resource 已設定好自訂 analyzer 所需的 <code>GPT-4.1</code>, <code>GPT-4.1-mini</code>和 <code>text-embedding-3-large</code> model。</p>
+    </blockquote>
+  </li>
+  <li>resource 連線完成後，即可建立自訂 analyzer。在頂端導覽列選取 <strong>Content Understanding</strong> 以前往首頁。</li>
+</ol>
+
+<h2 id="extract-information-from-invoice-documents">從發票文件擷取資訊</h2>
+
+<p>您將建置自訂的 Azure Content Understanding analyzer，以從發票擷取特定欄位。您將在 Content Understanding Studio 中建立 project、根據範例發票定義 schema，接著建置可重複使用的 analyzer。</p>
+
+<h3 id="create-a-storage-account">建立 storage account</h3>
+
+<p>Content Understanding Studio 需要 Azure Blob Storage account，才能儲存用來建置自訂 analyzer 的資料。您需要在與 Foundry resource 相同的 resource group 中建立它。</p>
+
+<ol>
+  <li>在新的瀏覽器索引標籤中，開啟 <a href="https://portal.azure.com">Azure portal</a> ，網址為 <code>https://portal.azure.com</code> ，並使用 Azure 認證登入。</li>
+  <li>選取 <strong>+ Create a resource</strong>，搜尋 <code>Storage account</code>，並建立新的 <strong>Storage account</strong> resource，使用下列設定：
+    <ul>
+      <li><strong>Subscription</strong>: <em>您的 Azure 訂用帳戶</em></li>
+      <li><strong>Resource group</strong>: <em>與 Foundry resource 相同的 resource group</em></li>
+      <li><strong>Storage account name</strong>: <em>輸入全域唯一的名稱</em></li>
+      <li><strong>Region</strong>: <em>與 Foundry resource 相同的區域</em></li>
+      <li><strong>Preferred storage type</strong>：Azure Blob Storage 或 Azure Data Lake Storage Gen 2</li>
+      <li><strong>Performance</strong>：Standard</li>
+      <li><strong>Redundancy</strong>：Locally-redundant storage (LRS)</li>
+    </ul>
+  </li>
+  <li>選取 <strong>Review + create</strong>，然後選取 <strong>Create</strong>。等待部署完成。</li>
+</ol>
+
+<h3 id="define-a-schema-for-invoice-analysis">定義發票分析的 schema</h3>
+
+<ol>
+  <li>在 Content Understanding Studio 中，選取自訂 project 區段中的 <strong>Get started</strong> 按鈕，並選取 <strong>Create</strong>.</li>
+  <li>選取 <strong>Extract content and fields with a custom schema</strong>，然後使用下列設定建立 project：
+    <ul>
+      <li><strong>Project name</strong>: <code>Invoice analysis</code></li>
+      <li><strong>Description</strong>: <code>Extract data from an invoice</code></li>
+      <li><strong>Advanced settings</strong>
+        <ul>
+          <li><strong>Connected resource</strong>: <em>確認已選取您的 Foundry resource</em></li>
+          <li><strong>Connect storage account</strong>: <em>選取剛建立的 storage account</em></li>
+          <li><strong>Blob container</strong>: <em>建立新的 container，名稱為</em> <code>content-understanding</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>等待 project 建立完成。</p>
+
+    <blockquote>
+      <p><strong>提示</strong>：如果發生存取 storage 的錯誤，請稍候一分鐘再試一次。新 resource 的權限可能需要數分鐘才能生效。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>從您解壓縮內容檔案的資料夾，上傳 <strong>invoice-1234.pdf</strong> 檔案。</p>
+
+    <p>Content Understanding 會將您的資料分類，並根據上傳的內容建議 analyzer 範本。</p>
+  </li>
+  <li>
+    <p>在 <strong>Choose a template</strong> 視窗中，選取 <strong>Invoice</strong> 範本，並選取 <strong>Save</strong>.</p>
+
+    <p>此 <em>Invoice</em> 範本包含發票中常見的欄位。您可以使用 schema 編輯器刪除不需要的建議欄位，並加入所需的自訂欄位。</p>
+  </li>
+  <li>在建議欄位清單中，選取 <strong>BillingAddress</strong>。您上傳的發票格式不需要此欄位，因此請使用 <strong>Delete field</strong> (<strong>🗑</strong>）圖示（出現在所選欄位列的末端）將其刪除。</li>
+  <li>在 schema 索引標籤頂端的列中，選取 <strong>Suggest</strong>。這會檢視範例發票，並建議 schema 應包含哪些欄位。展開 <strong>Items</strong> 欄位，查看建議的子欄位。加入這些欄位會取代現有的 schema，因此若您已在 project 中編輯 schema，請謹慎操作。選取 <strong>Save</strong>.</li>
+  <li>
+    <p>使用 <strong>+ Add new field</strong> 按鈕加入下列欄位，並為每個新欄位選取 <strong>Save</strong> (<strong>✓</strong>）：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>TotalQuantity</code></td>
+          <td><code>Total number of items on the invoice</code></td>
+          <td>String</td>
+          <td>Auto</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>確認完成的 schema 如下所示，並選取 <strong>Save</strong>.</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/invoice-schema.png" alt="Content Understanding Studio 中發票 analyzer schema 的螢幕擷取畫面，顯示 VendorName、InvoiceDate、SubTotal、Items 和 TotalQuantity 等欄位。" /></p>
+  </li>
+  <li>
+    <p>選取 <strong>Test</strong> 索引標籤，然後選取 <strong>Run analysis</strong> 以測試 schema。等待分析完成。</p>
+  </li>
+  <li>
+    <p>檢閱分析結果，結果應類似下列畫面：</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/invoice-analysis.png" alt="Content Understanding Studio 中發票分析測試結果的螢幕擷取畫面，顯示從範例發票擷取的欄位值。" /></p>
+  </li>
+  <li>在 <strong>Fields</strong> 窗格中檢視已識別欄位的詳細資料。</li>
+</ol>
+
+<h3 id="build-and-test-an-analyzer-for-invoices">建置及測試發票 analyzer</h3>
+
+<p>既然已定義從發票擷取欄位的 schema，您便可以建置 analyzer，用於類似的文件。</p>
+
+<ol>
+  <li>選取 <strong>Build analyzer</strong> 按鈕（位於頂端），並使用下列屬性建置新的 analyzer（請完全依照此處所示輸入）：
+    <ul>
+      <li><strong>Name</strong>: <code>invoiceanalyzer</code></li>
+      <li><strong>Description</strong>: <code>Invoice analyzer</code></li>
+    </ul>
+  </li>
+  <li>analyzer 建置完成後，選取 <strong>Jump to analyzer list</strong> 以檢視所有已建置的 analyzer，然後選取 <strong>invoiceanalyzer</strong> 連結。畫面將顯示 analyzer schema 中定義的欄位。</li>
+  <li>在 <strong>invoiceanalyzer</strong> 頁面上，選取 <strong>Test</strong> 索引標籤。</li>
+  <li>
+    <p>上傳 <strong>invoice-1235.pdf</strong> （位於您解壓縮內容檔案的資料夾），並執行分析，從發票擷取欄位資料。</p>
+
+    <p>要分析的發票如下所示：</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/invoice-1235.png" alt="編號 1235 的發票影像。" /></p>
+  </li>
+  <li>檢閱 <strong>Fields</strong> 窗格，並確認 analyzer 已從測試發票擷取正確的欄位。</li>
+  <li>檢閱 <strong>Results</strong> 窗格，查看 analyzer 將傳回給用戶端應用程式的 JSON 回應。</li>
+  <li>關閉 <strong>invoiceanalyzer</strong> 頁面，以返回 analyzer 清單。</li>
+</ol>
+
+<h2 id="extract-information-from-a-slide-image">從投影片影像擷取資訊</h2>
+
+<p>您將建置自訂的 Azure Content Understanding analyzer，以從包含圖表的投影片擷取資訊。</p>
+
+<h3 id="define-a-schema-for-image-analysis">定義影像分析的 schema</h3>
+
+<ol>
+  <li>在 <strong>Project list</strong> 索引標籤中，選取 <strong>Create</strong> ，並選取 <strong>Extract content and fields with a custom schema</strong>，然後使用下列設定建立 project：
+    <ul>
+      <li><strong>Project name</strong>: <code>Slide analysis</code></li>
+      <li><strong>Description</strong>: <code>Extract data from an image of a slide</code></li>
+      <li><strong>Advanced settings</strong>: <em>確認設定與上一個 project 相同</em></li>
+    </ul>
+  </li>
+  <li>
+    <p>等待 project 建立完成。</p>
+  </li>
+  <li>
+    <p>上傳 <strong>slide-1.jpg</strong> 檔案（位於您解壓縮內容檔案的資料夾）。接著選取 <strong>Image analysis</strong> 範本，並選取 <strong>Save</strong>.</p>
+
+    <p>此 <em>Image analysis</em> 範本不包含任何預先定義的欄位。您必須定義欄位，描述要擷取的資訊。</p>
+  </li>
+  <li>
+    <p>使用 <strong>+ Add new field</strong> 按鈕加入下列欄位，並為每個新欄位選取 <strong>Save changes</strong> (<strong>✓</strong>）：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Title</code></td>
+          <td><code>Slide title</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Summary</code></td>
+          <td><code>Summary of the slide</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Charts</code></td>
+          <td><code>Number of charts on the slide</code></td>
+          <td>Integer</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>使用 <strong>+ Add new field</strong> 按鈕加入新欄位，名稱為 <code>QuarterlyRevenue</code> ，描述為 <code>Revenue per quarter</code> ，值類型為 <strong>List of objects</strong>。接著選取值類型下拉式選單旁的表格圖示。在開啟的表格子欄位新頁面中，加入下列子欄位：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Quarter</code></td>
+          <td><code>Which quarter?</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Revenue</code></td>
+          <td><code>Revenue for the quarter</code></td>
+          <td>Number</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>選取 <strong>Back</strong> 以返回 schema 最上層，並使用 <strong>+ Add new field</strong> 按鈕加入新欄位，名稱為 <code>ProductCategories</code> ，描述為 <code>Product categories</code> ，值類型為 <strong>List of objects</strong>。接著選取值類型旁的表格圖示，以開啟表格子欄位的新頁面，加入下列子欄位：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>ProductCategory</code></td>
+          <td><code>Product category name</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>RevenuePercentage</code></td>
+          <td><code>Percentage of revenue</code></td>
+          <td>Number</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>選取 <strong>Back</strong> 以返回 schema 最上層，並確認它如下所示。接著選取 <strong>Save</strong>.</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/slide-schema.png" alt="Content Understanding Studio 中影像 analyzer schema 的螢幕擷取畫面，顯示 Title、Summary、Charts、QuarterlyRevenue 和 ProductCategories 欄位。" /></p>
+  </li>
+  <li>選取 <strong>Test</strong> 索引標籤，然後選取 <strong>Run analysis</strong> ，並等待分析完成。</li>
+  <li>
+    <p>檢閱分析結果，結果應類似下列畫面：</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/slide-analysis.png" alt="Content Understanding Studio 中影像分析測試結果的螢幕擷取畫面，顯示從投影片擷取的欄位，包括營收資料和產品類別。" /></p>
+  </li>
+  <li>在 <strong>Fields</strong> 窗格中檢視已識別欄位的詳細資料，並展開 <strong>QuarterlyRevenue</strong> 和 <strong>ProductCategories</strong> 欄位，以查看子欄位值。</li>
+</ol>
+
+<h3 id="build-and-test-an-analyzer">建置及測試 analyzer</h3>
+
+<p>既然已定義從投影片擷取欄位的 schema，您便可以建置 analyzer，用於類似的投影片影像。</p>
+
+<ol>
+  <li>選取 <strong>Build analyzer</strong> 按鈕（位於頂端），並使用下列屬性建置新的 analyzer（請完全依照此處所示輸入）：
+    <ul>
+      <li><strong>Name</strong>: <code>slideanalyzer</code></li>
+      <li><strong>Description</strong>: <code>Slide image analyzer</code></li>
+    </ul>
+  </li>
+  <li>analyzer 建置完成後，選取 <strong>Jump to analyzer list</strong>，然後選取 <strong>slideanalyzer</strong> 連結。畫面將顯示 analyzer schema 中定義的欄位。</li>
+  <li>在 <strong>slideanalyzer</strong> 頁面上，選取 <strong>Test</strong> 索引標籤。</li>
+  <li>使用 <strong>+ Upload test files</strong> 按鈕上傳 <strong>slide-2.jpg</strong> （位於您解壓縮內容檔案的資料夾），並執行分析，從影像擷取欄位資料。</li>
+  <li>
+    <p>檢閱 <strong>Fields</strong> 窗格，並確認 analyzer 已從投影片影像擷取正確的欄位。</p>
+
+    <blockquote>
+      <p><strong>注意</strong>：第 2 張投影片未包含按產品類別劃分的明細，因此找不到產品類別營收資料。</p>
+    </blockquote>
+  </li>
+  <li>檢閱 <strong>Results</strong> 窗格，查看 analyzer 將傳回給用戶端應用程式的 JSON 回應。</li>
+  <li>關閉 <strong>slideanalyzer</strong> 頁面。</li>
+</ol>
+
+<h2 id="extract-information-from-a-voicemail-audio-recording">從語音留言錄音擷取資訊</h2>
+
+<p>您將建置自訂的 Azure Content Understanding analyzer，以從語音留言的錄音擷取資訊。</p>
+
+<h3 id="define-a-schema-for-audio-analysis">定義音訊分析的 schema</h3>
+
+<ol>
+  <li>在 <strong>Project list</strong> 索引標籤中，選取 <strong>Create</strong> ，並選取 <strong>Extract content and fields with a custom schema</strong>，然後使用下列設定建立 project：
+    <ul>
+      <li><strong>Project name</strong>: <code>Voicemail analysis</code></li>
+      <li><strong>Description</strong>: <code>Extract data from a voicemail recording</code></li>
+      <li><strong>Advanced settings</strong>: <em>確認設定與上一個 project 相同</em></li>
+    </ul>
+  </li>
+  <li>
+    <p>等待 project 建立完成。</p>
+  </li>
+  <li>上傳 <strong>call-1.mp3</strong> 檔案（位於您解壓縮內容檔案的資料夾）。接著選取 <strong>Audio analysis</strong> 範本，並選取 <strong>Save</strong>.</li>
+  <li>
+    <p>在 <strong>Content</strong> 窗格（位於右側）中，選取 <strong>Get transcription preview</strong> 以查看錄製留言的逐字稿。</p>
+
+    <p>此 <em>Audio analysis</em> 範本不包含任何預先定義的欄位。您必須定義欄位，描述要擷取的資訊。</p>
+  </li>
+  <li>
+    <p>使用 <strong>+ Add new field</strong> 按鈕加入下列欄位，並為每個新欄位選取 <strong>Save</strong> (<strong>✓</strong>）：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Caller</code></td>
+          <td><code>Person who left the message</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Summary</code></td>
+          <td><code>Summary of the message</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Actions</code></td>
+          <td><code>Requested actions</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>CallbackNumber</code></td>
+          <td><code>Telephone number to return the call</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>AlternativeContacts</code></td>
+          <td><code>Alternative contact details</code></td>
+          <td>List of Strings</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>選取 <strong>Run analysis</strong> ，並等待分析完成。</p>
+
+    <p>音訊分析可能需要一些時間。等待期間，您可以播放下方的音訊檔案：</p>
+
+    <video controls="" src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/call-1.mp4" title="來電 1" width="300">
+     <track src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/call-1.vtt" kind="captions" srclang="en" label="English" />
+ </video>
+
+    <p><strong>注意</strong>：此音訊是使用 AI 生成的。</p>
+  </li>
+  <li>檢閱分析結果，並在 <strong>Fields</strong> 窗格中檢視已識別欄位的詳細資料，展開 <strong>AlternativeContacts</strong> 欄位以查看列出的值。</li>
+</ol>
+
+<h3 id="build-and-test-an-analyzer-1">建置及測試 analyzer</h3>
+
+<p>既然已定義從語音留言擷取欄位的 schema，您便可以建置 analyzer，用於類似的錄音。</p>
+
+<ol>
+  <li>選取 <strong>Build analyzer</strong> 按鈕（位於頂端），並使用下列屬性建置新的 analyzer（請完全依照此處所示輸入）：
+    <ul>
+      <li><strong>Name</strong>: <code>voicemailanalyzer</code></li>
+      <li><strong>Description</strong>: <code>Voicemail audio analyzer</code></li>
+    </ul>
+  </li>
+  <li>analyzer 建置完成後，選取 <strong>Jump to analyzer list</strong>，然後選取 <strong>voicemailanalyzer</strong> 連結。畫面將顯示 analyzer schema 中定義的欄位。</li>
+  <li>在 <strong>voicemailanalyzer</strong> 頁面上，選取 <strong>Test</strong> 索引標籤。</li>
+  <li>
+    <p>使用 <strong>+ Upload test files</strong> 按鈕上傳 <strong>call-2.mp3</strong> （位於您解壓縮內容檔案的資料夾），並執行分析，從音訊檔案擷取欄位資料。</p>
+
+    <p>音訊分析可能需要一些時間。等待期間，您可以播放下方的音訊檔案：</p>
+
+    <video controls="" src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/call-2.mp4" title="來電 2" width="300">
+     <track src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/call-2.vtt" kind="captions" srclang="en" label="English" />
+ </video>
+
+    <p><strong>注意</strong>：此音訊是使用 AI 生成的。</p>
+  </li>
+  <li>檢閱 <strong>Fields</strong> 窗格，並確認 analyzer 已從語音留言擷取正確的欄位。</li>
+  <li>檢閱 <strong>Results</strong> 窗格，查看 analyzer 將傳回給用戶端應用程式的 JSON 回應。</li>
+  <li>關閉 <strong>voicemail-analyzer</strong> 頁面。</li>
+</ol>
+
+<h2 id="extract-information-from-a-video-conference-recording">從視訊會議錄影擷取資訊</h2>
+
+<p>您將建置自訂的 Azure Content Understanding analyzer，以從電話會議的影片錄影擷取資訊。</p>
+
+<h3 id="define-a-schema-for-video-analysis">定義影片分析的 schema</h3>
+
+<ol>
+  <li>在 Content Understanding Studio 首頁上，選取 <strong>Create project</strong> （或先使用導覽功能返回首頁）。</li>
+  <li>選取 <strong>Extract content and fields with a custom schema</strong>，然後使用下列設定建立 project：
+    <ul>
+      <li><strong>Project name</strong>: <code>Conference call video analysis</code></li>
+      <li><strong>Description</strong>: <code>Extract data from a video conference recording</code></li>
+    </ul>
+  </li>
+  <li>
+    <p>等待 project 建立完成。</p>
+  </li>
+  <li>上傳 <strong>meeting-1.mp4</strong> 檔案（位於您解壓縮內容檔案的資料夾）。接著選取 <strong>Video analysis</strong> 範本，並選取 <strong>Create</strong>.</li>
+  <li>
+    <p>在 <strong>Content</strong> 窗格（位於右側）中，選取 <strong>Get transcription preview</strong> 以查看錄製會議的逐字稿。</p>
+
+    <p>此 <em>Video analysis</em> 範本會針對每個片段擷取資料，但不包含任何預先定義的欄位。您必須定義欄位，描述要擷取的資訊。</p>
+  </li>
+  <li>
+    <p>使用 <strong>+ Add new field</strong> 按鈕加入下列欄位，並為每個新欄位選取 <strong>Save</strong> (<strong>✓</strong>）：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Summary</code></td>
+          <td><code>Summary of the discussion</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Participants</code></td>
+          <td><code>Count of meeting participants</code></td>
+          <td>Integer</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>ParticipantNames</code></td>
+          <td><code>Names of meeting participants</code></td>
+          <td>List of Strings</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>SharedSlides</code></td>
+          <td><code>Descriptions of any PowerPoint slides presented</code></td>
+          <td>List of Strings</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>AssignedActions</code></td>
+          <td><code>Tasks assigned to participants</code></td>
+          <td>List of Objects</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>輸入 <strong>AssignedActions</strong> 欄位時，請在子欄位表格中建立下列子欄位：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Task</code></td>
+          <td><code>Description of the task</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>AssignedTo</code></td>
+          <td><code>Who the task is assigned to</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>選取 <strong>Back</strong> 以返回 schema 最上層，並確認它如下所示。接著選取 <strong>Save</strong>.</p>
+  </li>
+  <li>
+    <p>選取 <strong>Run analysis</strong> ，並等待分析完成。</p>
+
+    <p>影片分析可能需要一些時間。等待期間，您可以觀看下方的影片：</p>
+
+    <video controls="" src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/meeting-1.mp4" title="會議 1" width="480">
+     <track src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/meeting-1.vtt" kind="captions" srclang="en" label="English" />
+ </video>
+
+    <p><strong>注意</strong>：此影片是使用 AI 生成的。</p>
+  </li>
+  <li>
+    <p>分析完成後，檢閱結果。</p>
+  </li>
+  <li>在 <strong>Fields</strong> 窗格中，檢視擷取的資料。</li>
+</ol>
+
+<h3 id="build-and-test-an-analyzer-2">建置及測試 analyzer</h3>
+
+<p>既然已定義從電話會議錄影擷取欄位的 schema，您便可以建置 analyzer，用於類似的影片。</p>
+
+<ol>
+  <li>選取 <strong>Build analyzer</strong> 按鈕（位於頂端），並使用下列屬性建置新的 analyzer（請完全依照此處所示輸入）：
+    <ul>
+      <li><strong>Name</strong>: <code>meetinganalyzer</code></li>
+      <li><strong>Description</strong>: <code>Meeting video analyzer</code></li>
+    </ul>
+  </li>
+  <li>等待新的 analyzer 準備就緒（使用 <strong>Refresh</strong> 按鈕進行檢查）。</li>
+  <li>analyzer 建置完成後，選取 <strong>Jump to analyzer list</strong>，然後選取 <strong>meetinganalyzer</strong> 連結。畫面將顯示 analyzer schema 中定義的欄位。</li>
+  <li>在 <strong>meetinganalyzer</strong> 頁面上，選取 <strong>Test</strong> 索引標籤。</li>
+  <li>
+    <p>使用 <strong>+ Upload test files</strong> 按鈕上傳 <strong>meeting-2.mp4</strong> （位於您解壓縮內容檔案的資料夾），並執行分析，從影片檔案擷取欄位資料。</p>
+
+    <p>影片分析可能需要一些時間。等待期間，您可以觀看下方的影片：</p>
+
+    <video controls="" src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/meeting-2.mp4" title="會議 2" width="480">
+     <track src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/Instructions/Exercises/media/meeting-2.vtt" kind="captions" srclang="en" label="English" />
+ </video>
+
+    <p><strong>注意</strong>：此影片是使用 AI 生成的。</p>
+  </li>
+  <li>檢閱 <strong>Fields</strong> 窗格，並檢視 analyzer 針對電話會議影片中每個鏡頭擷取的欄位。</li>
+  <li>檢閱 <strong>Results</strong> 窗格，查看 analyzer 將傳回給用戶端應用程式的 JSON 回應。</li>
+  <li>關閉 <strong>meetinganalyzer</strong> 頁面。</li>
+</ol>
+
+<h2 id="clean-up">清理</h2>
+
+<p>如果您已完成 Content Understanding 服務的操作，請刪除本練習中建立的 resource，以避免產生不必要的 Azure 費用。</p>
+
+<ol>
+  <li>在 <a href="https://portal.azure.com">Azure portal</a>中，刪除您為本練習建立的 resource group。</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">消費者健康資料隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">使用條款 </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">商標 </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-information-extraction" target="_blank" class="ml-2">
+                    原始碼
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://microsoftlearning.github.io/mslearn-ai-information-extraction/assets/js/script.js?v=a79b11a76caf9fa547d761e890b732a02bd53e56"></script>
+</body>
+
+
+</html>

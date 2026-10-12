@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <title>
+        使用 Microsoft Agent Framework 開發 multi-agent 解決方案 |
+        
+        在 Azure 中開發 AI agent
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="https://microsoftlearning.github.io/mslearn-ai-agents/assets/css/style.css?v=009131ab4938c06ec5f7b860c15a1164a8ed7d3e">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">在 Azure 中開發 AI agent</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-agents" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;首頁
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-agents">
+                Develop AI Agents in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-agents" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="develop-a-multi-agent-solution-with-microsoft-agent-framework">使用 Microsoft Agent Framework 開發 multi-agent 解決方案</h1>
+
+<p>在本練習中，您將練習使用 Microsoft Agent Framework SDK 的 sequential orchestration pattern。您將建立由三個 agent 組成的簡單 pipeline，它們會共同處理客戶意見回饋，並提出後續步驟的建議。您將建立下列 agent：</p>
+
+<ul>
+  <li>Summarizer agent 會將原始意見回饋濃縮為簡短且中立的句子。</li>
+  <li>Classifier agent 會將意見回饋分類為 Positive、Negative 或 Feature request。</li>
+  <li>最後，Recommended Action agent 會建議適當的後續處理步驟。</li>
+</ul>
+
+<p>您將學習如何使用 Microsoft Agent Framework SDK 拆解問題，交由適當的 agent 依序處理，並產生可付諸行動的結果。開始吧！</p>
+
+<p>本練習大約需要 <strong>30</strong> 分鐘才能完成。</p>
+
+<blockquote>
+  <p><strong>注意</strong>：本練習使用的部分技術仍處於預覽階段或積極開發中。您可能會遇到非預期的行為、警告或錯誤。</p>
+</blockquote>
+
+<h2 id="prerequisites">必要條件</h2>
+
+<p>開始本練習之前，請確認您已具備以下條件：</p>
+
+<ul>
+  <li><a href="https://code.visualstudio.com/">Visual Studio Code</a> 已安裝於本機</li>
+  <li>有效的 <a href="https://azure.microsoft.com/free/">Azure subscription</a></li>
+  <li><a href="https://www.python.org/downloads/">Python 3.13</a> 已安裝</li>
+  <li><a href="https://git-scm.com/downloads">Git</a> 已安裝於本機</li>
+</ul>
+
+<blockquote>
+  <p>* 目前尚不支援 Python 3.14：部分相依套件沒有 3.14 的版本。本實驗已使用 Python 3.13.12 測試。</p>
+</blockquote>
+
+<h2 id="create-a-foundry-project-with-the-foundry-toolkit-for-vs-code-extension">使用 Foundry Toolkit for VS Code 擴充功能建立 Foundry project</h2>
+
+<p>身為開發人員，您可能會花一些時間在 Foundry portal 中操作，但也很可能會花大量時間使用 Visual Studio Code。Foundry Toolkit for VS Code 擴充功能可讓您不必離開開發環境，就能方便地使用 Foundry project 的資源。</p>
+
+<ol>
+  <li>
+    <p>開啟 Visual Studio Code。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Extensions</strong> （位於左側窗格），或按下 <strong>Ctrl+Shift+X</strong>).</p>
+  </li>
+  <li>
+    <p>在擴充功能市集中搜尋 Microsoft 提供的 <code>Foundry Toolkit</code> 擴充功能，然後選取 <strong>Install</strong>.</p>
+
+    <blockquote>
+      <p><strong>注意</strong>：此擴充功能目前列出的名稱為 <strong>Foundry Toolkit</strong>，但部分 VS Code 標籤、命令或較舊的螢幕擷取畫面可能仍使用 <strong>AI Toolkit</strong>這個名稱。在本實驗中，請將這些名稱視為同一個擴充功能體驗。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>安裝擴充功能後，選取側邊欄中的圖示，以開啟 Foundry Toolkit 檢視。</p>
+
+    <p>如果您尚未登入，系統應會提示您登入 Azure 帳戶。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Create Project</strong> ，位於 <strong>Microsoft Foundry Resources</strong>.</p>
+
+    <p>如果已有啟用中的預設 project，project 名稱會顯示在 <strong>My Resources</strong>下。您可以在目前啟用的 project 上按一下滑鼠右鍵，然後選取 <strong>Switch Default Project in Azure Extension</strong>.</p>
+  </li>
+  <li>
+    <p>選取您的 Azure subscription 和 resource group，然後輸入 Foundry project 的名稱，以建立本練習使用的新 project。</p>
+
+    <p>deployment 完成後，您應該會看到此 project 出現在 Foundry Toolkit 窗格中，並設為預設 project。</p>
+  </li>
+</ol>
+
+<h2 id="deploy-a-model">部署 model</h2>
+
+<p>每個 generative AI project 的核心都至少有一個 generative AI model。在此任務中，您將從 Model Catalog 部署一個 model，供 agent 使用。</p>
+
+<ol>
+  <li>
+    <p>當「Project deployed successfully」快顯視窗出現時，選取 <strong>Deploy a new model</strong> 按鈕。這會開啟 Model Catalog。</p>
+
+    <blockquote>
+      <p><strong>提示</strong>：您也可以選取 <strong>+</strong> 圖示（位於 Resources 區段的 <strong>Models</strong> 旁），或按下 <strong>F1</strong> 並執行命令 <strong>Foundry Toolkit: Show model catalog</strong>.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>在 Model Catalog 中找到 <strong>gpt-5</strong> model（您可以使用搜尋列快速找到它）。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Deploy</strong> （位於 gpt-5 model 旁）。</p>
+  </li>
+  <li>設定 deployment 選項：
+    <ul>
+      <li><strong>Deployment name</strong>：輸入名稱，例如「gpt-5」</li>
+      <li><strong>Deployment type</strong>：選取 <strong>Global Standard</strong> （或 <strong>Standard</strong> ，如果無法使用 Global Standard）</li>
+      <li><strong>Model version</strong>：保留預設值</li>
+      <li><strong>Tokens per minute</strong>：保留預設值</li>
+    </ul>
+  </li>
+  <li>
+    <p>選取 <strong>Deploy to Microsoft Foundry</strong> （位於左下角）。</p>
+  </li>
+  <li>
+    <p>等待 deployment 完成。已部署的 model 會出現在 Resources 檢視中的 <strong>Models</strong> 區段。</p>
+  </li>
+  <li>
+    <p>在 project deployment 的名稱上按一下滑鼠右鍵，然後選取 <strong>Copy Project Endpoint</strong>。在後續步驟中，您需要使用這個 URL 將 agent 連線至 Foundry project。</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-agents/Instructions/Media/vs-code-endpoint.png" alt="在 Foundry Toolkit VS Code 擴充功能中複製 project endpoint 的螢幕擷取畫面。" /></p>
+  </li>
+</ol>
+
+<h2 id="clone-the-starter-code-repository">複製起始程式碼 repository</h2>
+
+<p>本練習將使用起始程式碼，協助您連線至 Foundry project，並建立能處理客戶意見回饋的 multi-agent 解決方案。您將從 GitHub repository 複製此程式碼。</p>
+
+<ol>
+  <li>
+    <p>在 VS Code 中開啟 Command Palette（<strong>Ctrl+Shift+P</strong> 或 <strong>View &gt; Command Palette</strong>).</p>
+  </li>
+  <li>
+    <p>輸入 <strong>Git: Clone</strong> 並從清單中選取該命令。</p>
+  </li>
+  <li>
+    <p>輸入 repository URL：</p>
+
+    <pre><code>https://github.com/MicrosoftLearning/mslearn-ai-agents.git
+</code></pre>
+  </li>
+  <li>
+    <p>選擇本機上的位置，以複製 repository。</p>
+  </li>
+  <li>
+    <p>系統提示時，選取 <strong>Open</strong> 以在 VS Code 中開啟已複製的 repository。</p>
+  </li>
+  <li>
+    <p>repository 開啟後，選取 <strong>File &gt; Open Folder</strong> 並瀏覽至 <code>mslearn-ai-agents/Labfiles/08-agent-orchestration</code>，然後選擇 <strong>Select Folder</strong>.</p>
+  </li>
+  <li>
+    <p>在 Explorer 窗格中，展開 <strong>Python</strong> 資料夾，以檢視本練習的程式碼檔案。</p>
+  </li>
+  <li>
+    <p>在 <strong>requirements.txt</strong> 檔案上按一下滑鼠右鍵，然後選取 <strong>Open in Integrated Terminal</strong>.</p>
+  </li>
+  <li>
+    <p>在終端機中輸入下列命令，在 virtual environment 中安裝所需的 Python 套件：</p>
+
+    <pre><code>python -m venv labenv
+.\labenv\Scripts\Activate.ps1
+pip install -r requirements.txt
+</code></pre>
+  </li>
+  <li>
+    <p>開啟 <strong>.env</strong> 檔案，將 <strong>your_project_endpoint</strong> 預留位置替換為您 project 的 endpoint（從 Foundry Toolkit 擴充功能中的 project deployment 資源複製），並確認 MODEL_DEPLOYMENT_NAME 變數已設為您的 model deployment 名稱。使用 <strong>Ctrl+S</strong> 儲存修改後的檔案。</p>
+  </li>
+</ol>
+
+<h2 id="create-ai-agents">建立 AI agent</h2>
+
+<p>現在，您已準備好建立 multi-agent 解決方案所需的 agent！開始吧！</p>
+
+<ol>
+  <li>
+    <p>在程式碼編輯器中開啟 <strong>agents.py</strong> 檔案。</p>
+  </li>
+  <li>
+    <p>在檔案頂端的註解 <strong>Add references</strong>下方，新增下列程式碼，以參考實作 agent 所需程式庫中的 namespace：</p>
+
+    <pre><code class="language-python"># Add references
+from agent_framework import Message
+from agent_framework.foundry import FoundryChatClient
+from agent_framework.orchestrations import SequentialBuilder
+from azure.identity import AzureCliCredential
+</code></pre>
+  </li>
+  <li>
+    <p>在 <strong>main</strong> 函式中，花一點時間檢閱 agent 的指示。這些指示定義了 orchestration 中每個 agent 的行為。</p>
+  </li>
+  <li>
+    <p>在下列註解下方新增程式碼： <strong>Create the chat client</strong>:</p>
+
+    <pre><code class="language-python"># Create the chat client
+credential = AzureCliCredential()
+chat_client = FoundryChatClient(
+    credential=credential,
+    project_endpoint=os.getenv("AZURE_AI_PROJECT_ENDPOINT"),
+    model=os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME"),
+)
+</code></pre>
+
+    <p>請注意， <strong>AzureCliCredential</strong> 物件會讓程式碼能向您的 Azure 帳戶進行驗證。 <strong>FoundryChatClient</strong> 物件會使用 .env 組態中的 endpoint 和 model deployment 名稱，連線至 Foundry project。</p>
+  </li>
+  <li>
+    <p>在下列註解下方新增程式碼： <strong>Create agents</strong>:</p>
+
+    <p>（請務必保持縮排層級）</p>
+
+    <pre><code class="language-python"># Create agents
+summarizer_agent = chat_client.as_agent(
+    name="summarizer",
+    instructions=summarizer_instructions,
+)
+
+classifier_agent = chat_client.as_agent(
+    name="classifier",
+    instructions=classifier_instructions,
+)
+
+action_agent = chat_client.as_agent(
+    name="action",
+    instructions=action_instructions,
+)
+</code></pre>
+  </li>
+</ol>
+
+<h2 id="create-a-sequential-orchestration">建立 sequential orchestration</h2>
+
+<ol>
+  <li>
+    <p>在 <strong>main</strong> 函式中，找到註解 <strong>Initialize the current feedback</strong> 並新增下列程式碼：</p>
+
+    <p>（請務必保持縮排層級）</p>
+
+    <pre><code class="language-python"># Initialize the current feedback
+feedback="""
+I use the dashboard every day to monitor metrics, and it works well overall. 
+But when I'm working late at night, the bright screen is really harsh on my eyes. 
+If you added a dark mode option, it would make the experience much more comfortable.
+"""
+</code></pre>
+  </li>
+  <li>
+    <p>在註解 <strong>Build a sequential orchestration</strong>下方，新增下列程式碼，以使用您定義的 agent 定義 sequential orchestration：</p>
+
+    <pre><code class="language-python"># Build sequential orchestration
+workflow = SequentialBuilder(
+    participants=[summarizer_agent, classifier_agent, action_agent],
+    output_from="all",
+).build()
+</code></pre>
+
+    <p>agent 會依照加入 orchestration 的順序處理意見回饋。 <code>output_from="all"</code> 參數可確保收集所有 agent 的輸出。</p>
+  </li>
+  <li>
+    <p>在下列註解下方新增程式碼： <strong>Run and collect outputs</strong>:</p>
+
+    <pre><code class="language-python"># Run and collect outputs
+result = await workflow.run(f"Customer feedback: {feedback}")
+outputs = result.get_outputs()
+</code></pre>
+
+    <p>此程式碼會執行 orchestration，並收集每個參與 agent 的輸出。</p>
+  </li>
+  <li>
+    <p>在下列註解下方新增程式碼： <strong>Display outputs</strong>:</p>
+
+    <pre><code class="language-python"># Display outputs
+i = 1
+for response in outputs:
+    for msg in cast(list[Message], response.messages):
+        name = msg.author_name or ("assistant" if msg.role == "assistant" else "user")
+        print(f"{'-' * 60}\n{i:02d} [{name}]\n{msg.text}")
+        i += 1
+</code></pre>
+
+    <p>此程式碼會將您從 orchestration 收集的 workflow 輸出訊息格式化並顯示。</p>
+  </li>
+  <li>
+    <p>使用 <strong>CTRL+S</strong> 命令，將變更儲存至程式碼檔案。</p>
+  </li>
+</ol>
+
+<h2 id="test-the-application">測試應用程式</h2>
+
+<p>現在，您已準備好執行程式碼，觀察 AI agent 如何協作。</p>
+
+<ol>
+  <li>
+    <p>在整合式終端機中輸入下列命令，以執行應用程式：</p>
+
+    <pre><code>az login
+</code></pre>
+
+    <pre><code>python agents.py
+</code></pre>
+  </li>
+  <li>
+    <p>您應該會看到類似下列內容的輸出：</p>
+
+    <pre><code class="language-output">User requests a dark mode option for more comfortable nighttime use.
+Feature request
+Log as enhancement request to add dark mode for improved user comfort during nighttime use.
+------------------------------------------------------------
+01 [summarizer]
+User requests a dark mode option for more comfortable nighttime use.
+------------------------------------------------------------
+02 [classifier]
+Feature request
+------------------------------------------------------------
+03 [action]
+Log as enhancement request to add dark mode for improved user comfort during nighttime use.
+</code></pre>
+  </li>
+  <li>
+    <p>您也可以選擇使用不同的意見回饋輸入來執行程式碼，例如：</p>
+
+    <pre><code class="language-output">I reached out to your customer support yesterday because I couldn't access my account. The representative responded almost immediately, was polite and professional, and fixed the issue within minutes. Honestly, it was one of the best support experiences I've ever had.
+</code></pre>
+  </li>
+  <li>
+    <p>完成後，輸入 <code>deactivate</code> （在終端機中），以離開 Python virtual environment。</p>
+  </li>
+</ol>
+
+<h2 id="clean-up">清理</h2>
+
+<p>如果您已完成探索 Azure AI Agent Service，請刪除本練習中建立的資源，以避免產生不必要的 Azure 費用。</p>
+
+<h3 id="delete-your-model">刪除您的 model</h3>
+
+<ol>
+  <li>
+    <p>在 VS Code 中重新整理 <strong>Azure Resources</strong> 檢視。</p>
+  </li>
+  <li>
+    <p>展開 <strong>Models</strong> 子區段。</p>
+  </li>
+  <li>
+    <p>在已部署的 model 上按一下滑鼠右鍵，然後選取 <strong>Delete</strong>.</p>
+  </li>
+</ol>
+
+<h3 id="delete-the-resource-group">刪除 resource group</h3>
+
+<ol>
+  <li>
+    <p>開啟 <a href="https://portal.azure.com">Azure portal</a>.</p>
+  </li>
+  <li>
+    <p>瀏覽至包含 Microsoft Foundry 資源的 resource group。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Delete resource group</strong> 並確認刪除。</p>
+  </li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">消費者健康隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">使用條款 </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">商標 </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-agents" target="_blank" class="ml-2">
+                    原始碼
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://microsoftlearning.github.io/mslearn-ai-agents/assets/js/script.js?v=009131ab4938c06ec5f7b860c15a1164a8ed7d3e"></script>
+</body>
+
+
+</html>

@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <title>
+        使用支援語音的 generative AI model |
+        
+        在 Azure 上開發 AI 語言與語音解決方案
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="https://microsoftlearning.github.io/mslearn-ai-language/assets/css/style.css?v=cea9917802480634f7e437d83201e30f3431ad2a">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">在 Azure 上開發 AI 語言與語音解決方案</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-language" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;首頁
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-language">
+                Develop AI Language and Speech solutions on Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-language" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="use-speech-capable-generative-ai-models">使用支援語音的 generative AI model</h1>
+<p>generative AI model 的能力正逐漸超越以文字為基礎的語言補全，進而支援其他格式的內容，包括可聽見的語音。</p>
+<p>在本練習中，您將使用 generative AI model 支援兩種常見情境：</p>
+<ul>
+<li>speech synthesis（text-to-speech）：產生語音輸出。</li>
+<li>speech recognition（speech-to-text）：將語音輸入轉錄為文字。</li>
+</ul>
+<p>雖然本練習以 Python 為基礎，但您可以使用多種語言專屬的 SDK 開發 generative AI 語音應用程式，包括：</p>
+<ul>
+<li><a href="https://pypi.org/project/openai/">OpenAI SDK for Python</a></li>
+<li><a href="https://www.nuget.org/packages/OpenAI">OpenAI SDK for .NET</a></li>
+<li><a href="https://www.npmjs.com/package/openai">OpenAI SDK for JavaScript</a></li>
+</ul>
+<p>本練習約需 <strong>30</strong> 分鐘。</p>
+<blockquote>
+<p><strong>注意</strong>：本練習使用的部分技術仍處於預覽階段或積極開發中。您可能會遇到非預期的行為、警告或錯誤。</p>
+</blockquote>
+<h2 id="prerequisites">必要條件</h2>
+<p>開始本練習之前，請確認您已具備：</p>
+<ul>
+<li>有效的 <a href="https://azure.microsoft.com/pricing/purchase-options/azure-account">Azure subscription</a></li>
+<li><a href="https://code.visualstudio.com/">Visual Studio Code</a> 已安裝</li>
+<li><a href="https://www.python.org/downloads/release/python-31312/">Python 版本 <strong>3.13.xx</strong></a> 已安裝*</li>
+<li><a href="https://git-scm.com/install/">Git</a> 已安裝並完成設定</li>
+<li><a href="https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest">Azure CLI</a> 已安裝</li>
+</ul>
+<blockquote>
+<p>* Python 3.14 已推出，但部分相依套件尚未針對該版本完成編譯。本實驗已使用 Python 3.13.12 成功測試。</p>
+</blockquote>
+<h2 id="create-a-microsoft-foundry-project">建立 Microsoft Foundry project</h2>
+<p>Microsoft Foundry 使用 project 來整理開發 AI 解決方案所需的 model、resource、資料及其他資產。</p>
+<ol>
+<li>
+<p>在網頁瀏覽器中開啟 <a href="https://ai.azure.com">Microsoft Foundry portal</a> ，網址為 <code>https://ai.azure.com</code> ，並使用您的 Azure 認證登入。關閉首次登入時開啟的任何提示或快速入門窗格，必要時使用左上角的 Foundry 標誌導覽至首頁。</p>
+</li>
+<li>
+<p>如果尚未啟用，請在頁面頂端的工具列啟用 <strong>New Foundry</strong> 選項。接著，如果出現提示，請建立名稱唯一的新 project；展開 <strong>Advanced options</strong> 區域，為 project 指定下列設定：</p>
+<ul>
+<li><strong>Foundry resource</strong>: <em>使用 resource 的預設名稱（通常為 {project_name}-resource）</em></li>
+<li><strong>Subscription</strong>: <em>您的 Azure subscription</em></li>
+<li><strong>Resource group</strong>: <em>建立或選取 resource group</em></li>
+<li><strong>Region</strong>：選取 <em>East US 2</em> ，以使用本練習所需的 model 版本及 deployment 類型。</li>
+</ul>
+<blockquote>
+<p><strong>重要</strong>：model 是否可用取決於 resource 的 region、model 版本及 deployment 類型。本練習使用 <code>gpt-4o-mini-tts</code> 及 <code>gpt-4o-mini-transcribe</code>的指定版本 deployment，位於 <strong>East US 2</strong>。Global Standard 並不表示 model 可部署至所有 resource region。能否部署也取決於 subscription 的 quota 及可用容量。</p>
+</blockquote>
+</li>
+<li>
+<p>選取 <strong>Create</strong>。等待 project 建立完成，然後檢視其首頁。</p>
+</li>
+</ol>
+<h2 id="deploy-models">部署 model</h2>
+<p>要開發支援語音的應用程式，我們需要支援語音的 model。具體而言，需要一個能產生語音的 model，以及一個能處理語音輸入的 model。</p>
+<h3 id="deploy-a-speech-generation-model">部署語音產生 model</h3>
+<ol>
+<li>
+<p>現在您已準備好 <strong>Start building</strong>。讓我們選取 <strong>Explore models</strong> （或在 <strong>Discover</strong> 頁面選取 <strong>Models</strong> 索引標籤），以檢視 Microsoft Foundry model catalog。</p>
+</li>
+<li>
+<p>在 model catalog 中搜尋 <code>gpt-4o-mini-tts</code> ，或搜尋您所在 region 可用的其他 text-to-speech model。</p>
+</li>
+<li>
+<p>檢閱 model card，然後使用預設設定部署可用的 text-to-speech model。</p>
+</li>
+<li>
+<p>model 部署完成後，檢視其詳細資料，留意使用它所需的 <strong>Endpoint</strong> 可在此處取得（稍後您會需要此 Endpoint）。</p>
+<blockquote>
+<p><strong>重要</strong>: <code>gpt-4o-mini-tts</code> 是本練習建議使用的 model，並非必要。如果您所在的 region 無法使用它，請改為部署受支援的 text-to-speech model。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="deploy-a-speech-recognition-model">部署 speech recognition model</h3>
+<ol>
+<li>
+<p>在 Foundry portal 選單列中選取 <strong>Build</strong>，然後檢視 <strong>Deployments</strong> 頁面。請注意，您部署的 text-to-speech model 已列在其中。</p>
+</li>
+<li>
+<p>選取 <strong>Deploy a base model</strong>，並在 catalog 中搜尋 <code>gpt-4o-mini-transcribe</code> ，或搜尋您所在 region 可用的其他 speech-to-text model。</p>
+</li>
+<li>
+<p>使用預設設定部署可用的 speech-to-text model。</p>
+</li>
+<li>
+<p>返回 <strong>Deployments</strong> 頁面，確認您部署的兩個 model 均已列出。</p>
+</li>
+<li>
+<p>選取各個 model，以查看其 <strong>Endpoint</strong> 及 deployment 名稱，供程式碼使用。</p>
+<blockquote>
+<p><strong>重要</strong>: <code>gpt-4o-mini-transcribe</code> 是本練習建議使用的 model，並非必要。如果您所在的 region 無法使用它，請改為部署受支援的 speech-to-text model。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="get-the-application-files-from-github">從 GitHub 取得應用程式檔案</h2>
+<p>開發語音應用程式所需的初始應用程式檔案，已提供於 GitHub repo 中。</p>
+<ol>
+<li>
+<p>開啟 Visual Studio Code。</p>
+</li>
+<li>
+<p>開啟命令選擇區（<em>Ctrl+Shift+P</em>），並使用 <code>Git:clone</code> 命令將 <code>https://github.com/microsoftlearning/mslearn-ai-language</code> repo 複製到本機資料夾（任一資料夾皆可），然後開啟它。</p>
+<p>系統可能會要求您確認是否信任作者。</p>
+</li>
+<li>
+<p>在 Visual Studio Code 中檢視 <strong>Extensions</strong> 窗格；如果尚未安裝，請安裝 <strong>Python</strong> 擴充功能。</p>
+</li>
+<li>
+<p>在 <strong>Command Palette</strong>中使用命令 <code>python:select interpreter</code>。接著，若已有環境，請選取現有環境；或根據已安裝的 Python 3.1x 建立新的 <strong>Venv</strong> 環境。</p>
+<blockquote>
+<p><strong>提示</strong>：若系統提示您安裝相依套件，可以安裝 <em>requirements.txt</em> 檔案中列出的套件，該檔案位於 <em>/Labfiles/03-gen-ai-speech/Python/generate-speech</em> 資料夾；但即使現在不安裝也沒關係，我們稍後會安裝！</p>
+</blockquote>
+<blockquote>
+<p><strong>提示</strong>：如果您偏好使用終端機，可以建立 <strong>Venv</strong> 環境，使用 <code>python -m venv labenv</code>，然後使用以下命令啟用它： <code>\labenv\Scripts\activate</code>.</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="create-a-speech-generation-app">建立語音產生應用程式</h2>
+<ol>
+<li>複製 repo 後，在 Explorer 窗格中導覽至應用程式程式碼檔案所在的資料夾： <strong>/Labfiles/03-gen-ai-speech/Python/generate-speech</strong>。應用程式檔案包括：
+<ul>
+<li><strong>.env</strong> （應用程式設定檔）</li>
+<li><strong>requirements.txt</strong> （需要安裝的 Python 套件相依性）</li>
+<li><strong>generate-speech.py</strong> （應用程式的程式碼檔案）</li>
+</ul>
+</li>
+</ol>
+<h3 id="configure-your-application">設定應用程式</h3>
+<ol>
+<li>
+<p>在 <strong>Explorer</strong> 窗格中，以滑鼠右鍵按一下 <strong>generate-speech</strong> 資料夾（其中包含應用程式檔案），然後選取 <strong>Open in integrated terminal</strong> （或從 <strong>Terminal</strong> 選單開啟終端機，並導覽至 <em>/Labfiles/03-gen-ai-speech/Python/generate-speech</em> 資料夾）。</p>
+<blockquote>
+<p><strong>注意</strong>：在 Visual Studio Code 中開啟終端機會自動啟用 Python 環境。您可能需要允許系統執行 script。</p>
+</blockquote>
+</li>
+<li>
+<p>確認終端機已在 <strong>generate-speech</strong> 資料夾中開啟，且顯示前綴 <strong>(.venv)</strong> ，表示您建立的 Python 環境已啟用。</p>
+</li>
+<li>
+<p>執行下列命令，安裝 OpenAI SDK 套件及其他必要套件：</p>
+<pre><code>pip install -r requirements.txt
+</code></pre></li>
+<li>
+<p>在 <strong>Explorer</strong> 窗格的 <strong>generate-speech</strong> 資料夾中，選取 <strong>.env</strong> 檔案以開啟它。接著更新設定值，填入 <strong>Endpoint</strong> 及 deployment 名稱，對應的 model 為 <strong>gpt-4o-mini-tts</strong> 。</p>
+<blockquote>
+<p><strong>提示</strong>：請複製 <strong>Endpoint</strong> ，其位置在 Foundry portal 的 model deployment 詳細資料頁面。此處使用的 <code>AzureOpenAI</code> client 需要 Azure OpenAI resource endpoint，例如 <code>https://&lt;resource-name&gt;.openai.azure.com/</code>，而不是以 <code>/api/projects/&lt;project-name&gt;</code> 結尾的 Foundry project URL，也不是附加了 <code>/openai/v1/</code> 的 URL。請使用您的 deployment 名稱，它可能與 model 名稱不同。</p>
+</blockquote>
+<p>儲存修改後的設定檔。</p>
+</li>
+</ol>
+<h3 id="write-code-to-use-the-model-for-speech-generation">撰寫使用 model 產生語音的程式碼</h3>
+<ol>
+<li>
+<p>在 <strong>Explorer</strong> 窗格的 <strong>generate-speech</strong> 資料夾中，選取 <strong>generate-speech.py</strong> 檔案以開啟它。</p>
+</li>
+<li>
+<p>檢閱現有程式碼。您將新增使用 OpenAI SDK 存取 model 的程式碼。</p>
+<blockquote>
+<p><strong>提示</strong>：將程式碼新增至程式碼檔案時，請務必維持正確的縮排。</p>
+</blockquote>
+</li>
+<li>
+<p>在程式碼檔案頂端、現有 namespace 參考下方，找出註解 <strong>Import namespaces</strong> ，然後新增下列程式碼，以匯入使用 OpenAI SDK 所需的 namespace：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># import namespaces
+</span><span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">AzureOpenAI</span>
+<span class="kn">from</span> <span class="nn">azure.identity</span> <span class="kn">import</span> <span class="n">DefaultAzureCredential</span><span class="p">,</span> <span class="n">get_bearer_token_provider</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>在 <strong>main</strong> 函式中，請注意已提供從設定檔載入 endpoint 的程式碼。接著找出註解 <strong>Create the Azure OpenAI client</strong>，並新增下列程式碼，以建立 OpenAI API 的 client：</p>
+<pre><code class="language-Python"># Create the Azure OpenAI client
+token_provider = get_bearer_token_provider(                    
+    DefaultAzureCredential(), &quot;https://ai.azure.com/.default&quot;
+)
+
+client = AzureOpenAI(
+    azure_endpoint=endpoint,
+    azure_ad_token_provider = token_provider,
+    api_version=&quot;2025-03-01-preview&quot;
+)
+</code></pre></li>
+<li>
+<p>找出註解 <strong>Generate speech and save to file</strong>，並新增下列程式碼，將 prompt 提交至語音產生 model，並將回應儲存為檔案。</p>
+<pre><code class="language-Python"># Generate speech and save to file
+with client.audio.speech.with_streaming_response.create(
+            model=model_deployment,
+            voice=&quot;alloy&quot;,
+            input=&quot;My voice is my passport!&quot;,
+            instructions=&quot;Speak in a serious tone.&quot;,
+        ) as response:
+    response.stream_to_file(speech_file_path)
+</code></pre></li>
+<li>
+<p>儲存程式碼檔案的變更。</p>
+</li>
+</ol>
+<h3 id="run-the-application">執行應用程式</h3>
+<ol>
+<li>
+<p>在終端機窗格中，使用下列命令登入 Azure。</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">az</span><span class="w"> </span><span class="nx">login</span><span class="w">
+</span></code></pre></div></div>
+<blockquote>
+<p><strong>注意</strong>：在大多數情況下，僅使用 <em>az login</em> 即可。不過，如果您的 subscription 分屬多個 tenant，可能需要使用 <em>--tenant</em> 參數指定 tenant。請參閱 <a href="https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively">使用 Azure CLI 以互動方式登入 Azure</a> 以取得詳細資訊。</p>
+</blockquote>
+</li>
+<li>
+<p>出現提示時，請依照指示登入 Azure。接著在命令列完成登入程序，檢視包含 Foundry resource 的 subscription 詳細資料（必要時進行確認）。</p>
+</li>
+<li>
+<p>登入後，輸入下列命令以執行應用程式：</p>
+<pre><code>python generate-speech.py
+</code></pre></li>
+<li>
+<p>觀察輸出，程式碼會產生所要求的語音並儲存為檔案。程式碼也應播放產生的音訊檔案。</p>
+</li>
+</ol>
+<h2 id="create-a-speech-transcription-app">建立語音轉錄應用程式</h2>
+<ol>
+<li>在 Explorer 窗格中，導覽至應用程式程式碼檔案所在的資料夾： <strong>/Labfiles/03-gen-ai-speech/Python/transcribe-speech</strong>。應用程式檔案包括：
+<ul>
+<li><strong>.env</strong> （應用程式設定檔）</li>
+<li><strong>requirements.txt</strong> （需要安裝的 Python 套件相依性）</li>
+<li><strong>transcribe-speech.py</strong> （應用程式的程式碼檔案）</li>
+</ul>
+</li>
+</ol>
+<h3 id="configure-your-application-1">設定應用程式</h3>
+<ol>
+<li>
+<p>在 <strong>Explorer</strong> 窗格中，以滑鼠右鍵按一下 <strong>transcribe-speech</strong> 資料夾（其中包含應用程式檔案），然後選取 <strong>Open in integrated terminal</strong> （或在現有終端機中導覽至 <em>/Labfiles/03-gen-ai-speech/Python/transcribe-speech</em> 資料夾）。</p>
+<blockquote>
+<p><strong>注意</strong>：在 Visual Studio Code 中開啟終端機會自動啟用 Python 環境。您可能需要允許系統執行 script。</p>
+</blockquote>
+</li>
+<li>
+<p>確認終端機已在 <strong>transcribe-speech</strong> 資料夾中開啟，且顯示前綴 <strong>(.venv)</strong> ，表示您先前建立的 Python 環境已啟用。</p>
+</li>
+<li>
+<p>執行下列命令，安裝 OpenAI SDK 套件及其他必要套件：</p>
+<pre><code>pip install -r requirements.txt
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：如果您已完成本練習的前一部分，其實不需要此步驟，因為兩個應用程式使用相同環境且具有相同的相依套件；但再執行一次也不會有任何影響！</p>
+</blockquote>
+</li>
+<li>
+<p>在 <strong>Explorer</strong> 窗格的 <strong>transcribe-speech</strong> 資料夾中，選取 <strong>.env</strong> 檔案以開啟它。接著更新設定值，填入 <strong>Endpoint</strong> 及 deployment 名稱，對應的 model 為 <strong>gpt-4o-mini-transcribe</strong> 。</p>
+<blockquote>
+<p><strong>提示</strong>：請複製 <strong>Endpoint</strong> ，其位置在 Foundry portal 的 model deployment 詳細資料頁面。如同語音產生應用程式，請使用 Azure OpenAI resource endpoint 及您的 deployment 名稱，而非 Foundry project URL。</p>
+</blockquote>
+<p>儲存修改後的設定檔。</p>
+</li>
+</ol>
+<h3 id="write-code-to-use-the-model-for-speech-transcription">撰寫使用 model 轉錄語音的程式碼</h3>
+<ol>
+<li>
+<p>在 <strong>Explorer</strong> 窗格的 <strong>transcribe-speech</strong> 資料夾中，選取 <strong>transcribe-speech.py</strong> 檔案以開啟它。</p>
+</li>
+<li>
+<p>檢閱現有程式碼。您將新增使用 OpenAI SDK 存取 model 的程式碼。</p>
+<blockquote>
+<p><strong>提示</strong>：將程式碼新增至程式碼檔案時，請務必維持正確的縮排。</p>
+</blockquote>
+</li>
+<li>
+<p>在程式碼檔案頂端、現有 namespace 參考下方，找出註解 <strong>Import namespaces</strong> ，然後新增下列程式碼，以匯入使用 OpenAI SDK 所需的 namespace：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># import namespaces
+</span><span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">AzureOpenAI</span>
+<span class="kn">from</span> <span class="nn">azure.identity</span> <span class="kn">import</span> <span class="n">DefaultAzureCredential</span><span class="p">,</span> <span class="n">get_bearer_token_provider</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>在 <strong>main</strong> 函式中，請注意已提供從設定檔載入 endpoint 的程式碼。接著找出註解 <strong>Create the Azure OpenAI client</strong>，並新增下列程式碼，以建立 OpenAI API 的 client：</p>
+<pre><code class="language-Python"># Create the Azure OpenAI client
+token_provider = get_bearer_token_provider(                    
+    DefaultAzureCredential(), &quot;https://ai.azure.com/.default&quot;
+)
+
+client = AzureOpenAI(
+    azure_endpoint=endpoint,
+    azure_ad_token_provider = token_provider,
+    api_version=&quot;2025-03-01-preview&quot;
+)
+</code></pre></li>
+<li>
+<p>找出註解 <strong>Call model to transcribe audio file</strong>，並新增下列程式碼，將音訊檔案提交至語音轉錄 model，以產生轉錄文字。</p>
+<pre><code class="language-Python"># Call model to transcribe audio file
+audio_file = open(file_path, &quot;rb&quot;)
+transcription = client.audio.transcriptions.create(
+    model=model_deployment,
+    file=audio_file,
+    response_format=&quot;text&quot;
+)
+    
+print(transcription)
+    
+</code></pre></li>
+<li>
+<p>儲存程式碼檔案的變更。</p>
+</li>
+</ol>
+<h3 id="run-the-application-1">執行應用程式</h3>
+<ol>
+<li>
+<p>在終端機窗格中，使用下列命令登入 Azure。</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">az</span><span class="w"> </span><span class="nx">login</span><span class="w">
+</span></code></pre></div></div>
+<blockquote>
+<p><strong>注意</strong>：在大多數情況下，僅使用 <em>az login</em> 即可。不過，如果您的 subscription 分屬多個 tenant，可能需要使用 <em>--tenant</em> 參數指定 tenant。請參閱 <a href="https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively">使用 Azure CLI 以互動方式登入 Azure</a> 以取得詳細資訊。</p>
+</blockquote>
+</li>
+<li>
+<p>出現提示時，請依照指示登入 Azure。接著在命令列完成登入程序，檢視包含 Foundry resource 的 subscription 詳細資料（必要時進行確認）。</p>
+</li>
+<li>
+<p>登入後，輸入下列命令以執行應用程式：</p>
+<pre><code>python transcribe-speech.py
+</code></pre></li>
+<li>
+<p>觀察輸出，程式碼會將音訊檔案提交至 model 進行轉錄，並顯示結果。程式碼也應播放該音訊檔案。</p>
+</li>
+</ol>
+<h2 id="clean-up">清理資源</h2>
+<p>如果您已完成 Foundry Tools 中支援語音的 model 探索，應刪除在本練習中建立的 resource，以避免產生不必要的 Azure 費用。</p>
+<ol>
+<li>開啟 <a href="https://portal.azure.com">Azure portal</a> ，並檢視您部署本練習所用 resource 的 resource group 內容。</li>
+<li>在工具列上選取 <strong>Delete resource group</strong>.</li>
+<li>輸入 resource group 名稱，並確認要刪除它。</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">消費者健康隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">使用條款 </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">商標 </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-language" target="_blank" class="ml-2">
+                    原始碼
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://microsoftlearning.github.io/mslearn-ai-language/assets/js/script.js?v=cea9917802480634f7e437d83201e30f3431ad2a"></script>
+</body>
+
+
+</html>

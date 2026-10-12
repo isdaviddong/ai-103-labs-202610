@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>
+        Develop a Content Understanding client application |
+        
+        Develop AI-powered information extraction solutions in Azure
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="/mslearn-ai-information-extraction/assets/css/style.css?v=a79b11a76caf9fa547d761e890b732a02bd53e56">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">Develop AI-powered information extraction solutions in Azure</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-information-extraction" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;Home
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-information-extraction">
+                Develop AI-powered information extraction solutions in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-information-extraction" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="develop-a-content-understanding-client-application">Develop a Content Understanding client application</h1>
+
+<p>In this exercise, you use the Azure Content Understanding Python SDK to create an analyzer that extracts information from business cards. You’ll then develop a client application that uses the analyzer to extract contact details from scanned business cards.</p>
+
+<p>This exercise takes approximately <strong>30</strong> minutes.</p>
+
+<h2 id="create-a-microsoft-foundry-resource-and-project">Create a Microsoft Foundry resource and project</h2>
+
+<p>The features we’re going to use in this exercise require a Microsoft Foundry resource and project.</p>
+
+<ol>
+  <li>In a web browser, open the <a href="https://ai.azure.com">Microsoft Foundry portal</a> at <code>https://ai.azure.com</code> and sign in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in.</li>
+  <li>Make sure the <strong>New Foundry</strong> toggle is on so that you’re using <strong>Foundry (new)</strong>.</li>
+  <li>Select the project name in the upper-left corner, and then select <strong>Create new project</strong>.</li>
+  <li>Give your project a name and expand <strong>Advanced options</strong> to specify the following settings:
+    <ul>
+      <li><strong>Subscription</strong>: <em>Your Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>Create or select a resource group</em></li>
+      <li><strong>Location</strong>: Choose one of the following supported regions:*
+        <ul>
+          <li>Australia East</li>
+          <li>East US</li>
+          <li>East US 2</li>
+          <li>Japan East</li>
+          <li>North Europe</li>
+          <li>South Central US</li>
+          <li>Southeast Asia</li>
+          <li>Sweden Central</li>
+          <li>UK South</li>
+          <li>West Europe</li>
+          <li>West US</li>
+          <li>West US 3</li>
+        </ul>
+      </li>
+    </ul>
+
+    <blockquote>
+      <p>*Azure Content Understanding is available in selected regions. See the <a href="https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support">region support documentation</a> for the latest availability.</p>
+    </blockquote>
+  </li>
+  <li>Select <strong>Create</strong> and wait for your project to be created. This will create a project and the parent resource.</li>
+  <li>Once created, select the project name at the top of the page, and select <strong>Project details</strong>. On that page, follow the link to the parent resource. Leave this browser tab open.</li>
+</ol>
+
+<h2 id="configure-content-understanding-models-and-connection">Configure Content Understanding models and connection</h2>
+
+<p>Connect foundry thought CU portal</p>
+
+<p>Content Understanding uses OpenAI models for analysis that are deployed in your project. You need to deploy these models before using analyzers, and set up the connection between Content Understanding and your Foundry resource. The easiest way is through the Content Understanding Studio.</p>
+
+<ol>
+  <li>In a new tab, navigate to <a href="https://contentunderstanding.ai.azure.com/home">Content Understanding Studio</a> at <code>https://contentunderstanding.ai.azure.com/home</code> and sign in with your credentials.</li>
+  <li>Select the settings gear icon on the top navigation bar, and select <strong>+ Add resource</strong>.</li>
+  <li>Select your subscription and resource group where you created your Foundry resource, then select your Foundry resource name from the dropdown. This resource is the parent resource to the project you previously created.</li>
+  <li>Ensure the <strong>Enable auto-deployment</strong> box is checked, then select <strong>Next</strong> and <strong>Save</strong> to create the configuration.</li>
+  <li>Wait while it deploys the required models for Content Understanding.</li>
+</ol>
+
+<h2 id="prepare-the-development-environment">Prepare the development environment</h2>
+
+<p>You’ll use Visual Studio Code as your development environment.</p>
+
+<ol>
+  <li>Start <strong>Visual Studio Code</strong>.</li>
+  <li>Open the Command Palette (press <strong>Ctrl+Shift+P</strong>), type <strong>Git: Clone</strong>, and select it.</li>
+  <li>
+    <p>In the URL bar, paste the following repository URL and press <strong>Enter</strong>:</p>
+
+    <pre><code> https://github.com/microsoftlearning/mslearn-ai-information-extraction
+</code></pre>
+  </li>
+  <li>Choose a local folder to clone into, and then when prompted, select <strong>Open</strong> to open the cloned repository in VS Code.</li>
+  <li>In the VS Code Explorer pane, navigate to <strong>Labfiles/02-content-understanding-api</strong>. The folder contains two scanned business card images as well as the Python code files you need to build your app.</li>
+  <li>
+    <p>Open a new terminal and navigate to the app folder:</p>
+
+    <pre><code>cd Labfiles/02-content-understanding-api
+</code></pre>
+  </li>
+  <li>
+    <p>Install the required libraries:</p>
+
+    <pre><code>python -m venv labenv
+labenv\Scripts\activate
+pip install -r requirements.txt azure-ai-contentunderstanding
+</code></pre>
+  </li>
+  <li>In the VS Code Explorer pane, open the <strong>.env</strong> file in the <strong>Labfiles/02-content-understanding-api</strong> folder.</li>
+  <li>
+    <p>In the file, replace the <strong>YOUR_ENDPOINT</strong> and <strong>YOUR_KEY</strong> placeholders with your Microsoft Foundry resource endpoint and API key (copied from the portal tab you left open), and ensure that <strong>ANALYZER_NAME</strong> is set to <code>businesscardanalyzer</code>.</p>
+
+    <blockquote>
+      <p><strong>Tip</strong>: You can also find the endpoint and keys in the <a href="https://portal.azure.com">Azure portal</a> by navigating to your Microsoft Foundry resource and viewing <strong>Resource Management</strong> &gt; <strong>Keys and Endpoint</strong>.</p>
+    </blockquote>
+  </li>
+  <li>Save the file (<strong>CTRL+S</strong>).</li>
+</ol>
+
+<h2 id="create-an-analyzer-with-the-python-sdk">Create an analyzer with the Python SDK</h2>
+
+<p>Now you’ll use the Content Understanding Python SDK to create an analyzer that can extract information from images of business cards.</p>
+
+<ol>
+  <li>
+    <p>In the VS Code Explorer pane, open the <strong>biz-card.json</strong> file and review its contents. This JSON defines an analyzer schema for a business card, specifying the fields to extract (Company, Name, Title, Email, Phone).</p>
+  </li>
+  <li>
+    <p>Open the <strong>create-analyzer.py</strong> file in VS Code.</p>
+  </li>
+  <li>Review the code, which:
+    <ul>
+      <li>Imports the <code>ContentUnderstandingClient</code> and <code>AzureKeyCredential</code> from the <a href="https://learn.microsoft.com/python/api/overview/azure/ai-contentunderstanding-readme?view=azure-python-preview">Azure Content Understanding SDK</a>.</li>
+      <li>Loads the analyzer schema from the <strong>biz-card.json</strong> file.</li>
+      <li>Retrieves the endpoint, key, and analyzer name from the environment configuration file.</li>
+      <li>Calls a function named <strong>create_analyzer</strong>, which is currently not implemented.</li>
+    </ul>
+  </li>
+  <li>
+    <p>In the <strong>create_analyzer</strong> function, find the comment <strong>Create a Content Understanding analyzer</strong> and add the following code (being careful to maintain the correct indentation):</p>
+
+    <pre><code class="language-python"> # Create a Content Understanding analyzer
+ print(f"Creating {analyzer}")
+
+ # Create the Content Understanding client
+ client = ContentUnderstandingClient(
+     endpoint=endpoint,
+     credential=AzureKeyCredential(key)
+ )
+
+ # Parse the schema JSON into a ContentAnalyzer object
+ analyzer_definition = json.loads(schema)
+
+ # Create the analyzer using the SDK (long-running operation)
+ poller = client.begin_create_analyzer(
+     analyzer_id=analyzer,
+     resource=analyzer_definition,
+     allow_replace=True
+ )
+
+ # Wait for the operation to complete
+ result = poller.result()
+ print(f"Analyzer '{analyzer}' created successfully.")
+ print(f"Status: {result['status'] if isinstance(result, dict) else 'Succeeded'}")
+</code></pre>
+  </li>
+  <li>Review the code you added, which:
+    <ul>
+      <li>Creates a <code>ContentUnderstandingClient</code> instance with the endpoint and API key.</li>
+      <li>Parses the analyzer schema JSON.</li>
+      <li>Uses <code>begin_create_analyzer</code> to start the long-running operation to create the analyzer.</li>
+      <li>Calls <code>.result()</code> to wait for the operation to complete.</li>
+    </ul>
+
+    <blockquote>
+      <p><strong>Note</strong>: The SDK handles polling automatically through the <code>LROPoller</code> pattern — no manual polling is needed!</p>
+    </blockquote>
+  </li>
+  <li>Save the file (<strong>CTRL+S</strong>).</li>
+  <li>
+    <p>In the VS Code terminal (make sure the virtual environment is still activated and you’re in the <strong>Labfiles/02-content-understanding-api</strong> folder), run the Python code:</p>
+
+    <pre><code> python create-analyzer.py
+</code></pre>
+  </li>
+  <li>Review the output from the program, which should indicate that the analyzer has been created.</li>
+</ol>
+
+<h2 id="analyze-content-using-the-python-sdk">Analyze content using the Python SDK</h2>
+
+<p>Now that you’ve created an analyzer, you can consume it from a client application through the Content Understanding Python SDK.</p>
+
+<ol>
+  <li>
+    <p>In VS Code, open the <strong>read-card.py</strong> file.</p>
+  </li>
+  <li>Review the code, which:
+    <ul>
+      <li>Imports the <code>ContentUnderstandingClient</code> and <code>AzureKeyCredential</code> from the SDK.</li>
+      <li>Identifies the image file to be analyzed, with a default of <strong>biz-card-1.png</strong>.</li>
+      <li>Retrieves the endpoint and key from the environment configuration file.</li>
+      <li>Calls a function named <strong>analyze_card</strong>, which is currently not implemented.</li>
+    </ul>
+  </li>
+  <li>
+    <p>In the <strong>analyze_card</strong> function, find the comment <strong>Use Content Understanding to analyze the image</strong> and add the following code (being careful to maintain the correct indentation):</p>
+
+    <pre><code class="language-python"> # Use Content Understanding to analyze the image
+ print(f"Analyzing {image_file}")
+
+ # Create the Content Understanding client
+ client = ContentUnderstandingClient(
+     endpoint=endpoint,
+     credential=AzureKeyCredential(key)
+ )
+
+ # Read the image data
+ with open(image_file, "rb") as file:
+     image_data = file.read()
+
+ # Submit the image for analysis
+ print("Submitting request...")
+ poller = client.begin_analyze_binary(
+     analyzer_id=analyzer,
+     binary_input=image_data
+ )
+
+ # Wait for the analysis to complete
+ result = poller.result()
+ print("Analysis succeeded:\n")
+
+ # Save JSON results to a file
+ output_file = "results.json"
+ with open(output_file, "w") as json_file:
+     json.dump(dict(result), json_file, indent=4, default=str)
+     print(f"Response saved in {output_file}\n")
+
+ # Iterate through the contents and extract fields
+ for content in result.contents:
+     if hasattr(content, 'fields') and content.fields:
+         for field_name, field_data in content.fields.items():
+             value = field_data.value if hasattr(field_data, 'value') else None
+             print(f"{field_name}: {value}")
+</code></pre>
+  </li>
+  <li>Review the code you added, which:
+    <ul>
+      <li>Creates a <code>ContentUnderstandingClient</code> instance.</li>
+      <li>Reads the content of the image file as bytes.</li>
+      <li>Calls <code>begin_analyze_binary</code> to submit the image to the analyzer (the SDK handles the asynchronous polling automatically).</li>
+      <li>Calls <code>.result()</code> to wait for and retrieve the analysis results.</li>
+      <li>Saves the JSON response and parses the extracted fields.</li>
+    </ul>
+  </li>
+  <li>Save the file (<strong>CTRL+S</strong>).</li>
+  <li>
+    <p>In the VS Code terminal, run the Python code:</p>
+
+    <pre><code> python read-card.py biz-card-1.png
+</code></pre>
+  </li>
+  <li>
+    <p>Review the output from the program, which should show the values for the fields in the following business card:</p>
+
+    <p><img src="/mslearn-ai-information-extraction/Instructions/Exercises/media/biz-card-1.png" alt="A business card for Roberto Tamburello, an Adventure Works Cycles employee." /></p>
+  </li>
+  <li>
+    <p>Run the program again with a different business card:</p>
+
+    <pre><code> python read-card.py biz-card-2.png
+</code></pre>
+  </li>
+  <li>
+    <p>Review the results, which should reflect the values in this business card:</p>
+
+    <p><img src="/mslearn-ai-information-extraction/Instructions/Exercises/media/biz-card-2.png" alt="A business card for Mary Duartes, a Contoso employee." /></p>
+  </li>
+  <li>
+    <p>To view the full JSON response that was returned, open the <strong>results.json</strong> file in VS Code, or run the following command in the terminal:</p>
+
+    <pre><code> cat results.json
+</code></pre>
+  </li>
+</ol>
+
+<h2 id="clean-up">Clean up</h2>
+
+<p>If you’ve finished working with the Content Understanding service, you should delete the resources you have created in this exercise to avoid incurring unnecessary Azure costs.</p>
+
+<ol>
+  <li>In the <a href="https://portal.azure.com">Azure portal</a>, delete the resource group you created for this exercise.</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">Trademarks </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-information-extraction" target="_blank" class="ml-2">
+                    Source
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="/mslearn-ai-information-extraction/assets/js/script.js?v=a79b11a76caf9fa547d761e890b732a02bd53e56"></script>
+</body>
+
+
+</html>

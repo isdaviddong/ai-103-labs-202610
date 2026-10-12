@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>
+        Extract information from multimodal content |
+        
+        Develop AI-powered information extraction solutions in Azure
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="/mslearn-ai-information-extraction/assets/css/style.css?v=a79b11a76caf9fa547d761e890b732a02bd53e56">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">Develop AI-powered information extraction solutions in Azure</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-information-extraction" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;Home
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-information-extraction">
+                Develop AI-powered information extraction solutions in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-information-extraction" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="extract-information-from-multimodal-content">Extract information from multimodal content</h1>
+
+<p>In this exercise, you use Azure Content Understanding to extract information from a variety of content types; including an invoice, an image of a slide containing charts, an audio recording of a voice message, and a video recording of a conference call.</p>
+
+<p>This exercise takes approximately <strong>40</strong> minutes.</p>
+
+<h2 id="create-a-microsoft-foundry-resource-and-project">Create a Microsoft Foundry resource and project</h2>
+
+<p>The features we’re going to use in this exercise require a Microsoft Foundry resource and project.</p>
+
+<ol>
+  <li>In a web browser, open the <a href="https://ai.azure.com">Microsoft Foundry portal</a> at <code>https://ai.azure.com</code> and sign in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in.</li>
+  <li>Make sure the <strong>New Foundry</strong> toggle is on so that you’re using <strong>Foundry (new)</strong>.</li>
+  <li>If you aren’t prompted to create a new project automatically, select the project name in the upper-left corner, and then select <strong>Create new project</strong>.</li>
+  <li>Give your project a name and expand <strong>Advanced options</strong> to specify the following settings:
+    <ul>
+      <li><strong>Project name</strong>: <em>Provide a valid name for your project</em></li>
+      <li><strong>Foundry resource</strong>: <em>Use the default</em></li>
+      <li><strong>Region</strong>: Choose one of the following supported regions:*
+        <ul>
+          <li>Australia East</li>
+          <li>East US</li>
+          <li>East US 2</li>
+          <li>Japan East</li>
+          <li>North Europe</li>
+          <li>South Central US</li>
+          <li>Southeast Asia</li>
+          <li>Sweden Central</li>
+          <li>UK South</li>
+          <li>West Europe</li>
+          <li>West US</li>
+          <li>West US 3</li>
+        </ul>
+      </li>
+      <li><strong>Subscription</strong>: <em>Your Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>Create or select a resource group</em></li>
+    </ul>
+
+    <blockquote>
+      <p>*Azure Content Understanding is available in selected regions. See the <a href="https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support">region support documentation</a> for the latest availability.</p>
+    </blockquote>
+  </li>
+  <li>Select <strong>Create</strong> and wait for your project to be created.</li>
+</ol>
+
+<h2 id="download-content">Download content</h2>
+
+<p>The content you’re going to analyze is in a .zip archive. Download it and extract it in a local folder.</p>
+
+<ol>
+  <li>In a new browser tab, download <a href="https://github.com/microsoftlearning/mslearn-ai-information-extraction/raw/main/Labfiles/content/content.zip">content.zip</a> from <code>https://github.com/microsoftlearning/mslearn-ai-information-extraction/raw/main/Labfiles/content/content.zip</code> and save it in a local folder.</li>
+  <li>Extract the downloaded <em>content.zip</em> file and view the files it contains. You’ll use these files to explore Content Understanding analyzers in this exercise.</li>
+</ol>
+
+<blockquote>
+  <p><strong>Note</strong>: If you’re only interested in exploring analysis of a specific modality (documents, images, video, or audio), you can skip to the relevant task below. For the best experience, go through each task to learn how to extract information from different types of content.</p>
+</blockquote>
+
+<h2 id="try-prebuilt-analyzers-in-microsoft-foundry">Try prebuilt analyzers in Microsoft Foundry</h2>
+
+<p>Azure Content Understanding includes prebuilt <strong>Read</strong> and <strong>Layout</strong> analyzers that can extract text and structural elements from documents without requiring any custom configuration. These prebuilt analyzers are available directly in the Foundry (new) portal as AI Services models.</p>
+
+<h3 id="use-the-layout-analyzer-in-the-playground">Use the Layout analyzer in the playground</h3>
+
+<ol>
+  <li>In the <a href="https://ai.azure.com">Microsoft Foundry portal</a>, make sure the <strong>New Foundry</strong> toggle is on.</li>
+  <li>Select <strong>Build</strong> in the upper-right menu, then select <strong>Services</strong> in the left pane.</li>
+  <li>Ensure the <strong>Playgrounds</strong> tab is selected to view the prebuilt models provided by Foundry Tools.</li>
+  <li>
+    <p>Find and select <strong>Content Understanding - Document Layout Analyzer</strong>.</p>
+
+    <p>This opens the Layout analyzer playground page, where you can test the layout model on sample data or your own files.</p>
+  </li>
+  <li>
+    <p>In the playground, use the option to upload your own data and upload the <strong>invoice-1234.pdf</strong> file from the folder where you extracted content files. This file contains the following invoice:</p>
+
+    <p><img src="/mslearn-ai-information-extraction/Instructions/Exercises/media/invoice-1234.png" alt="Image of an invoice number 1234." /></p>
+  </li>
+  <li>Run the analyzer and wait for analysis to complete.</li>
+  <li>
+    <p>Review the results. You can view the extracted content either as formatted output or as raw JSON data. Notice that the Layout analyzer extracts text, tables, and structural elements such as paragraphs and sections from the document.</p>
+
+    <blockquote>
+      <p><strong>Note</strong>: The prebuilt <strong>OCR/Read</strong> and <strong>Layout</strong> analyzers extract content from documents without requiring a generative AI model. <strong>OCR/Read</strong> extracts text elements (words, paragraphs, formulas, and barcodes), while <strong>Layout</strong> additionally extracts tables, figures, document structure, hyperlinks, and annotations. These analyzers are useful for general-purpose content extraction, but they don’t extract specific custom fields such as invoice amounts or vendor names.</p>
+    </blockquote>
+  </li>
+  <li>Optionally, go back to the <strong>Services</strong> tab and try <strong>Azure Content Understanding - OCR/Read</strong> with the same file to compare the results. Notice that Read extracts text without layout analysis.</li>
+</ol>
+
+<h2 id="set-up-content-understanding-studio-for-custom-analyzers">Set up Content Understanding Studio for custom analyzers</h2>
+
+<p>To extract specific fields from your content (such as invoice amounts, caller names, or meeting participants), you need to build custom analyzers. Custom analyzers are created in <strong>Content Understanding Studio</strong>, a separate web-based tool for building and testing analyzers with custom schemas.</p>
+
+<ol>
+  <li>In a new browser tab, open <a href="https://contentunderstanding.ai.azure.com">Content Understanding Studio</a> at <code>https://contentunderstanding.ai.azure.com</code>.</li>
+  <li>If prompted, sign in with the same Azure credentials you used for the Foundry portal.</li>
+  <li>On the <strong>Settings</strong> page (or if redirected to set up your resource), select the <strong>+ Add resource</strong> button.</li>
+  <li>
+    <p>Select the Foundry resource you created earlier, and select <strong>Next</strong> &gt; <strong>Save</strong>.</p>
+
+    <blockquote>
+      <p><strong>Tip</strong>: Make sure that the <strong>Enable autodeployment for required models if no defaults are available</strong> checkbox is selected. This ensures your resource is set up with the required <code>GPT-4.1</code>, <code>GPT-4.1-mini</code>, and <code>text-embedding-3-large</code> models that custom analyzers need.</p>
+    </blockquote>
+  </li>
+  <li>After your resource is connected, you’re ready to create custom analyzers. Select <strong>Content Understanding</strong> in the top navigation to go to the home page.</li>
+</ol>
+
+<h2 id="extract-information-from-invoice-documents">Extract information from invoice documents</h2>
+
+<p>You are going to build a custom Azure Content Understanding analyzer that can extract specific fields from invoices. You’ll create a project in Content Understanding Studio, define a schema based on a sample invoice, and then build a reusable analyzer.</p>
+
+<h3 id="create-a-storage-account">Create a storage account</h3>
+
+<p>Content Understanding Studio requires an Azure Blob Storage account to store the data used for building custom analyzers. You need to create one in the same resource group as your Foundry resource.</p>
+
+<ol>
+  <li>In a new browser tab, open the <a href="https://portal.azure.com">Azure portal</a> at <code>https://portal.azure.com</code> and sign in with your Azure credentials.</li>
+  <li>Select <strong>+ Create a resource</strong>, search for <code>Storage account</code>, and create a new <strong>Storage account</strong> resource with the following settings:
+    <ul>
+      <li><strong>Subscription</strong>: <em>Your Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>The same resource group as your Foundry resource</em></li>
+      <li><strong>Storage account name</strong>: <em>Enter a globally unique name</em></li>
+      <li><strong>Region</strong>: <em>The same region as your Foundry resource</em></li>
+      <li><strong>Preferred storage type</strong>: Azure Blob Storage or Azure Data Lake Storage Gen 2</li>
+      <li><strong>Performance</strong>: Standard</li>
+      <li><strong>Redundancy</strong>: Locally-redundant storage (LRS)</li>
+    </ul>
+  </li>
+  <li>Select <strong>Review + create</strong>, and then <strong>Create</strong>. Wait for deployment to complete.</li>
+</ol>
+
+<h3 id="define-a-schema-for-invoice-analysis">Define a schema for invoice analysis</h3>
+
+<ol>
+  <li>In Content Understanding Studio, select the <strong>Get started</strong> button in the custom projects section, and select <strong>Create</strong>.</li>
+  <li>Select <strong>Extract content and fields with a custom schema</strong>, then create a project with the following settings:
+    <ul>
+      <li><strong>Project name</strong>: <code>Invoice analysis</code></li>
+      <li><strong>Description</strong>: <code>Extract data from an invoice</code></li>
+      <li><strong>Advanced settings</strong>
+        <ul>
+          <li><strong>Connected resource</strong>: <em>Confirm your Foundry resource is selected</em></li>
+          <li><strong>Connect storage account</strong>: <em>Select the storage account you just created</em></li>
+          <li><strong>Blob container</strong>: <em>Create a new container named</em> <code>content-understanding</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Wait for the project to be created.</p>
+
+    <blockquote>
+      <p><strong>Tip</strong>: If an error accessing storage occurs, wait a minute and try again. Permissions for a new resource may take a few minutes to propagate.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>Upload the <strong>invoice-1234.pdf</strong> file from the folder where you extracted content files.</p>
+
+    <p>Content Understanding classifies your data and recommends analyzer templates based on the uploaded content.</p>
+  </li>
+  <li>
+    <p>In the <strong>Choose a template</strong> window, select the <strong>Invoice</strong> template and select <strong>Save</strong>.</p>
+
+    <p>The <em>Invoice</em> template includes common fields that are found in invoices. You can use the schema editor to delete any of the suggested fields that you don’t need, and add any custom fields that you do.</p>
+  </li>
+  <li>In the list of suggested fields, select <strong>BillingAddress</strong>. This field is not needed for the invoice format you have uploaded, so use the <strong>Delete field</strong> (<strong>🗑</strong>) icon that appears at the end in the selected field row to delete it.</li>
+  <li>In the top bar of the schema tab, select <strong>Suggest</strong>. This will look at the sample invoice and suggest which fields should be a part of your schema. Expand the <strong>Items</strong> field to see which subfields are suggested. Adding those fields will replace your existing schema, so be careful in your projects if you’ve edited a schema. Select <strong>Save</strong>.</li>
+  <li>
+    <p>Use <strong>+ Add new field</strong> button to add the following field, selecting <strong>Save</strong> (<strong>✓</strong>) for each new field:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>TotalQuantity</code></td>
+          <td><code>Total number of items on the invoice</code></td>
+          <td>String</td>
+          <td>Auto</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Verify that your completed schema looks like this, and select <strong>Save</strong>.</p>
+
+    <p><img src="/mslearn-ai-information-extraction/Instructions/Exercises/media/invoice-schema.png" alt="Screenshot of the invoice analyzer schema in Content Understanding Studio showing fields such as VendorName, InvoiceDate, SubTotal, Items, and TotalQuantity." /></p>
+  </li>
+  <li>
+    <p>Select the <strong>Test</strong> tab, then select <strong>Run analysis</strong> to test your schema. Wait for analysis to complete.</p>
+  </li>
+  <li>
+    <p>Review the analysis results, which should look similar to this:</p>
+
+    <p><img src="/mslearn-ai-information-extraction/Instructions/Exercises/media/invoice-analysis.png" alt="Screenshot of invoice analysis test results in Content Understanding Studio showing extracted field values from the sample invoice." /></p>
+  </li>
+  <li>View the details of the fields that were identified in the <strong>Fields</strong> pane.</li>
+</ol>
+
+<h3 id="build-and-test-an-analyzer-for-invoices">Build and test an analyzer for invoices</h3>
+
+<p>Now that you have defined a schema to extract fields from invoices, you can build an analyzer to use with similar documents.</p>
+
+<ol>
+  <li>Select the <strong>Build analyzer</strong> button at the top, and build a new analyzer with the following properties (typed exactly as shown here):
+    <ul>
+      <li><strong>Name</strong>: <code>invoiceanalyzer</code></li>
+      <li><strong>Description</strong>: <code>Invoice analyzer</code></li>
+    </ul>
+  </li>
+  <li>When the analyzer has been built, select <strong>Jump to analyzer list</strong> to view all built analyzers, then select the <strong>invoiceanalyzer</strong> link. The fields defined in the analyzer’s schema will be displayed.</li>
+  <li>In the <strong>invoiceanalyzer</strong> page, select the <strong>Test</strong> tab.</li>
+  <li>
+    <p>Upload <strong>invoice-1235.pdf</strong> from the folder where you extracted the content files, and run the analysis to extract field data from the invoice.</p>
+
+    <p>The invoice being analyzed looks like this:</p>
+
+    <p><img src="/mslearn-ai-information-extraction/Instructions/Exercises/media/invoice-1235.png" alt="Image of an invoice number 1235." /></p>
+  </li>
+  <li>Review the <strong>Fields</strong> pane, and verify that the analyzer extracted the correct fields from the test invoice.</li>
+  <li>Review the <strong>Results</strong> pane to see the JSON response that the analyzer would return to a client application.</li>
+  <li>Close the <strong>invoiceanalyzer</strong> page to return to the analyzer list.</li>
+</ol>
+
+<h2 id="extract-information-from-a-slide-image">Extract information from a slide image</h2>
+
+<p>You are going to build a custom Azure Content Understanding analyzer that can extract information from a slide containing charts.</p>
+
+<h3 id="define-a-schema-for-image-analysis">Define a schema for image analysis</h3>
+
+<ol>
+  <li>In <strong>Project list</strong> tab, select <strong>Create</strong> and select <strong>Extract content and fields with a custom schema</strong>, then create a project with the following settings:
+    <ul>
+      <li><strong>Project name</strong>: <code>Slide analysis</code></li>
+      <li><strong>Description</strong>: <code>Extract data from an image of a slide</code></li>
+      <li><strong>Advanced settings</strong>: <em>Verify the settings are the same as the last project</em></li>
+    </ul>
+  </li>
+  <li>
+    <p>Wait for the project to be created.</p>
+  </li>
+  <li>
+    <p>Upload the <strong>slide-1.jpg</strong> file from the folder where you extracted content files. Then select the <strong>Image analysis</strong> template and select <strong>Save</strong>.</p>
+
+    <p>The <em>Image analysis</em> template doesn’t include any predefined fields. You must define fields to describe the information you want to extract.</p>
+  </li>
+  <li>
+    <p>Use the <strong>+ Add new field</strong> button to add the following fields, selecting <strong>Save changes</strong> (<strong>✓</strong>) for each new field:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Title</code></td>
+          <td><code>Slide title</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Summary</code></td>
+          <td><code>Summary of the slide</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Charts</code></td>
+          <td><code>Number of charts on the slide</code></td>
+          <td>Integer</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Use <strong>+ Add new field</strong> button to add a new field named <code>QuarterlyRevenue</code> with the description <code>Revenue per quarter</code> with the value type <strong>List of objects</strong>. Then, select the table icon next to the value type dropdown. In the new page for the table subfields that opens, add the following subfields:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Quarter</code></td>
+          <td><code>Which quarter?</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Revenue</code></td>
+          <td><code>Revenue for the quarter</code></td>
+          <td>Number</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Select <strong>Back</strong> to return to the top level of your schema, and use <strong>+ Add new field</strong> button to add a new field named <code>ProductCategories</code> with the description <code>Product categories</code> with the value type <strong>List of objects</strong>. Then, select the table icon next to the value type to open a new page for the table subfields, add the following subfields:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>ProductCategory</code></td>
+          <td><code>Product category name</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>RevenuePercentage</code></td>
+          <td><code>Percentage of revenue</code></td>
+          <td>Number</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Select <strong>Back</strong> to return to the top level of your schema, and verify that it looks like this. Then select <strong>Save</strong>.</p>
+
+    <p><img src="/mslearn-ai-information-extraction/Instructions/Exercises/media/slide-schema.png" alt="Screenshot of the image analyzer schema in Content Understanding Studio showing fields for Title, Summary, Charts, QuarterlyRevenue, and ProductCategories." /></p>
+  </li>
+  <li>Select the <strong>Test</strong> tab, then <strong>Run analysis</strong> and wait for analysis to complete.</li>
+  <li>
+    <p>Review the analysis results, which should look similar to this:</p>
+
+    <p><img src="/mslearn-ai-information-extraction/Instructions/Exercises/media/slide-analysis.png" alt="Screenshot of image analysis test results in Content Understanding Studio showing extracted fields from the slide including revenue data and product categories." /></p>
+  </li>
+  <li>View the details of the fields that were identified in the <strong>Fields</strong> pane, expanding the <strong>QuarterlyRevenue</strong> and <strong>ProductCategories</strong> fields to see the subfield values.</li>
+</ol>
+
+<h3 id="build-and-test-an-analyzer">Build and test an analyzer</h3>
+
+<p>Now that you have defined a schema to extract fields from slides, you can build an analyzer to use with similar slide images.</p>
+
+<ol>
+  <li>Select the <strong>Build analyzer</strong> button at the top, and build a new analyzer with the following properties (typed exactly as shown here):
+    <ul>
+      <li><strong>Name</strong>: <code>slideanalyzer</code></li>
+      <li><strong>Description</strong>: <code>Slide image analyzer</code></li>
+    </ul>
+  </li>
+  <li>When the analyzer has been built, select <strong>Jump to analyzer list</strong>, then select the <strong>slideanalyzer</strong> link. The fields defined in the analyzer’s schema will be displayed.</li>
+  <li>In the <strong>slideanalyzer</strong> page, select the <strong>Test</strong> tab.</li>
+  <li>Use the <strong>+ Upload test files</strong> button to upload <strong>slide-2.jpg</strong> from the folder where you extracted the content files, and run the analysis to extract field data from the image.</li>
+  <li>
+    <p>Review the <strong>Fields</strong> pane, and verify that the analyzer extracted the correct fields from the slide image.</p>
+
+    <blockquote>
+      <p><strong>Note</strong>: Slide 2 doesn’t include a breakdown by product category, so the product category revenue data is not found.</p>
+    </blockquote>
+  </li>
+  <li>Review the <strong>Results</strong> pane to see the JSON response that the analyzer would return to a client application.</li>
+  <li>Close the <strong>slideanalyzer</strong> page.</li>
+</ol>
+
+<h2 id="extract-information-from-a-voicemail-audio-recording">Extract information from a voicemail audio recording</h2>
+
+<p>You are going to build a custom Azure Content Understanding analyzer that can extract information from an audio recording of a voicemail message.</p>
+
+<h3 id="define-a-schema-for-audio-analysis">Define a schema for audio analysis</h3>
+
+<ol>
+  <li>In <strong>Project list</strong> tab, select <strong>Create</strong> and select <strong>Extract content and fields with a custom schema</strong>, then create a project with the following settings:
+    <ul>
+      <li><strong>Project name</strong>: <code>Voicemail analysis</code></li>
+      <li><strong>Description</strong>: <code>Extract data from a voicemail recording</code></li>
+      <li><strong>Advanced settings</strong>: <em>Verify the settings are the same as the last project</em></li>
+    </ul>
+  </li>
+  <li>
+    <p>Wait for the project to be created.</p>
+  </li>
+  <li>Upload the <strong>call-1.mp3</strong> file from the folder where you extracted content files. Then select the <strong>Audio analysis</strong> template and select <strong>Save</strong>.</li>
+  <li>
+    <p>In the <strong>Content</strong> pane on the right, select <strong>Get transcription preview</strong> to see a transcription of the recorded message.</p>
+
+    <p>The <em>Audio analysis</em> template doesn’t include any predefined fields. You must define fields to describe the information you want to extract.</p>
+  </li>
+  <li>
+    <p>Use <strong>+ Add new field</strong> button to add the following fields, selecting <strong>Save</strong> (<strong>✓</strong>) for each new field:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Caller</code></td>
+          <td><code>Person who left the message</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Summary</code></td>
+          <td><code>Summary of the message</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Actions</code></td>
+          <td><code>Requested actions</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>CallbackNumber</code></td>
+          <td><code>Telephone number to return the call</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>AlternativeContacts</code></td>
+          <td><code>Alternative contact details</code></td>
+          <td>List of Strings</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Select <strong>Run analysis</strong> and wait for analysis to complete.</p>
+
+    <p>Audio analysis can take some time. While you’re waiting, you can play the audio file below:</p>
+
+    <video controls="" src="./media/call-1.mp4" title="Call 1" width="300">
+     <track src="./media/call-1.vtt" kind="captions" srclang="en" label="English" />
+ </video>
+
+    <p><strong>Note</strong>: This audio was generated using AI.</p>
+  </li>
+  <li>Review the analysis results and view the details of the fields that were identified in the <strong>Fields</strong> pane, expanding the <strong>AlternativeContacts</strong> field to see the listed values.</li>
+</ol>
+
+<h3 id="build-and-test-an-analyzer-1">Build and test an analyzer</h3>
+
+<p>Now that you have defined a schema to extract fields from voice messages, you can build an analyzer to use with similar audio recordings.</p>
+
+<ol>
+  <li>Select the <strong>Build analyzer</strong> button at the top, and build a new analyzer with the following properties (typed exactly as shown here):
+    <ul>
+      <li><strong>Name</strong>: <code>voicemailanalyzer</code></li>
+      <li><strong>Description</strong>: <code>Voicemail audio analyzer</code></li>
+    </ul>
+  </li>
+  <li>When the analyzer has been built, select <strong>Jump to analyzer list</strong>, then select the <strong>voicemailanalyzer</strong> link. The fields defined in the analyzer’s schema will be displayed.</li>
+  <li>In the <strong>voicemailanalyzer</strong> page, select the <strong>Test</strong> tab.</li>
+  <li>
+    <p>Use the <strong>+ Upload test files</strong> button to upload <strong>call-2.mp3</strong> from the folder where you extracted the content files, and run the analysis to extract field data from the audio file.</p>
+
+    <p>Audio analysis can take some time. While you’re waiting, you can play the audio file below:</p>
+
+    <video controls="" src="./media/call-2.mp4" title="Call 2" width="300">
+     <track src="./media/call-2.vtt" kind="captions" srclang="en" label="English" />
+ </video>
+
+    <p><strong>Note</strong>: This audio was generated using AI.</p>
+  </li>
+  <li>Review the <strong>Fields</strong> pane, and verify that the analyzer extracted the correct fields from the voice message.</li>
+  <li>Review the <strong>Results</strong> pane to see the JSON response that the analyzer would return to a client application.</li>
+  <li>Close the <strong>voicemail-analyzer</strong> page.</li>
+</ol>
+
+<h2 id="extract-information-from-a-video-conference-recording">Extract information from a video conference recording</h2>
+
+<p>You are going to build a custom Azure Content Understanding analyzer that can extract information from a video recording of a conference call.</p>
+
+<h3 id="define-a-schema-for-video-analysis">Define a schema for video analysis</h3>
+
+<ol>
+  <li>In Content Understanding Studio, select <strong>Create project</strong> on the home page (or use the navigation to return to the home page first).</li>
+  <li>Select <strong>Extract content and fields with a custom schema</strong>, then create a project with the following settings:
+    <ul>
+      <li><strong>Project name</strong>: <code>Conference call video analysis</code></li>
+      <li><strong>Description</strong>: <code>Extract data from a video conference recording</code></li>
+    </ul>
+  </li>
+  <li>
+    <p>Wait for the project to be created.</p>
+  </li>
+  <li>Upload the <strong>meeting-1.mp4</strong> file from the folder where you extracted content files. Then select the <strong>Video analysis</strong> template and select <strong>Create</strong>.</li>
+  <li>
+    <p>In the <strong>Content</strong> pane on the right, select <strong>Get transcription preview</strong> to see a transcription of the recorded meeting.</p>
+
+    <p>The <em>Video analysis</em> template extracts data for each segment. It doesn’t include any predefined fields. You must define fields to describe the information you want to extract.</p>
+  </li>
+  <li>
+    <p>Use <strong>+ Add new field</strong> button to add the following fields, selecting <strong>Save</strong> (<strong>✓</strong>) for each new field:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Summary</code></td>
+          <td><code>Summary of the discussion</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Participants</code></td>
+          <td><code>Count of meeting participants</code></td>
+          <td>Integer</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>ParticipantNames</code></td>
+          <td><code>Names of meeting participants</code></td>
+          <td>List of Strings</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>SharedSlides</code></td>
+          <td><code>Descriptions of any PowerPoint slides presented</code></td>
+          <td>List of Strings</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>AssignedActions</code></td>
+          <td><code>Tasks assigned to participants</code></td>
+          <td>List of Objects</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>When you enter the <strong>AssignedActions</strong> field, in the table of subfields, create the following subfields:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field name</th>
+          <th>Field description</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Task</code></td>
+          <td><code>Description of the task</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>AssignedTo</code></td>
+          <td><code>Who the task is assigned to</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Select <strong>Back</strong> to return to the top level of your schema, and verify that it looks like this. Then select <strong>Save</strong>.</p>
+  </li>
+  <li>
+    <p>Select <strong>Run analysis</strong> and wait for analysis to complete.</p>
+
+    <p>Video analysis can take some time. While you’re waiting, you can view the video below:</p>
+
+    <video controls="" src="./media/meeting-1.mp4" title="Meeting 1" width="480">
+     <track src="./media/meeting-1.vtt" kind="captions" srclang="en" label="English" />
+ </video>
+
+    <p><strong>Note</strong>: This video was generated using AI.</p>
+  </li>
+  <li>
+    <p>When analysis is complete, review the results.</p>
+  </li>
+  <li>In the <strong>Fields</strong> pane, view the extracted data.</li>
+</ol>
+
+<h3 id="build-and-test-an-analyzer-2">Build and test an analyzer</h3>
+
+<p>Now that you have defined a schema to extract fields from conference call recordings, you can build an analyzer to use with similar videos.</p>
+
+<ol>
+  <li>Select the <strong>Build analyzer</strong> button at the top, and build a new analyzer with the following properties (typed exactly as shown here):
+    <ul>
+      <li><strong>Name</strong>: <code>meetinganalyzer</code></li>
+      <li><strong>Description</strong>: <code>Meeting video analyzer</code></li>
+    </ul>
+  </li>
+  <li>Wait for the new analyzer to be ready (use the <strong>Refresh</strong> button to check).</li>
+  <li>When the analyzer has been built, select <strong>Jump to analyzer list</strong>, then select the <strong>meetinganalyzer</strong> link. The fields defined in the analyzer’s schema will be displayed.</li>
+  <li>In the <strong>meetinganalyzer</strong> page, select the <strong>Test</strong> tab.</li>
+  <li>
+    <p>Use the <strong>+ Upload test files</strong> button to upload <strong>meeting-2.mp4</strong> from the folder where you extracted the content files, and run the analysis to extract field data from the video file.</p>
+
+    <p>Video analysis can take some time. While you’re waiting, you can view the video below:</p>
+
+    <video controls="" src="./media/meeting-2.mp4" title="Meeting 2" width="480">
+     <track src="./media/meeting-2.vtt" kind="captions" srclang="en" label="English" />
+ </video>
+
+    <p><strong>Note</strong>: This video was generated using AI.</p>
+  </li>
+  <li>Review the <strong>Fields</strong> pane, and view the fields that the analyzer extracted for each shot in the conference call video.</li>
+  <li>Review the <strong>Results</strong> pane to see the JSON response that the analyzer would return to a client application.</li>
+  <li>Close the <strong>meetinganalyzer</strong> page.</li>
+</ol>
+
+<h2 id="clean-up">Clean up</h2>
+
+<p>If you’ve finished working with the Content Understanding service, you should delete the resources you have created in this exercise to avoid incurring unnecessary Azure costs.</p>
+
+<ol>
+  <li>In the <a href="https://portal.azure.com">Azure portal</a>, delete the resource group you created for this exercise.</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">Trademarks </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-information-extraction" target="_blank" class="ml-2">
+                    Source
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="/mslearn-ai-information-extraction/assets/js/script.js?v=a79b11a76caf9fa547d761e890b732a02bd53e56"></script>
+</body>
+
+
+</html>

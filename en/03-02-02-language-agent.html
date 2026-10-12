@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>
+        Develop a text analysis agent |
+        
+        Develop AI Language and Speech solutions on Azure
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="/mslearn-ai-language/assets/css/style.css?v=cea9917802480634f7e437d83201e30f3431ad2a">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">Develop AI Language and Speech solutions on Azure</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-language" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;Home
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-language">
+                Develop AI Language and Speech solutions on Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-language" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="develop-a-text-analysis-agent">Develop a text analysis agent</h1>
+<p><strong>Azure Language in Foundry Tools</strong> supports analysis of text, including language detection, entity recognition, and PII redaction.</p>
+<p>You can use the service directly in an application through its REST API and several language-specific SDKs. You can also use the <strong>Azure Language in Foundry Tools MCP server</strong> to integrate its capabilities into an AI agent, which is what you'll do in this exercise.</p>
+<p>The code used in this exercise is based on the Microsoft Foundry SDK for Python. You can develop similar solutions using the SDKs for Microsoft .NET, JavaScript, and Java. Refer to <a href="https://learn.microsoft.com/azure/ai-foundry/how-to/develop/sdk-overview">Microsoft Foundry SDK client libraries</a> for details.</p>
+<p>This exercise takes approximately <strong>30</strong> minutes.</p>
+<blockquote>
+<p><strong>Note</strong>: Some of the technologies used in this exercise are in preview or in active development. You may experience some unexpected behavior, warnings, or errors.</p>
+</blockquote>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Before starting this exercise, ensure you have:</p>
+<ul>
+<li>An active <a href="https://azure.microsoft.com/pricing/purchase-options/azure-account">Azure subscription</a></li>
+<li><a href="https://code.visualstudio.com/">Visual Studio Code</a> installed</li>
+<li><a href="https://www.python.org/downloads/release/python-31312/">Python version <strong>3.13.xx</strong></a> installed*</li>
+<li><a href="https://git-scm.com/install/">Git</a> installed and configured</li>
+<li><a href="https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest">Azure CLI</a> installed</li>
+</ul>
+<blockquote>
+<p>* Python 3.14 is available, but some dependencies are not yet compiled for that release. The lab has been successfully tested with Python 3.13.12.</p>
+</blockquote>
+<h2 id="create-a-microsoft-foundry-project">Create a Microsoft Foundry project</h2>
+<p>Microsoft Foundry uses projects to organize models, resources, data, and other assets used to develop an AI solution.</p>
+<ol>
+<li>
+<p>In a web browser, open the <a href="https://ai.azure.com">Microsoft Foundry portal</a> at <code>https://ai.azure.com</code> and sign in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in, and if necessary use the Foundry logo at the top left to navigate to the home page.</p>
+</li>
+<li>
+<p>If it is not already enabled, in the tool bar the top of the page, enable the <strong>New Foundry</strong> option. Then, if prompted, create a new project with a unique name; expanding the <strong>Advanced options</strong> area to specify the following settings for your project:</p>
+<ul>
+<li><strong>Foundry resource</strong>: <em>Use the default name for your resource (usually {project_name}-resource)</em></li>
+<li><strong>Subscription</strong>: <em>Your Azure subscription</em></li>
+<li><strong>Resource group</strong>: <em>Create or select a resource group</em></li>
+<li><strong>Region</strong>: Select any available region</li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Use a recommended Microsoft Foundry region. Model availability may vary by region.</p>
+</blockquote>
+<blockquote>
+<p><strong>TIP</strong>: Remember (or make a note of) the Foundry resource name - you're going to need it later!</p>
+</blockquote>
+</li>
+<li>
+<p>Select <strong>Create</strong>. Wait for your project to be created.</p>
+</li>
+<li>
+<p>On the home page for your project, note that the API key, project endpoint, and OpenAI endpoint are displayed here.</p>
+<blockquote>
+<p><strong>TIP</strong>: Copy the project key to the clipboard - you're going to need it later!</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="create-an-agent">Create an agent</h2>
+<p>Now that you have a Foundry project, you can create an agent.</p>
+<ol>
+<li>
+<p>Now you're ready to <strong>Start building</strong>. Select <strong>Create agents</strong> (or on the <strong>Build</strong> page, select the <strong>Agents</strong> tab); and create a new agent named <code>Text-Analysis-Agent</code>.</p>
+<p>When ready, your agent opens in the agent playground.</p>
+</li>
+<li>
+<p>In the model drop-down list, ensure that a <strong>gpt-5</strong> model has been deployed and selected for your agent.</p>
+<blockquote>
+<p><strong>Note</strong>: Instant Inference quota may take time to initialize. If you see <code>deployment_disabled</code> with &quot;Instant inference quota is still being initialized for this subscription&quot;, you can wait and retry, or deploy a model to continue this exercise. Select <strong>Models</strong> in the side panel, search for <strong>gpt-5</strong>, and select <strong>Custom deploy</strong>. Keep the default settings, deploy, and note the deployment name for later use. Once deployment completes, select it in your agent's model drop-down list, save, and retry your prompt.</p>
+</blockquote>
+</li>
+<li>
+<p>Assign your agent the following <strong>Instructions</strong>:</p>
+<pre><code>You are an AI agent that assists users by helping them analyze text.
+</code></pre></li>
+<li>
+<p>Use the <strong>Save</strong> button to save the changes.</p>
+</li>
+<li>
+<p>Test the agent by entering the following prompt in the <strong>Chat</strong> pane:</p>
+<pre><code>What can you help me with?
+</code></pre>
+<p>The agent should respond with an appropriate answer based on its instructions.</p>
+</li>
+</ol>
+<h2 id="create-an-azure-language-in-foundry-tools-connection">Create an Azure Language in Foundry Tools connection</h2>
+<p>Foundry includes an MCP server for Azure Language in Foundry Tools, which you can connect to your project and use in your agent.</p>
+<ol>
+<li>
+<p>In the navigation pane on the left, select the <strong>Tools</strong> page.</p>
+</li>
+<li>
+<p>Within the Tools page select the <strong>Tools</strong> tab.</p>
+</li>
+<li>
+<p>Connect a tool; selecting <strong>Azure Language in Foundry Tools</strong> in the <strong>Catalog</strong> and connecting it to an endpoint. specifying the following configuration</p>
+<ul>
+<li><strong>Name</strong>: A unique name for your tool/</li>
+<li><strong>Remote MCP Server endpoint</strong>: <code>https://{foundry-resource-name}.cognitiveservices.azure.com/language/mcp?api-version=2025-11-15-preview</code></li>
+<li><strong>Parameters</strong>: foundry-resource-name: <em>Your foundry resource name</em></li>
+<li><strong>Authentication</strong>: Key-based:</li>
+<li><strong>Ocp-Apim-Subscription-Key</strong>: <em>API Key for your Foundry project</em></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: If key-based authentication is disabled by a policy in your Azure subscription, you can use Entra ID authentication to connect the agent to the Azure Language service.</p>
+</blockquote>
+</li>
+<li>
+<p>Wait for the MCP tool connection to be created, and then view its details page.</p>
+</li>
+<li>
+<p>On the details page for the Azure Language in Foundry Tools connection, select <strong>Use in an agent</strong>, and then select the <strong>Text-Analysis-Agent</strong> agent you created previously.</p>
+<p>The agent should open in the playground, with the Azure Language in Foundry Tools tool connected.</p>
+<blockquote>
+<p><strong>Note</strong>: In some cases, the MCP tool is not added to the agent automatically. Verify that <strong>Azure Language in Foundry Tools</strong> appears in the agent's tool list. If it does not, add it manually from the available tools for the agent.</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="test-the-azure-language-tool-in-the-playground">Test the Azure Language tool in the playground</h2>
+<p>Now let's test the agent's ability to use the tool you connected.</p>
+<ol>
+<li>
+<p>In the agent playground for the <strong>Text-Analysis-Agent</strong> agent, modify the instructions as follows:</p>
+<pre><code>You are an AI agent that assists users by helping them analyze text. Use the Azure Language tool to perform text analysis tasks.
+</code></pre></li>
+<li>
+<p>Use the <strong>Save</strong> button to save the changes.</p>
+</li>
+<li>
+<p>Test the agent by entering the following prompt in the <strong>Chat</strong> pane:</p>
+<pre><code>Identify the PII entities in this article, and generate a redacted version:
+
+Microsoft was founded on April 4, 1975, by childhood friends Bill Gates (then 19) and Paul Allen (22) after they were inspired by the Altair 8800, one of the first personal computers, featured on the cover of Popular Electronics. They contacted the Altair’s maker, MITS, and successfully developed a version of the BASIC programming language, despite initially not owning the machine themselves. The pair formed a partnership called “Micro‑Soft” in Albuquerque, New Mexico, close to MITS’s headquarters, with the goal of writing software for emerging microcomputers.
+
+In the late 1970s, Microsoft grew by supplying programming languages to multiple hardware vendors, then relocated to the Seattle area in 1979. A pivotal moment came in 1980 when Microsoft partnered with IBM to provide an operating system for the IBM PC, leading to MS‑DOS and establishing the company’s dominance in personal computing. Gates guided the company’s long-term strategy as CEO, while Allen contributed key technical vision in its early years, setting Microsoft on a path that would reshape the software industry.
+</code></pre></li>
+<li>
+<p>When prompted, approve use of the Azure Language tool by selecting <strong>Always approve all Azure Language in Foundry Tools tools</strong> (you may need to do this twice because the prompt asked for two distinct text analysis tasks).</p>
+<blockquote>
+<p><strong>Note</strong>: Depending on your environment, you may occasionally receive a 403, 502, or other transient error after approving the tool. These errors are usually not blocking. Refresh the page and retry the same prompt.</p>
+</blockquote>
+</li>
+<li>
+<p>Review the response, which should identify any personally identifiable information in the article about the founding of Microsoft, and create a version of the article with this information redacted.</p>
+</li>
+<li>
+<p>Review the <strong>Logs</strong> for the chat and verify that the Azure Language tool was used by the agent to process the prompt.</p>
+</li>
+</ol>
+<h2 id="configure-tool-approval">Configure tool approval</h2>
+<p>As you've seen in the playground, to use the tool, the agent needs approval.</p>
+<ol>
+<li>In the playground, in the list of <strong>Tools</strong> under the <strong>Instructions</strong>, in the menu for the Azure language tool you added, select <strong>Configure</strong>.</li>
+<li>Ensure that the <strong>Approval setting for tools in this MCP server for this agent</strong> setting is <strong>Always auto-approve all tools</strong> (if not, change it and add it).</li>
+<li>Save any changes to the agent.</li>
+</ol>
+<h2 id="create-a-client-application">Create a client application</h2>
+<p>Now that you have a working agent, you can create a client application that uses it.</p>
+<h3 id="get-the-application-files-from-github">Get the application files from GitHub</h3>
+<ol>
+<li>
+<p>Open Visual Studio Code.</p>
+</li>
+<li>
+<p>Open the command palette (<em>Ctrl+Shift+P</em>) and use the <code>Git:clone</code> command to clone the <code>https://github.com/microsoftlearning/mslearn-ai-language</code> repo to a local folder (it doesn't matter which one). Then open it.</p>
+<p>You may be prompted to confirm you trust the authors.</p>
+</li>
+<li>
+<p>After the repo has been cloned, in the Explorer pane, navigate to the folder containing the application code files at <strong>/Labfiles/02-language-agent/Python/text-agent</strong>. The application files include:</p>
+<ul>
+<li><strong>.env</strong> (the application configuration file)</li>
+<li><strong>requirements.txt</strong> (the Python package dependencies that need to be installed)</li>
+<li><strong>text-agent.py</strong> (the code file for the application)</li>
+</ul>
+</li>
+</ol>
+<h3 id="configure-the-application">Configure the application</h3>
+<ol>
+<li>
+<p>In Visual Studio Code, view the <strong>Extensions</strong> pane; and if it is not already installed, install the <strong>Python</strong> extension.</p>
+</li>
+<li>
+<p>In the <strong>Command Palette</strong>, use the command <code>python:select interpreter</code>. Then select an existing environment if you have one, or create a new <strong>Venv</strong> environment based on your Python 3.1x installation.</p>
+<blockquote>
+<p><strong>Tip</strong>: If you are prompted to install dependencies, you can install the ones in the <em>requirements.txt</em> file in the <em>/Labfiles/02-language-agent/Python/text-agent</em> folder; but it's OK if you don't, we'll install them later.</p>
+</blockquote>
+<blockquote>
+<p><strong>Tip</strong>: If you prefer to use the terminal, you can create your <strong>Venv</strong> environment with <code>python -m venv labenv</code>, then activate it with <code>\labenv\Scripts\activate</code>.</p>
+</blockquote>
+</li>
+<li>
+<p>In the <strong>Explorer</strong> pane, right-click the <strong>text-agent</strong> folder containing the application files, and select <strong>Open in integrated terminal</strong> (or open a terminal in the <strong>Terminal</strong> menu and navigate to the <em>/Labfiles/02-language-agent/Python/text-agent</em> folder.)</p>
+<blockquote>
+<p><strong>Note</strong>: Opening the terminal in Visual Studio Code will automatically activate the Python environment. You may need to enable running scripts on your system.</p>
+</blockquote>
+</li>
+<li>
+<p>Ensure that the terminal is open in the <strong>text-agent</strong> folder with the prefix <strong>(.venv)</strong> to indicate that the Python environment you created is active.</p>
+</li>
+<li>
+<p>Install the Foundry SDK package, the Azure Identity package, and other required packages by running the following command:</p>
+<pre><code>pip install -r requirements.txt
+</code></pre></li>
+<li>
+<p>In the <strong>Explorer</strong> pane, in the <strong>text-agent</strong> folder, select the <strong>.env</strong> file to open it. Then update the configuration values to include your project <strong>endpoint</strong> (from the project home page in Foundry Portal) and the name of your agent (which should be <strong>Text-Analysis-Agent</strong> - note that this name is case-sensitive).</p>
+</li>
+<li>
+<p>Save the modified configuration file.</p>
+</li>
+</ol>
+<h3 id="implement-application-code">Implement application code</h3>
+<ol>
+<li>
+<p>In the <strong>Explorer</strong> pane, in the <strong>text-agent</strong> folder,  open the <strong>text-agent.py</strong> file.</p>
+</li>
+<li>
+<p>Review the existing code. You will add code to submit prompts to your agent.</p>
+<blockquote>
+<p><strong>Tip</strong>: As you add code to the code file, be sure to maintain the correct indentation.</p>
+</blockquote>
+</li>
+<li>
+<p>At the top of the code file, under the existing namespace references, find the comment <strong>Import namespaces</strong> and add the following code to import the namespaces you will need:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># import namespaces
+</span><span class="kn">from</span> <span class="nn">azure.identity</span> <span class="kn">import</span> <span class="n">DefaultAzureCredential</span>
+<span class="kn">from</span> <span class="nn">azure.ai.projects</span> <span class="kn">import</span> <span class="n">AIProjectClient</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>In the <strong>main</strong> function, note that code to load the endpoint from the configuration file has already been provided. Then find the comment <strong>Get project client</strong>, and add the following code to create a client for your Foundry project:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Get project client
+</span><span class="n">project_client</span> <span class="o">=</span> <span class="n">AIProjectClient</span><span class="p">(</span>
+    <span class="n">endpoint</span><span class="o">=</span><span class="n">foundry_endpoint</span><span class="p">,</span>
+    <span class="n">credential</span><span class="o">=</span><span class="n">DefaultAzureCredential</span><span class="p">(),</span>
+<span class="p">)</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>Find the comment <strong>Get an OpenAI client</strong>, and add the following code to get an OpenAI client with which to call your agent.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Get an OpenAI client
+</span><span class="n">openai_client</span> <span class="o">=</span> <span class="n">project_client</span><span class="p">.</span><span class="n">get_openai_client</span><span class="p">()</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>Find the comment <strong>Use the agent to get a response</strong>, and add the following code to submit a user prompt to your agent, and display the response.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Use the agent to get a response
+</span><span class="n">prompt</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s">"User prompt: "</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">openai_client</span><span class="p">.</span><span class="n">responses</span><span class="p">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="nb">input</span><span class="o">=</span><span class="p">[{</span><span class="s">"role"</span><span class="p">:</span> <span class="s">"user"</span><span class="p">,</span> <span class="s">"content"</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}],</span>
+    <span class="n">extra_body</span><span class="o">=</span><span class="p">{</span><span class="s">"agent_reference"</span><span class="p">:</span> <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="n">agent_name</span><span class="p">,</span> <span class="s">"type"</span><span class="p">:</span> <span class="s">"agent_reference"</span><span class="p">}},</span>
+<span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">agent_name</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">response</span><span class="p">.</span><span class="n">output_text</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>Save the changes you made to the code file.</p>
+</li>
+</ol>
+<h2 id="test-the-client-application">Test the client application</h2>
+<p>Now let's test the application by running it in a Python environment and authenticating the connection to your project.</p>
+<ol>
+<li>
+<p>In the Visual Studio Code terminal, enter the following command to sign into Azure</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="n">az</span><span class="w"> </span><span class="nx">login</span><span class="w">
+</span></code></pre></div></div>
+<blockquote>
+<p><strong>Note</strong>: In most scenarios, just using <em>az login</em> will be sufficient. However, if you have subscriptions in multiple tenants, you may need to specify the tenant by using the <em>--tenant</em> parameter. See <a href="https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively">Sign into Azure interactively using the Azure CLI</a> for details.</p>
+</blockquote>
+</li>
+<li>
+<p>When prompted, follow the instructions to sign into Azure. Then complete the sign in process in the command line, viewing (and confirming if necessary) the details of the subscription containing your Foundry resource.</p>
+</li>
+<li>
+<p>After you have signed in, enter the following command to run the application:</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">python</span><span class="w"> </span><span class="nx">text-agent.py</span><span class="w">
+</span></code></pre></div></div>
+</li>
+<li>
+<p>When prompted, enter the following prompt:</p>
+<pre><code>Extract named entities from the following text: &quot;Pierre and I went to Paris on July 14th.&quot;
+</code></pre></li>
+<li>
+<p>Review the response, which should identify named people, places, and dates.</p>
+</li>
+</ol>
+<h2 id="view-tool-details">View tool details</h2>
+<p>The Azure Language in Foundry Tools tool provides a wide range of functionality, and the agent must select the appropriate function to call. We can see the options available in the agent's response.</p>
+<ol>
+<li>
+<p>In the <strong>text-agent.py</strong> code file, add the following line immediately after the <em>print(f&quot;{agent_name}: {response.output_text}&quot;)</em> line you added previously (before the <em>except Exception as ex:</em> line):</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="se">\n</span><span class="s">Response Details: </span><span class="si">{</span><span class="n">response</span><span class="p">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>Save the changes to the code file.</p>
+</li>
+<li>
+<p>In the terminal, re-enter the command to run the application (<code>python text-agent.py</code>).</p>
+</li>
+<li>
+<p>When prompted, enter the following command:</p>
+<pre><code>Tell me what entities and dates are mentioned in this review, and whether it is positive or negative: &quot;I booked my flight to Paris in July with Margie's Travel, and it was fantastic!&quot;
+</code></pre></li>
+<li>
+<p>Review the response (you may need to scroll quite far up to see it), which should identify entities and dates, and determine the sentiment of the text.</p>
+</li>
+<li>
+<p>Review the JSON response details, which indicate each of the tools available to the agent. In this case, it should have used the <strong>extract_named_entities_from_text</strong> and <strong>detect_sentiment_from_text</strong> tools within Azure Language in Foundry Tools.</p>
+</li>
+</ol>
+<h2 id="clean-up-resources">Clean up resources</h2>
+<p>If you're finished exploring the Azure Language service, you can delete the resources you created in this exercise. Here's how:</p>
+<ol>
+<li>In the Azure portal, browse to the Foundry resource you created in this lab.</li>
+<li>On the resource page, select <strong>Delete</strong> and follow the instructions to delete the resource.</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">Trademarks </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-language" target="_blank" class="ml-2">
+                    Source
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="/mslearn-ai-language/assets/js/script.js?v=cea9917802480634f7e437d83201e30f3431ad2a"></script>
+</body>
+
+
+</html>

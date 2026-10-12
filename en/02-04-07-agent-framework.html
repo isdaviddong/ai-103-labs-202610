@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>
+        Develop an Azure AI chat agent with the Microsoft Agent Framework SDK |
+        
+        Develop AI Agents in Azure
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="/mslearn-ai-agents/assets/css/style.css?v=009131ab4938c06ec5f7b860c15a1164a8ed7d3e">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">Develop AI Agents in Azure</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-agents" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door-fill" viewbox="0 0 16 16">
+                        <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"></path>
+                    </svg>
+                     Home
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-agents">
+                Develop AI Agents in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-agents" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color->
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="">
+            <article class="col-sm-10 mb-5">
+                <h1 id="develop-an-azure-ai-chat-agent-with-the-microsoft-agent-framework-sdk">Develop an Azure AI chat agent with the Microsoft Agent Framework SDK</h1>
+
+<p>In this exercise, you’ll use Azure AI Agent Service and Microsoft Agent Framework to create an AI agent that processes expense claims.</p>
+
+<p>This exercise should take approximately <strong>30</strong> minutes to complete.</p>
+
+<blockquote>
+  <p><strong>Note</strong>: Some of the technologies used in this exercise are in preview or in active development. You may experience some unexpected behavior, warnings, or errors.</p>
+</blockquote>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>Before starting this exercise, ensure you have:</p>
+
+<ul>
+  <li>
+<a href="https://code.visualstudio.com/">Visual Studio Code</a> installed on your local machine</li>
+  <li>An active <a href="https://azure.microsoft.com/free/">Azure subscription</a>
+</li>
+  <li>
+<a href="https://www.python.org/downloads/">Python 3.13</a> installed</li>
+  <li>
+<a href="https://git-scm.com/downloads">Git</a> installed on your local machine</li>
+</ul>
+
+<blockquote>
+  <p>* Python 3.14 isn’t supported yet: some dependencies have no 3.14 build. This lab was tested with Python 3.13.12.</p>
+</blockquote>
+
+<h2 id="create-a-foundry-project-with-the-foundry-toolkit-vs-code-extension">Create a Foundry project with the Foundry Toolkit VS Code extension</h2>
+
+<p>As a developer, you may spend some time working in the Foundry portal; but you’re also likely to spend a lot of time in Visual Studio Code. The Foundry Toolkit extension provides a convenient way to work with Foundry project resources without leaving the development environment.</p>
+
+<ol>
+  <li>
+    <p>Open Visual Studio Code.</p>
+  </li>
+  <li>
+    <p>Select <strong>Extensions</strong> from the left pane (or press <strong>Ctrl+Shift+X</strong>).</p>
+  </li>
+  <li>
+    <p>Search the extensions marketplace for the <code>Foundry Toolkit</code> extension from Microsoft and select <strong>Install</strong>.</p>
+
+    <blockquote>
+      <p><strong>Note</strong>: The extension is currently listed as <strong>Foundry Toolkit</strong>, but some VS Code labels, commands, or older screenshots may still refer to <strong>AI Toolkit</strong>. In this lab, treat those names as referring to the same extension experience.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>After installing the extension, select its icon in the sidebar to open the Foundry Toolkit view.</p>
+
+    <p>You should be prompted to sign in to your Azure account if you haven’t already.</p>
+  </li>
+  <li>
+    <p>Select <strong>Create Project</strong> under <strong>Microsoft Foundry Resources</strong>.</p>
+
+    <p>If a default project is already active, the project name will appear under <strong>My Resources</strong>. You can create a new project by right-clicking on the active project and selecting <strong>Switch Default Project</strong>.</p>
+  </li>
+  <li>
+    <p>Select your Azure subscription and resource group, then enter a name for your Foundry project to create a new project for this exercise.</p>
+
+    <p>When the deployment is complete, you should see the project appear in the Foundry Toolkit pane as the default project.</p>
+  </li>
+</ol>
+
+<h2 id="deploy-a-model">Deploy a model</h2>
+
+<p>At the core of any generative AI project, there’s at least one generative AI model. In this task, you’ll deploy a model from the Model Catalog to use with your agent.</p>
+
+<ol>
+  <li>
+    <p>When the “Project deployed successfully” popup appears, select the <strong>Deploy a model</strong> button. This opens the Model Catalog.</p>
+
+    <blockquote>
+      <p><strong>Tip</strong>: You can also access the Model Catalog by selecting the <strong>+</strong> icon next to <strong>Models</strong> in the Resources section, or by pressing <strong>F1</strong> and running the command <strong>Foundry Toolkit: Show model catalog</strong>.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>In the Model Catalog, locate the <strong>gpt-5</strong> model (you can use the search bar to find it quickly).</p>
+  </li>
+  <li>
+    <p>Select <strong>Deploy</strong> next to the gpt-5 model.</p>
+  </li>
+  <li>Configure the deployment settings:
+    <ul>
+      <li>
+<strong>Deployment name</strong>: Enter a name like “gpt-5”</li>
+      <li>
+<strong>Deployment type</strong>: Select <strong>Global Standard</strong> (or <strong>Standard</strong> if Global Standard is not available)</li>
+      <li>
+<strong>Model version</strong>: Leave as default</li>
+      <li>
+<strong>Tokens per minute</strong>: Leave as default</li>
+    </ul>
+  </li>
+  <li>
+    <p>Select <strong>Deploy to Microsoft Foundry</strong> in the bottom-left corner.</p>
+  </li>
+  <li>
+    <p>Wait for the deployment to complete. Your deployed model will appear under the <strong>Models</strong> section in the Resources view.</p>
+  </li>
+  <li>
+    <p>Right-click the name of the project deployment and select <strong>Copy Project Endpoint</strong>. You’ll need this URL to connect your agent to the Foundry project in the next steps.</p>
+
+    <p><img src="/mslearn-ai-agents/Instructions/Media/vs-code-endpoint.png" alt="Screenshot of copying the project endpoint in the Foundry Toolkit VS Code extension."></p>
+  </li>
+</ol>
+
+<h2 id="clone-the-starter-code-repository">Clone the starter code repository</h2>
+
+<p>For this exercise, you’ll use starter code that will help you connect to your Foundry project and create an agent that can process expenses data. You’ll clone this code from a GitHub repository.</p>
+
+<ol>
+  <li>
+    <p>In VS Code, open the Command Palette (<strong>Ctrl+Shift+P</strong> or <strong>View &gt; Command Palette</strong>).</p>
+  </li>
+  <li>
+    <p>Type <strong>Git: Clone</strong> and select it from the list.</p>
+  </li>
+  <li>
+    <p>Enter the repository URL:</p>
+
+    <pre><code>https://github.com/MicrosoftLearning/mslearn-ai-agents.git
+</code></pre>
+  </li>
+  <li>
+    <p>Choose a location on your local machine to clone the repository.</p>
+  </li>
+  <li>
+    <p>When prompted, select <strong>Open</strong> to open the cloned repository in VS Code.</p>
+  </li>
+  <li>
+    <p>Once the repository opens, select <strong>File &gt; Open Folder</strong> and navigate to <code>mslearn-ai-agents/Labfiles/07-agent-framework</code>, then choose <strong>Select Folder</strong>.</p>
+  </li>
+  <li>
+    <p>In the Explorer pane, expand the <strong>Python</strong> folder to view the code files for this exercise.</p>
+  </li>
+  <li>
+    <p>Right-click on the <strong>requirements.txt</strong> file and select <strong>Open in Integrated Terminal</strong>.</p>
+  </li>
+  <li>
+    <p>In the terminal, enter the following command to install the required Python packages in a virtual environment:</p>
+
+    <pre><code>python -m venv labenv
+.\labenv\Scripts\Activate.ps1
+pip install -r requirements.txt
+</code></pre>
+  </li>
+  <li>
+    <p>Open the <strong>.env</strong> file, replace the <strong>your_project_endpoint</strong> placeholder with the endpoint for your project (copied from the project deployment resource in the Foundry Toolkit extension) and ensure that the MODEL_DEPLOYMENT_NAME variable is set to your model deployment name. Use <strong>Ctrl+S</strong> to save the file after making these changes.</p>
+  </li>
+</ol>
+
+<p>Now you’re ready to create an AI agent that uses a custom tool to process expenses data.</p>
+
+<h2 id="create-an-agent-with-a-custom-tool">Create an agent with a custom tool</h2>
+
+<blockquote>
+  <p><strong>Tip</strong>: As you add code, be sure to maintain the correct indentation. Use the existing comments as a guide, entering the new code at the same level of indentation.</p>
+</blockquote>
+
+<ol>
+  <li>
+    <p>Open the <strong>agent-framework.py</strong> file in the code editor.</p>
+  </li>
+  <li>Review the code in the file. It contains:
+    <ul>
+      <li>Some <strong>import</strong> statements to add references to commonly used namespaces</li>
+      <li>A <em>main</em> function that loads a file containing expenses data, asks the user for instructions, and then calls…</li>
+      <li>A <strong>process_expenses_data</strong> function in which the code to create and use your agent must be added</li>
+    </ul>
+  </li>
+  <li>
+    <p>At the top of the file, after the existing <strong>import</strong> statement, find the comment <strong>Add references</strong>, and add the following code to reference the namespaces in the libraries you’ll need to implement your agent:</p>
+
+    <pre><code class="language-python"># Add references
+from agent_framework import tool, Agent
+from agent_framework.foundry import FoundryChatClient
+from azure.identity import AzureCliCredential
+from pydantic import Field
+from typing import Annotated
+</code></pre>
+  </li>
+  <li>
+    <p>Near the bottom of the file, find the comment <strong>Create a tool function for the email functionality</strong>, and add the following code to define a function that your agent will use to send email (tools are a way to add custom functionality to agents)</p>
+
+    <pre><code class="language-python"># Create a tool function for the email functionality
+@tool(approval_mode="never_require")
+def submit_claim(
+    to: Annotated[str, Field(description="Who to send the email to")],
+    subject: Annotated[str, Field(description="The subject of the email.")],
+    body: Annotated[str, Field(description="The text body of the email.")]):
+        print("\nTo:", to)
+        print("Subject:", subject)
+        print(body, "\n")
+</code></pre>
+
+    <blockquote>
+      <p><strong>Note</strong>: The function <em>simulates</em> sending an email by printing it to the console. In a real application, you’d use an SMTP service or similar to actually send the email!</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>Back up above the <strong>send_email</strong> code, in the <strong>process_expenses_data</strong> function, find the comment <strong>Create a foundry chat client</strong>, and add the following code:</p>
+
+    <p>(Be sure to maintain the indentation level)</p>
+
+    <pre><code class="language-python"># Create a foundry chat client 
+client = FoundryChatClient(
+    project_endpoint=os.getenv("PROJECT_ENDPOINT"),
+    model=os.getenv("MODEL_DEPLOYMENT_NAME"),
+    credential=AzureCliCredential()
+)
+</code></pre>
+
+    <p>Note that the <strong>AzureCliCredential</strong> object will allow your code to authenticate to your Azure account. This client will be used to interact with the Foundry agent services.</p>
+  </li>
+  <li>
+    <p>Find the comment <strong>Initialize an agent with the tool and instructions</strong>, and add the following code:</p>
+
+    <p>(Be sure to maintain the indentation level)</p>
+
+    <pre><code class="language-python"># Initialize an agent with the tool and instructions
+async with (
+    Agent(
+        client=client,
+        name="ExpenseClaimAgent",
+        instructions="""You are an AI assistant for expense claim submission.
+                    At the user's request, create an expense claim and use the plug-in function to send an email to expenses@contoso.com with the subject 'Expense Claim`and a body that contains itemized expenses with a total.
+                    Then confirm to the user that you've done so. Don't ask for any more information from the user, just use the data provided to create the email.""",
+        tools=[submit_claim],
+    ) as agent,
+):
+</code></pre>
+    <p>In this code, the <strong>Agent</strong> object is initialized with the client, instructions for the agent, and the tool function you defined to send emails.</p>
+  </li>
+  <li>
+    <p>Find the comment <strong>Use the agent to process the expenses data</strong>, and add the following code to create a thread for your agent to run on, and then invoke it with a chat message.</p>
+
+    <p>(Be sure to maintain the indentation level):</p>
+
+    <pre><code class="language-python"># Use the agent to process the expenses data
+try:
+    # Add the input prompt to a list of messages to be submitted
+    prompt_messages = [f"{prompt}: {expenses_data}"]
+    # Invoke the agent for the specified thread with the messages
+    response = await agent.run(prompt_messages)
+    # Display the response
+    print(f"\n# Agent:\n{response}")
+except Exception as e:
+    # Something went wrong
+    print (e)
+</code></pre>
+  </li>
+  <li>Review that the completed code for your agent, using the comments to help you understand what each block of code does, and then save your code changes (<strong>CTRL+S</strong>).</li>
+</ol>
+
+<h2 id="test-the-application">Test the application</h2>
+
+<ol>
+  <li>
+    <p>In the integrated terminal, enter the following commands to run the application:</p>
+
+    <pre><code>az login
+</code></pre>
+
+    <pre><code>python agent-framework.py
+</code></pre>
+
+    <p><code>az login</code> allows the AzureCliCredential to authenticate to your Azure account.</p>
+  </li>
+  <li>
+    <p>When asked what to do with the expenses data, enter the following prompt:</p>
+
+    <pre><code>Submit an expense claim
+</code></pre>
+  </li>
+  <li>
+    <p>When the application has finished, review the output. The agent should have composed an email for an expenses claim based on the data that was provided.</p>
+
+    <blockquote>
+      <p><strong>Tip</strong>: If the app fails because the rate limit is exceeded. Wait a few seconds and try again. If there is insufficient quota available in your subscription, the model may not be able to respond.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>When you’re finished, enter <code>deactivate</code> in the terminal to exit the Python virtual environment.</p>
+  </li>
+</ol>
+
+<h2 id="clean-up">Clean up</h2>
+
+<p>If you’ve finished exploring Azure AI Agent Service, you should delete the resources you have created in this exercise to avoid incurring unnecessary Azure costs.</p>
+
+<h3 id="delete-your-model">Delete your model</h3>
+
+<ol>
+  <li>
+    <p>In VS Code, refresh the <strong>Azure Resources</strong> view.</p>
+  </li>
+  <li>
+    <p>Expand the <strong>Models</strong> subsection.</p>
+  </li>
+  <li>
+    <p>Right-click on your deployed model and select <strong>Delete</strong>.</p>
+  </li>
+</ol>
+
+<h3 id="delete-the-resource-group">Delete the resource group</h3>
+
+<ol>
+  <li>
+    <p>Open the <a href="https://portal.azure.com">Azure portal</a>.</p>
+  </li>
+  <li>
+    <p>Navigate to the resource group containing your Microsoft Foundry resources.</p>
+  </li>
+  <li>
+    <p>Select <strong>Delete resource group</strong> and confirm the deletion.</p>
+  </li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                © 2025 Microsoft  | 
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy </a> | 
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy </a> | 
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use </a> | 
+                  <a href="https://www.microsoft.com/trademarks">Trademarks </a> | 
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-agents" target="_blank" class="ml-2">
+                    Source
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="/mslearn-ai-agents/assets/js/script.js?v=009131ab4938c06ec5f7b860c15a1164a8ed7d3e"></script>
+</body>
+
+
+</html>

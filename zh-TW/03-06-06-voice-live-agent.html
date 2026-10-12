@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <title>
+        開發 Voice Live agent |
+        
+        在 Azure 上開發 AI 語言與語音解決方案
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="https://microsoftlearning.github.io/mslearn-ai-language/assets/css/style.css?v=cea9917802480634f7e437d83201e30f3431ad2a">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">在 Azure 上開發 AI 語言與語音解決方案</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-language" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;首頁
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-language">
+                Develop AI Language and Speech solutions on Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-language" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="develop-a-voice-live-agent">開發 Voice Live agent</h1>
+<p>支援語音的 AI agent 可讓使用者以對話方式互動：透過口頭命令與問題，取得語音回應。</p>
+<p>在本練習中，您將使用 Azure Speech in Microsoft Foundry Tools 的 Voice Live 功能，建立以語音為基礎的即時 agent。</p>
+<p>本練習約需 <strong>30</strong> 分鐘。</p>
+<blockquote>
+<p><strong>注意</strong>：本練習使用的部分技術仍處於預覽階段或積極開發中。您可能會遇到非預期的行為、警告或錯誤。</p>
+</blockquote>
+<h2 id="prerequisites">必要條件</h2>
+<p>開始本練習之前，請確認您已具備：</p>
+<ul>
+<li>有效的 <a href="https://azure.microsoft.com/pricing/purchase-options/azure-account">Azure subscription</a></li>
+<li><a href="https://code.visualstudio.com/">Visual Studio Code</a> 已安裝</li>
+<li><a href="https://www.python.org/downloads/release/python-31312/">Python 版本 <strong>3.13.xx</strong></a> 已安裝*</li>
+<li><a href="https://git-scm.com/install/">Git</a> 已安裝並完成設定</li>
+<li><a href="https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest">Azure CLI</a> 已安裝</li>
+</ul>
+<blockquote>
+<p>* Python 3.14 已推出，但部分相依套件尚未針對該版本完成編譯。本實驗已使用 Python 3.13.12 成功測試。</p>
+</blockquote>
+<h2 id="create-a-microsoft-foundry-project">建立 Microsoft Foundry project</h2>
+<p>Microsoft Foundry 使用 project 來整理開發 AI 解決方案所需的 model、resource、資料及其他資產。</p>
+<ol>
+<li>
+<p>在網頁瀏覽器中開啟 <a href="https://ai.azure.com">Microsoft Foundry</a> ，網址為 <code>https://ai.azure.com</code> ，並使用您的 Azure 認證登入。關閉首次登入時開啟的任何提示或快速入門窗格，必要時使用左上角的 Foundry 標誌導覽至首頁。</p>
+</li>
+<li>
+<p>如果尚未啟用，請在頁面頂端的工具列啟用 <strong>New Foundry</strong> 選項。接著，如果出現提示，請建立名稱唯一的新 project；展開  <strong>Advanced options</strong> 區域，為 project 指定下列設定：</p>
+<ul>
+<li><strong>Foundry resource</strong>: <em>輸入 AI Foundry resource 的有效名稱。</em></li>
+<li><strong>Subscription</strong>: <em>您的 Azure subscription</em></li>
+<li><strong>Resource group</strong>: <em>建立或選取 resource group</em></li>
+<li><strong>Region</strong>：選取任何可用的 region</li>
+</ul>
+<blockquote>
+<p><strong>注意</strong>：請使用建議的 Microsoft Foundry region。可用的 model 與功能可能因 region 而異。</p>
+</blockquote>
+</li>
+<li>
+<p>選取 <strong>Create</strong>。等待 project 建立完成，然後檢視其首頁。</p>
+</li>
+</ol>
+<h2 id="create-an-agent">建立 agent</h2>
+<p>現在讓我們建立 agent。</p>
+<ol>
+<li>
+<p>現在您已準備好 <strong>Start building</strong>。選取 <strong>Create agents</strong> （或在 <strong>Build</strong> 頁面選取 <strong>Agents</strong> 索引標籤），並建立新 agent，名稱為 <code>chat-agent</code>.</p>
+<p>準備完成後，您的 agent 會在 agent playground 中開啟。</p>
+</li>
+<li>
+<p>在 model 下拉式清單中，確認已部署並為 agent 選取 <strong>gpt-5</strong> model。</p>
+</li>
+<li>
+<p>為 agent 設定以下 <strong>Instructions</strong>:</p>
+<pre><code>You are an AI assistant that helps people find information about AI and related topics. You answer questions concisely and precisely.
+</code></pre></li>
+<li>
+<p>使用 <strong>Save</strong> 按鈕儲存變更。</p>
+</li>
+<li>
+<p>在 <strong>Chat</strong> 窗格中輸入下列 prompt，以測試 agent：</p>
+<pre><code>What can you help me with?
+</code></pre>
+<p>agent 應根據其指示提供適當的回答。</p>
+</li>
+</ol>
+<h2 id="configure-azure-speech-voice-live">設定 Azure Speech Voice Live</h2>
+<p>為 Foundry agent 啟用語音模式會整合 Azure Speech Voice Live，為 agent 加入語音功能。</p>
+<ol>
+<li>
+<p>在左側窗格中，於 model 選取清單下方啟用 <strong>Voice mode</strong>.</p>
+<p>如果 <strong>Configuration</strong> 窗格未自動開啟，請使用 &quot;齒輪&quot; 圖示（位於聊天介面上方）開啟它。</p>
+</li>
+<li>
+<p>在 <strong>Configuration</strong> 窗格的 <strong>Voice Live</strong>下方，檢閱預設的語音輸入與輸出設定。您可以試用不同的 voice，逐一預聽後決定要使用哪一個。</p>
+</li>
+<li>
+<p>關閉 <strong>Configuration</strong> 窗格，並使用 <strong>Save</strong> 按鈕儲存 agent。</p>
+</li>
+</ol>
+<h2 id="use-speech-to-interact-with-the-agent">使用語音與 agent 互動</h2>
+<p>現在您已準備好與 agent 聊天。</p>
+<ol>
+<li>
+<p>在 Chat 窗格中，使用 <strong>Start session</strong> 按鈕開始與 agent 對話。如果出現提示，請允許存取系統麥克風。</p>
+<p>agent 會開始語音 session，並聆聽您的 prompt。</p>
+</li>
+<li>
+<p>當應用程式狀態為 <strong>Listening…</strong>時，說出類似以下的問題： &quot;<em>How does speech recognition work?</em>&quot; ，並等待回應。</p>
+</li>
+<li>
+<p>確認應用程式狀態變更為 <strong>Processing…</strong>。應用程式會處理語音輸入。</p>
+<blockquote>
+<p><strong>提示</strong>：處理速度可能非常快，因此您還沒看到此狀態，它就已切換回 <em>Speaking</em>.</p>
+</blockquote>
+</li>
+<li>
+<p>當狀態變更為 <strong>Speaking…</strong>時，應用程式會使用 text-to-speech，將 model 的回應轉為語音。若要以文字查看原始 prompt 及回應，請選取 <strong>cc</strong> 按鈕（位於聊天畫面底部）。</p>
+<blockquote>
+<p><strong>提示</strong>：只需說話即可提交後續 prompt。您甚至可以打斷 agent，讓互動持續聚焦於您需要完成的工作。您也可以使用 <strong>Stop generation</strong> 按鈕（位於聊天窗格中）停止長時間執行的回應。此按鈕會結束對話。您需要開始新的對話，才能繼續使用 agent。</p>
+</blockquote>
+</li>
+<li>
+<p>若要繼續對話，只需再提出問題，例如 &quot;<em>How does speech synthesis work?</em>&quot;，並檢閱回應。</p>
+</li>
+<li>
+<p>與 agent 聊天結束後，使用 <strong>X</strong> 圖示結束 session。系統將顯示對話的轉錄文字。</p>
+</li>
+</ol>
+<h2 id="create-a-client-application">建立 client 應用程式</h2>
+<p>若要在自訂應用程式中使用 agent，您需要撰寫程式碼，使用 Azure Speech Voice Live SDK 啟動並管理對話 session。</p>
+<h3 id="get-the-application-files-from-github">從 GitHub 取得應用程式檔案</h3>
+<ol>
+<li>
+<p>開啟 Visual Studio Code。</p>
+</li>
+<li>
+<p>開啟命令選擇區（<em>Ctrl+Shift+P</em>），並使用 <code>Git:clone</code> 命令將 <code>https://github.com/microsoftlearning/mslearn-ai-language</code> repo 複製到本機資料夾（任一資料夾皆可），然後開啟它。</p>
+<p>系統可能會要求您確認是否信任作者。</p>
+</li>
+<li>
+<p>複製 repo 後，在 Explorer 窗格中導覽至應用程式程式碼檔案所在的資料夾： <strong>/Labfiles/06-voice-live/Python/chat-client</strong>。應用程式檔案包括：</p>
+<ul>
+<li><strong>.env</strong> （應用程式設定檔）</li>
+<li><strong>requirements.txt</strong> （需要安裝的 Python 套件相依性）</li>
+<li><strong>chat-client.py</strong> （應用程式的程式碼檔案）</li>
+</ul>
+</li>
+</ol>
+<h3 id="configure-the-application">設定應用程式</h3>
+<ol>
+<li>
+<p>在 Visual Studio Code 中檢視 <strong>Extensions</strong> 窗格；如果尚未安裝，請安裝 <strong>Python</strong> 擴充功能。</p>
+</li>
+<li>
+<p>在 <strong>Command Palette</strong>中使用命令 <code>python:select interpreter</code>。接著，若已有環境，請選取現有環境；或根據已安裝的 Python 3.13.xx 建立新的 <strong>Venv</strong> 環境。</p>
+<blockquote>
+<p><strong>提示</strong>：若系統提示您安裝相依套件，可以安裝 <em>requirements.txt</em> 檔案中列出的套件，該檔案位於 <em>/Labfiles/06-voice-live/Python/chat-client</em> 資料夾；但即使現在不安裝也沒關係，我們稍後會安裝！</p>
+</blockquote>
+<blockquote>
+<p><strong>提示</strong>：如果您偏好使用終端機，可以建立 <strong>Venv</strong> 環境，使用 <code>python -m venv labenv</code>，然後使用以下命令啟用它： <code>\labenv\Scripts\activate</code>.</p>
+</blockquote>
+</li>
+<li>
+<p>在 <strong>Explorer</strong> 窗格中，以滑鼠右鍵按一下 <strong>chat-client</strong> 資料夾（其中包含應用程式檔案），然後選取 <strong>Open in integrated terminal</strong> （或從 <strong>Terminal</strong> 選單開啟終端機，並導覽至 <em>/Labfiles/06-voice-live/Python/chat-client</em> 資料夾）。</p>
+<blockquote>
+<p><strong>注意</strong>：在 Visual Studio Code 中開啟終端機會自動啟用 Python 環境。您可能需要允許系統執行 script。</p>
+</blockquote>
+</li>
+<li>
+<p>確認終端機已在 <strong>chat-client</strong> 資料夾中開啟，且顯示前綴 <strong>(.venv)</strong> ，表示您建立的 Python 環境已啟用。</p>
+</li>
+<li>
+<p>執行下列命令，安裝 Foundry SDK 套件、Azure Identity 套件及其他必要套件：</p>
+<pre><code>pip install -r requirements.txt azure-identity azure-ai-voicelive==1.2.0b4 --pre azure-ai-projects==2.0.0b4
+</code></pre></li>
+<li>
+<p>在 <strong>Explorer</strong> 窗格的 <strong>chat-client</strong> 資料夾中，選取 <strong>.env</strong> 檔案以開啟它。接著更新設定值，填入 Foundry resource 的 <strong>endpoint</strong> （從 Foundry Portal 的 project 首頁取得 project endpoint，但只使用基本 URL，保留到 <em>.com</em> 網域）、project 名稱及 agent 名稱（應為 <strong>Chat-Agent</strong> ；請注意此名稱區分大小寫）。</p>
+</li>
+</ol>
+<blockquote>
+<p><strong>重要</strong>：修改貼上的 endpoint，移除 &quot;/api/projects/{project_name}&quot; 後綴；endpoint 應為 <em>https://{your-foundry-resource-name}.services.ai.azure.com</em>.</p>
+</blockquote>
+<ol>
+<li>儲存修改後的設定檔。</li>
+</ol>
+<h3 id="implement-application-code">實作應用程式程式碼</h3>
+<ol>
+<li>
+<p>在 <strong>Explorer</strong> 窗格的 <strong>chat-client</strong> 資料夾中，開啟 <strong>chat-client.py</strong> 檔案。</p>
+</li>
+<li>
+<p>檢閱現有程式碼。大部分應用程式骨架已提供；您必須實作關鍵步驟，以使用 Voice Live SDK 管理與 agent 的對話。</p>
+<blockquote>
+<p><strong>提示</strong>：將程式碼新增至程式碼檔案時，請務必維持正確的縮排。</p>
+</blockquote>
+</li>
+<li>
+<p>在程式碼檔案頂端、現有 namespace 參考下方，找出註解 <strong>Import namespaces</strong> ，然後新增下列程式碼，以匯入所需的 namespace：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># import namespaces
+</span><span class="kn">from</span> <span class="nn">azure.identity.aio</span> <span class="kn">import</span> <span class="n">AzureCliCredential</span>
+<span class="kn">from</span> <span class="nn">azure.ai.voicelive.aio</span> <span class="kn">import</span> <span class="n">connect</span>
+<span class="kn">from</span> <span class="nn">azure.ai.voicelive.models</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InputAudioFormat</span><span class="p">,</span>
+    <span class="n">Modality</span><span class="p">,</span>
+    <span class="n">OutputAudioFormat</span><span class="p">,</span>
+    <span class="n">RequestSession</span><span class="p">,</span>
+    <span class="n">ServerEventType</span><span class="p">,</span>
+    <span class="n">AudioNoiseReduction</span><span class="p">,</span>
+    <span class="n">AudioEchoCancellation</span><span class="p">,</span>
+    <span class="n">AzureSemanticVadMultilingual</span><span class="p">,</span>
+    <span class="n">AgentConfig</span>
+<span class="p">)</span> 
+</code></pre></div></div>
+</li>
+<li>
+<p>在 <strong>main</strong> 函式中，請注意已提供從設定檔載入 endpoint 的程式碼，也已提供取得 authentication credential，以及建立並執行 <strong>VoiceAssistant</strong> 物件的程式碼。</p>
+<p>此 <strong>VoiceAssistant</strong> 類別封裝了管理 Voice Live 對話的邏輯。</p>
+</li>
+<li>
+<p>在 <strong>main</strong> 函式下方，找出 <strong>VoiceAssistant</strong> 類別定義。</p>
+<p>此 <strong>init</strong> 函式已實作完成，可初始化以此類別為基礎的物件。</p>
+<p>您必須實作 <strong>start</strong> 函式，它是建立對話 session 的核心函式。</p>
+</li>
+<li>
+<p>找出註解 <strong>STEP 1: Connect Azure VoiceLive to the agent</strong>，並新增下列程式碼（請注意將它縮排一層，放在 <strong>try:</strong> 陳述式之下）：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># STEP 1: Connect Azure VoiceLive to the agent
+</span><span class="k">async</span> <span class="k">with</span> <span class="n">connect</span><span class="p">(</span>
+    <span class="n">endpoint</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">endpoint</span><span class="p">,</span>
+    <span class="n">credential</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">credential</span><span class="p">,</span>
+    <span class="n">api_version</span><span class="o">=</span><span class="s">"2026-01-01-preview"</span><span class="p">,</span>
+    <span class="n">agent_config</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">agent_config</span>
+<span class="p">)</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+</code></pre></div></div>
+<p>此步驟會建立與 agent 的連線，讓 Voice Live SDK 能與它進行對話。</p>
+</li>
+<li>
+<p>找出註解 <strong>STEP 2: Initialize audio processor</strong>，並新增下列程式碼（請注意將它 <em>再縮排一層</em> ，放在您剛新增的步驟 1 程式碼之下）：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># STEP 2: Initialize audio processor
+</span><span class="bp">self</span><span class="p">.</span><span class="n">audio_processor</span> <span class="o">=</span> <span class="n">AudioProcessor</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+</code></pre></div></div>
+<p>此程式碼會附加一個 AudioProcessor 物件，其類別定義位於程式碼檔案更下方。AudioProcessor 是管理音訊硬體 I/O 的公用程式類別。</p>
+</li>
+<li>
+<p>找出註解 <strong>STEP 3: Configure the session</strong>，並新增下列程式碼（請注意維持與上述步驟 2 程式碼相同的縮排）：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># STEP 3: Configure the session
+</span><span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">setup_session</span><span class="p">()</span>
+</code></pre></div></div>
+<p>此程式碼會設定 session，指定適當的音訊格式、對話輪次偵測語意，以及處理回音與背景噪音的選項。</p>
+</li>
+<li>
+<p>找出註解 <strong>STEP 4: Start audio systems</strong>，並新增下列程式碼（請注意維持與上述步驟 3 程式碼相同的縮排）：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># STEP 4: Start audio systems
+</span><span class="bp">self</span><span class="p">.</span><span class="n">audio_processor</span><span class="p">.</span><span class="n">start_playback</span><span class="p">()</span>
+        
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">✅ Ready! Start speaking..."</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Press Ctrl+C to exit</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+<p>此程式碼會啟動 audio processor，使其監聽麥克風的音訊輸入，並播放音訊輸出。</p>
+</li>
+<li>
+<p>找出註解 <strong>STEP 5: Process events</strong>，並新增下列程式碼（請注意維持與上述步驟 4 程式碼相同的縮排）：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># STEP 5: Process events
+</span><span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">process_events</span><span class="p">()</span>
+</code></pre></div></div>
+<p>此程式碼會執行主迴圈，以處理語音輸入、回應輸出及中斷等事件。</p>
+</li>
+<li>
+<p>儲存程式碼檔案的變更。</p>
+<p>完成後的函式應如下所示：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""Start the voice assistant."""</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span> <span class="o">+</span> <span class="s">"="</span> <span class="o">*</span><span class="mi">60</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"🎙️   </span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">agent_config</span><span class="p">[</span><span class="s">'agent_name'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"="</span><span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+
+        <span class="c1"># Add your code in this try block!
+</span>        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># STEP 1: Connect Azure VoiceLive to the agent
+</span>            <span class="k">async</span> <span class="k">with</span> <span class="n">connect</span><span class="p">(</span>
+                <span class="n">endpoint</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">endpoint</span><span class="p">,</span>
+                <span class="n">credential</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">credential</span><span class="p">,</span>
+                <span class="n">api_version</span><span class="o">=</span><span class="s">"2026-01-01-preview"</span><span class="p">,</span>
+                <span class="n">agent_config</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">agent_config</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+                    
+                <span class="c1"># STEP 2: Initialize audio processor
+</span>                <span class="bp">self</span><span class="p">.</span><span class="n">audio_processor</span> <span class="o">=</span> <span class="n">AudioProcessor</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+                                  
+                <span class="c1"># STEP 3: Configure the session
+</span>                <span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">setup_session</span><span class="p">()</span>
+                
+                <span class="c1"># STEP 4: Start audio systems
+</span>                <span class="bp">self</span><span class="p">.</span><span class="n">audio_processor</span><span class="p">.</span><span class="n">start_playback</span><span class="p">()</span>
+        
+                <span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">✅ Ready! Start speaking..."</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">"Press Ctrl+C to exit</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+                
+                <span class="c1"># STEP 5: Process events
+</span>                <span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">process_events</span><span class="p">()</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">'audio_processor'</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">audio_processor</span><span class="p">.</span><span class="n">shutdown</span><span class="p">()</span>
+</code></pre></div></div>
+</li>
+</ol>
+<h2 id="run-the-application">執行應用程式</h2>
+<p>現在您已準備好執行應用程式，並與 agent 對話。</p>
+<blockquote>
+<p><strong>提示</strong>：使用耳麥時，應用程式的效果最佳。使用喇叭時，agent 可能會 &quot;聽到&quot; 自己的回應，並將它們當作新的使用者輸入處理。</p>
+</blockquote>
+<ol>
+<li>
+<p>在 Visual Studio Code 終端機中，輸入下列命令以登入 Azure</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="n">az</span><span class="w"> </span><span class="nx">login</span><span class="w">
+</span></code></pre></div></div>
+<p>出現提示時，使用您的認證登入 Azure。</p>
+<blockquote>
+<p><strong>注意</strong>：在大多數情況下，僅使用 <em>az login</em> 即可。不過，如果您的 subscription 分屬多個 tenant，可能需要使用 <em>--tenant</em> 參數指定 tenant。請參閱 <em><a href="https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively">使用 Azure CLI 以互動方式登入 Azure</a></em> 以取得詳細資訊。</p>
+</blockquote>
+</li>
+<li>
+<p>在 Visual Studio Code 終端機中，確認 Azure subscription 的詳細資料，然後輸入下列命令以執行 client 應用程式：</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">python</span><span class="w"> </span><span class="nx">chat-client.py</span><span class="w">
+</span></code></pre></div></div>
+</li>
+<li>
+<p>出現提示時，提出問題以開始與 agent 對話，例如 &quot;<em>How is computer speech used in AI?</em>&quot;.</p>
+</li>
+<li>
+<p>聆聽回應，然後繼續對話；請注意，您可以打斷 agent 並提出新問題。</p>
+</li>
+<li>
+<p>完成後，按 <strong>CTRL+C</strong> 以結束對話並停止程式。</p>
+</li>
+</ol>
+<h2 id="clean-up">清理資源</h2>
+<p>如果您已完成 Microsoft Foundry 的探索，請刪除不再需要的 resource，以避免累積不必要的費用。</p>
+<ol>
+<li>開啟 <strong>Azure portal</strong> ，網址為 <a href="https://portal.azure.com">https://portal.azure.com</a> ，並選取包含您所建立 resource 的 resource group。</li>
+<li>選取 <strong>Delete resource group</strong> ，然後 <strong>輸入 resource group 名稱</strong> 以確認。接著 resource group 將會刪除。</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">消費者健康隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">使用條款 </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">商標 </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-language" target="_blank" class="ml-2">
+                    原始碼
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://microsoftlearning.github.io/mslearn-ai-language/assets/js/script.js?v=cea9917802480634f7e437d83201e30f3431ad2a"></script>
+</body>
+
+
+</html>

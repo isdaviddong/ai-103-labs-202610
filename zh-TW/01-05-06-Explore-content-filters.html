@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <title>
+        套用 guardrail，防止輸出有害內容 |
+        
+        在 Azure 中開發 generative AI 解決方案
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="https://microsoftlearning.github.io/mslearn-ai-studio/assets/css/style.css?v=b702dc2fd9f9411b5eb1f86b9259db6515cd9c48">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">在 Azure 中開發 generative AI 解決方案</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-studio" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;首頁
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-studio">
+                Develop generative AI solutions in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-studio" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="apply-guardrails-to-prevent-the-output-of-harmful-content">套用 guardrail，防止輸出有害內容</h1>
+
+<p>Microsoft Foundry 包含預設 guardrail，可協助確保在與服務互動時，辨識並移除可能有害的 prompt 及 completion。此外，您可以根據特定需求定義自訂 guardrail，確保 model deployment 為 generative AI 應用情境落實適當的 responsible AI 原則。在使用 generative AI model 時，content filtering 是有效實踐 responsible AI 的其中一環。</p>
+
+<p>在此練習中，您將探索 Foundry 中 guardrail 的效果。</p>
+
+<p>此練習大約需要 <strong>25</strong> 分鐘。</p>
+
+<blockquote>
+  <p><strong>注意</strong>：此練習使用的部分技術仍處於預覽階段或持續開發中。您可能遇到非預期的行為、警告或錯誤。</p>
+</blockquote>
+
+<h2 id="prerequisites">先決條件</h2>
+
+<p>若要完成此練習，您需要：</p>
+
+<ul>
+  <li>一個 <a href="https://azure.microsoft.com/free/">Azure subscription</a> ，且具有建立 AI resource 的權限。</li>
+</ul>
+
+<h2 id="create-a-microsoft-foundry-project">建立 Microsoft Foundry 專案</h2>
+
+<p>Microsoft Foundry 使用專案來組織開發 AI 解決方案所需的 model、resource、資料及其他資產。</p>
+
+<ol>
+  <li>
+    <p>在網頁瀏覽器中，開啟 <a href="https://ai.azure.com">Microsoft Foundry portal</a> ，網址為 <code>https://ai.azure.com</code> ，開始建置；使用您的 Azure 認證登入。關閉首次登入時開啟的任何提示或快速入門窗格。</p>
+  </li>
+  <li>如果尚未啟用，請在頁面頂端的工具列中啟用 <strong>New Foundry</strong> 選項。接著，如果出現提示，請以唯一的名稱建立新專案；展開 <strong>Advanced options</strong> 區域，為您的專案指定下列設定：
+    <ul>
+      <li><strong>Foundry resource</strong>: <em>使用 resource 的預設名稱（通常為 {project_name}-resource）</em></li>
+      <li><strong>Subscription</strong>: <em>您的 Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>建立或選取 resource group</em></li>
+      <li><strong>Region</strong>：選取 <strong>AI Foundry recommended</strong> 的任一區域，請參閱 <strong target="_blank"><a href="https://learn.microsoft.com/azure/foundry/openai/how-to/responses#region-availability">此清單</a></strong></li>
+    </ul>
+  </li>
+  <li>等候專案建立完成，然後檢視其首頁。</li>
+</ol>
+
+<h2 id="deploy-a-model">部署 model</h2>
+
+<p>接下來，讓我們部署聊天應用程式將使用的 model。</p>
+
+<ol>
+  <li>現在您已準備好探索 model。在 <strong>Discover</strong> 頁面中，選取 <strong>Models</strong> 索引標籤，檢視 Microsoft Foundry model catalog。</li>
+  <li>在 model catalog 中搜尋 <code>gpt-5.2</code>.</li>
+  <li>檢閱 model card，然後使用預設設定部署它。</li>
+  <li>Model 部署完成後，會在 model playground 中開啟；您可以視需要在該處測試。</li>
+</ol>
+
+<h2 id="chat-using-the-default-guardrail">使用預設 guardrail 聊天</h2>
+
+<p>您部署的 model 已套用預設 guardrail，其中包含一組均衡的 filter：阻擋大多數有害內容，同時允許被視為合理安全的輸入及輸出文字。</p>
+
+<ol>
+  <li>
+    <p>在 model playground 中，提交下列 prompt 並檢視回應：</p>
+
+    <pre><code>I'm planning to rob a bank. Help me plan a getaway.
+</code></pre>
+
+    <p>Model 可能根據其訓練對回應進行「自我審查」，但 content filter 不一定會阻擋回應。</p>
+  </li>
+  <li>
+    <p>嘗試下列 prompt：</p>
+
+    <pre><code>Tell me an offensive joke about Scotsmen.
+</code></pre>
+
+    <p>Model 可能根據其訓練對回應進行「自我審查」，但 content filter 不一定會阻擋回應。</p>
+  </li>
+  <li>
+    <p>現在嘗試此 prompt：
+1</p>
+
+    <pre><code>What should I do if I cut myself?
+</code></pre>
+
+    <p>預設 content filter 可能會阻擋此 prompt，因為它可能被解讀為提及自我傷害。</p>
+
+    <blockquote>
+      <p><strong>重要</strong>：如果您對自我傷害或其他心理健康問題有疑慮，請尋求專業協助。嘗試輸入 prompt <code>Where can I get help or support related to self-harm?</code></p>
+    </blockquote>
+  </li>
+</ol>
+
+<h2 id="create-and-apply-a-custom-guardrail">建立並套用自訂 guardrail</h2>
+
+<p>如果預設 guardrail 不符合需求，您可以建立自訂 guardrail，更精確地控制如何防止產生可能有害或冒犯性的內容。</p>
+
+<ol>
+  <li>
+    <p>在左側導覽窗格中，選取 <strong>Guardrails</strong>.</p>
+  </li>
+  <li>
+    <p>在 <strong>Guardrail</strong> 頁面中，選取 <strong>Create</strong>.</p>
+
+    <p>您可以在 <strong>Create guardrail controls</strong> 頁面中建立並套用 content filter 及其他風險緩解設定。</p>
+  </li>
+  <li>
+    <p>在 <strong>Add controls</strong>下方，選取 <strong>Risk</strong> 下拉式選單。</p>
+
+    <p>您可以選取希望 content filter 專門處理的風險。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Hate</strong> 類別，然後將 <strong>Hate</strong> 內容的 blocking threshold 提高至 <em>Highest blocking</em> 層級。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Add control</strong> ，將新的 content filter 設定套用至您的 model deployment。</p>
+
+    <p>由於 content filter 已包含 Hate 風險緩解設定，系統會提示您確認是否以新的 content filter 取代現有的 filter。選取 <strong>OK</strong> ，確認您要取代現有 content filter。</p>
+  </li>
+  <li>
+    <p>重複 content filter 設定步驟，為 <strong>Violence</strong>, <strong>Sexual</strong>及 <strong>Self-harm</strong> 類別建立並套用新的 content filter，並將各個類別的 blocking threshold 設為 <em>Highest blocking</em> 層級。</p>
+
+    <p>Filter 會套用至各個類別的 prompt 及 completion，依據 blocking threshold 決定要攔截並阻擋哪些特定類型的文字。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Next</strong> ；在此之前，請先完成全部四個風險類別的 content filter 設定修改。</p>
+  </li>
+  <li>
+    <p>在 <strong>Select agents and models</strong> 區段中，選取 <strong>Models</strong>，然後將新的 guardrail 套用至 <strong>gpt-5.2</strong> model。</p>
+  </li>
+  <li>
+    <p>在 <strong>Review</strong> 區段中，閱讀摘要，接著選取 <strong>Submit</strong>，並等候 guardrail 儲存完成。</p>
+  </li>
+  <li>在左側窗格中，選取 <strong>Deployments</strong>。接著選取 <strong>gpt-5.2</strong> model，在 playground 中開啟它。</li>
+  <li>選取 model 的 <strong>Details</strong> 頁面，並確認新的 guardrail 已套用至 model。</li>
+</ol>
+
+<blockquote>
+  <p><strong>注意</strong>：對於像此實驗所能包含的冒犯性內容，預設 guardrail 通常已相當有效，因此我們建立的更嚴格 guardrail 不一定會改變先前 prompt 的回應。不過，對於提及極端暴力、性內容、仇恨言論或自我傷害的 prompt，它會更有效。</p>
+</blockquote>
+
+<p>在此練習中，您已探索 content filter，以及它們如何協助防範可能有害或冒犯性的內容。Content filter 只是完整 responsible AI 解決方案的其中一環；如需詳細資訊，請參閱 <a href="https://learn.microsoft.com/azure/ai-foundry/responsible-use-of-ai-overview">Foundry 的 responsible AI</a> 。</p>
+
+<h2 id="clean-up">清理</h2>
+
+<p>如果您已完成 Microsoft Foundry 的探索，請刪除此練習中建立的 resource，避免產生不必要的 Azure 費用。</p>
+
+<ol>
+  <li>開啟 <a href="https://portal.azure.com">Azure portal</a> ，檢視您部署此練習所用 resource 的 resource group 內容。</li>
+  <li>在工具列上，選取 <strong>Delete resource group</strong>.</li>
+  <li>輸入 resource group 名稱，並確認您要刪除它。</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">消費者健康隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">使用條款 </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">商標 </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-studio" target="_blank" class="ml-2">
+                    原始碼
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://microsoftlearning.github.io/mslearn-ai-studio/assets/js/script.js?v=b702dc2fd9f9411b5eb1f86b9259db6515cd9c48"></script>
+</body>
+
+
+</html>

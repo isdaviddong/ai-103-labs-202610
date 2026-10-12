@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>
+        Explore and compare models |
+        
+        Develop generative AI solutions in Azure
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="/mslearn-ai-studio/assets/css/style.css?v=b702dc2fd9f9411b5eb1f86b9259db6515cd9c48">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">Develop generative AI solutions in Azure</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-studio" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;Home
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-studio">
+                Develop generative AI solutions in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-studio" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="explore-and-compare-models">Explore and compare models</h1>
+
+<p>The Microsoft Foundry model catalog serves as a central repository where you can explore and use a variety of models, facilitating the creation of your generative AI scenario. In this exercise, you’ll explore the model catalog, compare models using benchmarks, test models in the model playground, and run an evaluation using a synthetic dataset.</p>
+
+<p>This exercise will take approximately <strong>45</strong> minutes.</p>
+
+<blockquote>
+  <p><strong>Note</strong>: Some of the technologies used in this exercise are in preview or in active development. You may experience some unexpected behavior, warnings, or errors.</p>
+</blockquote>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>To complete this exercise, you need:</p>
+
+<ul>
+  <li>An <a href="https://azure.microsoft.com/free/">Azure subscription</a> with permissions to create AI resources.</li>
+</ul>
+
+<h2 id="create-a-microsoft-foundry-project">Create a Microsoft Foundry project</h2>
+
+<p>Microsoft Foundry uses projects to organize models, resources, data, and other assets used to develop an AI solution.</p>
+
+<ol>
+  <li>
+    <p>In a web browser, open the <a href="https://ai.azure.com">Microsoft Foundry portal</a> at <code>https://ai.azure.com</code> to start building; signing in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in.</p>
+  </li>
+  <li>If it is not already enabled, in the tool bar at the top of the page, enable the <strong>New Foundry</strong> option. Then, if prompted, create a new project with a unique name; expanding the <strong>Advanced options</strong> area to specify the following settings for your project:
+    <ul>
+      <li><strong>Foundry resource</strong>: <em>Use the default name for your resource (usually {project_name}-resource)</em></li>
+      <li><strong>Subscription</strong>: <em>Your Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>Create or select a resource group</em></li>
+      <li><strong>Region</strong>: Select any of the <strong>AI Foundry recommended</strong> regions in <strong target="_blank"><a href="https://learn.microsoft.com/azure/foundry/openai/how-to/responses#region-availability">this list</a></strong></li>
+    </ul>
+  </li>
+  <li>Wait for your project to be created. Then view its home page.</li>
+</ol>
+
+<h2 id="explore-models-in-the-catalog">Explore models in the catalog</h2>
+
+<p>Microsoft Foundry Models provides a catalog of models that you can use in your project. You can browse the catalog and compare models to find the right one for your needs.</p>
+
+<ol>
+  <li>
+    <p>Now you’re ready to explore models. On the <strong>Discover</strong> page, select the <strong>Models</strong> tab to view the Microsoft Foundry model catalog.</p>
+
+    <p>The model catalog lists all models available in Foundry. Some are provided directly from Azure (and billed through your Azure subscription) while others are provided by partners and the community.</p>
+
+    <p>Note that you can search and filter the catalog, based on model names, capabilities, and other factors.</p>
+  </li>
+  <li>Search for <code>gpt-5.2</code>. Then, in the search results, select the <strong>gpt-5.2</strong> model to view its <em>model card</em>. Model cards provide information about models to help you determine if they are suitable for your needs.</li>
+  <li>Read the description and review the other information available on the <strong>Details</strong> page.</li>
+  <li>View the <strong>Benchmarks</strong> page for the gpt-5.2 model to see how the model compares across some standard performance benchmarks with other models that are used in similar scenarios.</li>
+  <li>Use the back arrow (<strong>←</strong>) next to the <strong>gpt-5.2</strong> page title to return to the model catalog.</li>
+</ol>
+
+<h2 id="compare-models-using-the-model-leaderboard">Compare models using the model leaderboard</h2>
+
+<p>Now let’s use the model leaderboard and side-by-side comparison features to compare models visually.</p>
+
+<ol>
+  <li>In the model catalog page, select <strong>View leaderboard</strong>.</li>
+  <li>In the <strong>Model leaderboard</strong> page, review the top models ranked by quality, safety, cost, and performance. Note which models score highest for AI quality metrics.</li>
+  <li>Scroll down to use the <strong>Trade-off chart</strong> section to compare models on multiple dimensions.</li>
+  <li>Select the <strong>Benchmark Cost</strong> from the dropdown to see how model quality relates to cost, and then use the model list to compare <strong>gpt-5.2</strong> and <strong>gpt-5-mini</strong>. If you want to explore further, you can add other models to the comparison.</li>
+  <li>Select the <strong>Throughput</strong> metric from the dropdown to see how the quality of these models relates to throughput scores.</li>
+  <li>Select the <strong>Safety</strong> metric from the dropdown to see how the quality of these models relates to safety scores.</li>
+  <li>In the table just above the trade-off charts, you can compare benchmarks. Select <strong>gpt-5.2</strong> and <strong>gpt-5-mini</strong>, and optionally any other models you want to explore, and then use the <strong>Compare models</strong> button to view their benchmarks side-by-side.</li>
+  <li>Review the comparison across the following data:
+    <ul>
+      <li><strong>Performance benchmarks</strong>: Quality, safety, and throughput scores.</li>
+      <li><strong>Input</strong> and <strong>output</strong>: The formats supported for prompts and responses.</li>
+      <li><strong>Context</strong>: The number of tokens that can be maintained in a conversation and produced as output, and when the model was trained.</li>
+      <li><strong>Endpoints</strong>: The API endpoints through which the model can be consumed by client applications, and whether it can be used by an agent.</li>
+      <li><strong>Supported features</strong>: Specific capabilities that you may require in your application scenario.</li>
+    </ul>
+  </li>
+  <li>Use the back arrow (<strong>←</strong>) next to the <strong>gpt-5.2</strong> page title to return to the model catalog.</li>
+</ol>
+
+<h2 id="deploy-models">Deploy models</h2>
+
+<p>Now let’s deploy the models we’ll use for testing and evaluation. You need to deploy <strong>gpt-5.2</strong> and <strong>gpt-5-mini</strong>.</p>
+
+<h3 id="deploy-the-gpt-52-model">Deploy the gpt-5.2 model</h3>
+
+<ol>
+  <li>In the model catalog, search for <code>gpt-5.2</code> and select it.</li>
+  <li>
+    <p>On the model page, select <strong>Deploy</strong> and deploy the model using the *default settings.</p>
+
+    <p>The deployed model will open in the model playground, where it will be selected in the <strong>Model</strong> drop-down list.</p>
+  </li>
+  <li>Note the deployment name that is assigned to the <strong>gpt-5.2</strong> model. You’ll need to identify this deployment later.</li>
+</ol>
+
+<h3 id="deploy-the-gpt-5-mini-model">Deploy the gpt-5-mini model</h3>
+
+<ol>
+  <li>In the model playground, in the <strong>Model</strong> list, select <strong>Browse more models</strong>.</li>
+  <li>
+    <p>Search for <code>gpt-5-mini</code>, and then select it and deploy it.</p>
+
+    <p>The model is deployed and selected in the model playground.</p>
+  </li>
+  <li>Note the deployment name that is assigned to the <strong>gpt-5-mini</strong> model.</li>
+</ol>
+
+<h2 id="compare-models-in-the-model-playground">Compare models in the model playground</h2>
+
+<p>Now that you have two model deployments, let’s compare them in the playground.</p>
+
+<ol>
+  <li>In the playground, ensure the deployment for the <strong>gpt-5-mini</strong> model is selected in the <strong>Models</strong> list, and then on the right side of the page, in the <strong>Compare models</strong> list, select the deployment for the <strong>gpt-5.2</strong> model.</li>
+  <li>
+    <p>The side-by-side comparison view opens directly into separate chat panes for each model. Select the <strong>Chat</strong> tab for both models, and enter the following prompt:</p>
+
+    <pre><code>I have a fox, a chicken, and a bag of grain that I need to take over a river in a boat. I can only take one thing at a time. If I leave the chicken and the grain unattended, the chicken will eat the grain. If I leave the fox and the chicken unattended, the fox will eat the chicken. How can I get all three things across the river without anything being eaten?
+</code></pre>
+  </li>
+  <li>
+    <p>Submit the prompt and view the responses from both models. Then, enter the following follow-up prompt:</p>
+
+    <pre><code>Explain your reasoning.
+</code></pre>
+  </li>
+  <li>Compare the responses from each model. Note any differences in accuracy, reasoning quality, and response style.</li>
+</ol>
+
+<h2 id="evaluate-a-model-with-a-synthetic-dataset">Evaluate a model with a synthetic dataset</h2>
+
+<p>The model playground is useful for quick manual testing, but to systematically assess a model’s performance across many inputs, you can run an evaluation. Let’s evaluate the <strong>gpt-5.2</strong> model using a synthetically generated dataset of travel-related questions.</p>
+
+<h3 id="step-1-target">Step 1: Target</h3>
+
+<ol>
+  <li>In the playground, select the <strong>Evaluations</strong> tab.</li>
+  <li>Select <strong>Create</strong> to open the <strong>Create new evaluation</strong> wizard.</li>
+  <li>For the evaluation target, select <strong>Model</strong>.</li>
+  <li>In the table of models, deselect any preselected deployments so that only the checkbox for <strong>gpt-5.2</strong> is selected, and then select <strong>Next</strong>.</li>
+</ol>
+
+<h3 id="step-2-data">Step 2: Data</h3>
+
+<p>Instead of uploading a test dataset, you’ll use Foundry’s synthetic data generation feature to create one automatically.</p>
+
+<ol>
+  <li>
+    <p>In the <strong>Data</strong> step, under <strong>Dataset source</strong>, select <strong>Synthetic generation</strong>.</p>
+
+    <p>With synthetic generation, a deployment is used to automatically generate questions for each target when you submit the evaluation.</p>
+  </li>
+  <li>Select <strong>Generate</strong>, and then set and confirm the following:
+    <ul>
+      <li><strong>Name of the new dataset</strong>: <em>Leave as default</em></li>
+      <li><strong>Model</strong>: gpt-5.2</li>
+      <li><strong>Number of rows</strong>: 45</li>
+      <li><strong>Prompt</strong>: <code>Create various travel related questions, and include some content safety and security tests</code></li>
+      <li><strong>Seed data</strong>: <em>Leave blank</em></li>
+    </ul>
+  </li>
+  <li>Select <strong>Next</strong> to proceed.</li>
+</ol>
+
+<h3 id="step-3-configure-models">Step 3: Configure models</h3>
+
+<ol>
+  <li>
+    <p>In the <strong>Configure models</strong> step, set the <strong>Developer</strong> prompt for the model being evaluated:</p>
+
+    <pre><code> You are a helpful travel assistant that provides accurate, detailed, and practical travel advice to help users plan their trips.
+</code></pre>
+  </li>
+  <li>
+    <p>Leave the rest of the values at their default, then select <strong>Next</strong>.</p>
+  </li>
+</ol>
+
+<h3 id="step-4-criteria">Step 4: Criteria</h3>
+
+<ol>
+  <li>In the <strong>Criteria</strong> step, view all of the suggested evaluators. These use an AI model as a judge to assess the quality of responses.</li>
+  <li>Remove all of the criteria under <em>Agents</em> and <em>Safety</em>, leaving the rest of the evaluators enabled.</li>
+  <li>Select <strong>Next</strong>.</li>
+</ol>
+
+<h3 id="step-5-review-and-submit">Step 5: Review and submit</h3>
+
+<ol>
+  <li>In the <strong>Review</strong> step, verify the evaluation configuration, including the target model, dataset, and selected criteria.</li>
+  <li>Provide a name for the evaluation, such as <code>travel-assistant-eval</code>.</li>
+  <li>Select <strong>Submit</strong> to start the evaluation run.</li>
+  <li>Wait for the evaluation to complete. This may take several minutes, depending on data center load.</li>
+</ol>
+
+<h3 id="review-the-results">Review the results</h3>
+
+<ol>
+  <li>When the evaluation completes, select the evaluation run to view the results page displays an overview of the evaluation metrics.</li>
+  <li>Review the scores and results from each evaluation in the table detailed on the run page. Scroll to the right and view additional pages, where you’ll see mostly passing values. Depending on the model’s response, you may see some failures. If you do, examine those closely.</li>
+  <li>Select the <strong>Analyze results</strong> button, selecting <strong>gpt-5.2</strong> from dropdown, then select <strong>Start analysis</strong>.</li>
+  <li>On this page you’ll see any failures clustered by why they failed, where you can see details on why it failed. Most of those failures will be due to the model saying it’s unable to help due to the nature of the question, however you should explore each failure and consider if the response is what you want to see.</li>
+  <li>Review any failures and the AI suggestions for how to improve. This guidance will help you tweak your configuration to perform better.</li>
+</ol>
+
+<h2 id="clean-up">Clean up</h2>
+
+<p>If you’ve finished exploring Microsoft Foundry, you should delete the resources you have created in this exercise to avoid incurring unnecessary Azure costs.</p>
+
+<ol>
+  <li>Open the <a href="https://portal.azure.com">Azure portal</a> and view the contents of the resource group where you deployed the resources used in this exercise.</li>
+  <li>On the toolbar, select <strong>Delete resource group</strong>.</li>
+  <li>Enter the resource group name and confirm that you want to delete it.</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">Trademarks </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-studio" target="_blank" class="ml-2">
+                    Source
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="/mslearn-ai-studio/assets/js/script.js?v=b702dc2fd9f9411b5eb1f86b9259db6515cd9c48"></script>
+</body>
+
+
+</html>

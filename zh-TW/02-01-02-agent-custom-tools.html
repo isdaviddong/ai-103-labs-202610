@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <title>
+        在 AI agent 中使用自訂函式 |
+        
+        在 Azure 中開發 AI agent
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="https://microsoftlearning.github.io/mslearn-ai-agents/assets/css/style.css?v=009131ab4938c06ec5f7b860c15a1164a8ed7d3e">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">在 Azure 中開發 AI agent</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-agents" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;首頁
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-agents">
+                Develop AI Agents in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-agents" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="use-a-custom-function-in-an-ai-agent">在 AI agent 中使用自訂函式</h1>
+
+<p>在本練習中，您將探索如何建立能使用自訂函式作為工具來完成任務的 agent。此 agent 將擔任天文助理，可提供天文事件的資訊，並根據使用者輸入計算望遠鏡租借費用。您將定義函式工具，並實作處理 agent 所發出函式呼叫的邏輯。</p>
+
+<blockquote>
+  <p><strong>提示</strong>：本練習使用的程式碼以 Microsoft Foundry SDK for Python 為基礎。您也可以使用 Microsoft .NET、JavaScript 和 Java 的 SDK 開發類似的解決方案。請參閱 <a href="https://learn.microsoft.com/azure/ai-foundry/how-to/develop/sdk-overview">Microsoft Foundry SDK client libraries</a> 以取得詳細資訊。</p>
+</blockquote>
+
+<p>本練習大約需要 <strong>50</strong> 分鐘才能完成。</p>
+
+<blockquote>
+  <p><strong>注意</strong>：本練習使用的部分技術仍處於預覽階段或積極開發中。您可能會遇到非預期的行為、警告或錯誤。</p>
+</blockquote>
+
+<h2 id="prerequisites">必要條件</h2>
+
+<p>開始本練習之前，請確認您已具備以下條件：</p>
+
+<ul>
+  <li><a href="https://code.visualstudio.com/">Visual Studio Code</a> 已安裝於本機</li>
+  <li>有效的 <a href="https://azure.microsoft.com/free/">Azure subscription</a></li>
+  <li><a href="https://www.python.org/downloads/">Python 3.13</a> 已安裝</li>
+  <li><a href="https://git-scm.com/downloads">Git</a> 已安裝於本機</li>
+</ul>
+
+<blockquote>
+  <p>* 目前尚不支援 Python 3.14：部分相依套件沒有 3.14 的版本。本實驗已使用 Python 3.13.12 測試。</p>
+</blockquote>
+
+<h2 id="create-a-foundry-project-with-the-foundry-toolkit-for-vs-code-extension">使用 Foundry Toolkit for VS Code 擴充功能建立 Foundry project</h2>
+
+<p>身為開發人員，您可能會花一些時間在 Foundry portal 中操作，但也很可能會花大量時間使用 Visual Studio Code。Foundry Toolkit for VS Code 擴充功能可讓您不必離開開發環境，就能方便地使用 Foundry project 的資源。</p>
+
+<ol>
+  <li>
+    <p>開啟 Visual Studio Code。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Extensions</strong> （位於左側窗格），或按下 <strong>Ctrl+Shift+X</strong>).</p>
+  </li>
+  <li>
+    <p>在擴充功能市集中搜尋 Microsoft 提供的 <code>Foundry Toolkit for VS Code</code> 擴充功能，然後選取 <strong>Install</strong>.</p>
+
+    <p>安裝 Foundry Toolkit 擴充功能後，VS Code 中就會新增 Foundry Toolkit 擴充功能。</p>
+
+    <blockquote>
+      <p><strong>注意</strong>：此擴充功能目前列出的名稱為 <strong>Foundry Toolkit</strong>，但部分 VS Code 標籤、命令或較舊的螢幕擷取畫面可能仍使用 <strong>AI Toolkit</strong>這個名稱。在本實驗中，請將這些名稱視為同一個擴充功能體驗。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>安裝擴充功能後，選取側邊欄中的 Foundry Toolkit 圖示。</p>
+
+    <p>如果您尚未登入，系統應會提示您登入 Azure 帳戶。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Create Project</strong> ，位於 <strong>Microsoft Foundry Resources</strong>.</p>
+
+    <p>如果已有啟用中的預設 project，project 名稱會顯示在 <strong>My Resources</strong>下。您可以在目前啟用的 project 上按一下滑鼠右鍵，然後選取 <strong>Switch Default Project in Azure Extension</strong>.</p>
+  </li>
+  <li>
+    <p>選取您的 Azure subscription 和 resource group，然後輸入 Foundry project 的名稱，以建立本練習使用的新 project。</p>
+
+    <p>deployment 完成後，您應該會看到此 project 出現在 Foundry Toolkit 窗格中，並設為預設 project。</p>
+  </li>
+</ol>
+
+<h2 id="deploy-a-model">部署 model</h2>
+
+<p>每個 generative AI project 的核心都至少有一個 generative AI model。在此任務中，您將從 Model Catalog 部署一個 model，供 agent 使用。</p>
+
+<ol>
+  <li>
+    <p>當「Project deployed successfully」快顯視窗出現時，選取 <strong>Deploy a new model</strong> 按鈕。這會開啟 Model Catalog。</p>
+
+    <blockquote>
+      <p><strong>提示</strong>：您也可以選取 <strong>+</strong> 圖示（位於 Resources 區段的 <strong>Models</strong> 旁），或按下 <strong>F1</strong> 並執行命令 <strong>Foundry Toolkit: Show model catalog</strong>.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>在 Model Catalog 中找到 <strong>gpt-5</strong> model（您可以使用搜尋列快速找到它）。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Deploy</strong> （位於 gpt-5 model 旁）。</p>
+  </li>
+  <li>設定 deployment 選項：
+    <ul>
+      <li><strong>Deployment name</strong>：輸入名稱，例如「gpt-5」</li>
+      <li><strong>Deployment type</strong>：選取 <strong>Global Standard</strong> （或 <strong>Standard</strong> ，如果無法使用 Global Standard）</li>
+      <li><strong>Model version</strong>：保留預設值</li>
+      <li><strong>Tokens per minute</strong>：保留預設值</li>
+    </ul>
+  </li>
+  <li>
+    <p>選取 <strong>Deploy to Microsoft Foundry</strong> （位於左下角）。</p>
+  </li>
+  <li>
+    <p>等待 deployment 完成。已部署的 model 會出現在 Resources 檢視中的 <strong>Models</strong> 區段。</p>
+  </li>
+  <li>
+    <p>在 project deployment 的名稱上按一下滑鼠右鍵，然後選取 <strong>Copy Project Endpoint</strong>。在後續步驟中，您需要使用這個 URL 將 agent 連線至 Foundry project。</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-agents/Instructions/Media/vs-code-endpoint.png" alt="在 Foundry Toolkit VS Code 擴充功能中複製 project endpoint 的螢幕擷取畫面。" /></p>
+  </li>
+</ol>
+
+<h2 id="clone-the-starter-code-repository">複製起始程式碼 repository</h2>
+
+<p>本練習將使用起始程式碼，協助您連線至 Foundry project，並建立使用自訂函式工具的 agent。</p>
+
+<ol>
+  <li>
+    <p>在 VS Code 中開啟 Command Palette（<strong>Ctrl+Shift+P</strong> 或 <strong>View &gt; Command Palette</strong>).</p>
+  </li>
+  <li>
+    <p>輸入 <strong>Git: Clone</strong> 並從清單中選取該命令。</p>
+  </li>
+  <li>
+    <p>輸入 repository URL：</p>
+
+    <pre><code>https://github.com/MicrosoftLearning/mslearn-ai-agents.git
+</code></pre>
+  </li>
+  <li>
+    <p>選擇本機上的位置，以複製 repository。</p>
+  </li>
+  <li>
+    <p>系統提示時，選取 <strong>Open</strong> 以在 VS Code 中開啟已複製的 repository。</p>
+  </li>
+  <li>
+    <p>repository 開啟後，選取 <strong>File &gt; Open Folder</strong> 並瀏覽至 <code>mslearn-ai-agents/Labfiles/02-agent-custom-tools</code>，然後選擇 <strong>Select Folder</strong>.</p>
+  </li>
+  <li>
+    <p>在 Explorer 窗格中，展開 <strong>Python</strong> 資料夾，以檢視本練習的程式碼檔案。</p>
+  </li>
+  <li>
+    <p>在 <strong>requirements.txt</strong> 檔案上按一下滑鼠右鍵，然後選取 <strong>Open in Integrated Terminal</strong>.</p>
+  </li>
+  <li>
+    <p>在終端機中輸入下列命令，在 virtual environment 中安裝所需的 Python 套件：</p>
+
+    <pre><code>python -m venv labenv
+.\labenv\Scripts\Activate.ps1
+pip install -r requirements.txt
+</code></pre>
+  </li>
+  <li>
+    <p>開啟 <strong>.env</strong> 檔案，將 <strong>your_project_endpoint</strong> 預留位置替換為您 project 的 endpoint（從 Foundry Toolkit VS Code 擴充功能中的 project deployment 資源複製），並確認 MODEL_DEPLOYMENT_NAME 變數已設為您的 model deployment 名稱。使用 <strong>Ctrl+S</strong> 儲存修改後的檔案。</p>
+  </li>
+</ol>
+
+<p>現在，您已準備好建立使用 MCP server 工具來存取外部資料來源和 API 的 AI agent。</p>
+
+<h2 id="create-a-function-for-the-agent-to-use">建立供 agent 使用的函式</h2>
+
+<ol>
+  <li>
+    <p>開啟 <strong>functions.py</strong> 檔案，並檢閱現有的程式碼。</p>
+
+    <p>此檔案包含數個可作為 agent 工具的函式。這些函式會使用位於 <strong>data</strong> 資料夾中的範例檔案，擷取天文事件和地點的資訊。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Determine the next visible astronomical event for a given location</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Determine the next visible astronomical event for a given location
+def next_visible_event(location: str) -&gt; str:
+    """Returns the next visible astronomical event for a location."""
+    today = int(datetime.now().strftime("%m%d"))
+    loc = location.lower().replace(" ", "_")
+
+    # Retrieve the next event visible from the location, starting with events later this year
+    for name, event_type, date, date_str, locs in EVENTS:
+        if loc in locs and date &gt;= today:
+            return json.dumps({"event": name, "type": event_type, "date": date_str, "visible_from": sorted(locs)})
+
+    return json.dumps({"message": f"No upcoming events found for {location}."})
+</code></pre>
+
+    <p>此函式會檢查範例事件資料，找出從指定地點可觀測到的下一個天文事件，並以 JSON 字串傳回事件詳細資訊。接下來，建立能使用此函式的 agent。</p>
+  </li>
+</ol>
+
+<h2 id="connect-to-the-foundry-project">連線至 Foundry project</h2>
+
+<ol>
+  <li>
+    <p>開啟 <strong>agent.py</strong> 檔案。</p>
+
+    <blockquote>
+      <p><strong>提示</strong>：新增程式碼時，請務必保持正確的縮排。請以註解的縮排層級作為參考。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>找到註解 <strong>Add references</strong> 並新增下列程式碼，匯入建立使用函式工具的 Azure AI agent 所需的類別：</p>
+
+    <pre><code class="language-python"># Add references
+from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
+from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
+from functions import next_visible_event, calculate_observation_cost, generate_observation_report
+</code></pre>
+
+    <p>請注意，您在 <strong>functions.py</strong> 檔案中定義的函式會被匯入，供 agent 作為工具使用。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Connect to the project client</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Connect to the project client
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=project_endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+</code></pre>
+  </li>
+</ol>
+
+<h2 id="define-the-function-tools">定義函式工具</h2>
+
+<p>在此任務中，您將定義 agent 可使用的各個函式工具。每個函式工具的參數都以 JSON schema 定義，指定函式每個參數的名稱、型別、描述及其他屬性。</p>
+
+<ol>
+  <li>
+    <p>找到註解 <strong>Define the event function tool</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Define the event function tool
+event_tool = FunctionTool(
+    name="next_visible_event",
+    description="Get the next visible event in a given location.",
+    parameters={
+        "type": "object",
+        "properties": {
+            "location": {
+                "type": "string",
+                "description": "continent to find the next visible event in (e.g. 'north_america', 'south_america', 'australia')",
+            },
+        },
+        "required": ["location"],
+        "additionalProperties": False,
+    },
+    strict=True,
+)
+</code></pre>
+  </li>
+  <li>
+    <p>找到註解 <strong>Define the observation cost function tool</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Define the observation cost function tool
+cost_tool = FunctionTool(
+    name="calculate_observation_cost",
+    description="Calculate the cost of an observation based on the telescope tier, number of hours, and priority level.",
+    parameters={
+        "type": "object",
+        "properties": {
+            "telescope_tier": {
+                "type": "string",
+                "description": "the tier of the telescope (e.g. 'standard', 'advanced', 'premium')",
+            },
+            "hours": {
+                "type": "number",
+                "description": "the number of hours for the observation",
+            },
+            "priority": {
+                "type": "string",
+                "description": "the priority level of the observation (e.g. 'low', 'normal', 'high')",
+            },
+        },
+        "required": ["telescope_tier", "hours", "priority"],
+        "additionalProperties": False,
+    },
+    strict=True,
+)
+</code></pre>
+  </li>
+  <li>
+    <p>找到註解 <strong>Define the observation report generation function tool</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Define the observation report generation function tool
+report_tool = FunctionTool(
+    name="generate_observation_report",
+    description="Generate a report summarizing an astronomical observation",
+    parameters={
+        "type": "object",
+        "properties": {
+            "event_name": {
+                "type": "string",
+                "description": "the name of the astronomical event being observed",
+            },
+            "location": {
+                "type": "string",
+                "description": "the location of the observer",
+            },
+            "telescope_tier": {
+                "type": "string",
+                "description": "the tier of the telescope used for the observation (e.g. 'standard', 'advanced', 'premium')",
+            },
+            "hours": {
+                "type": "number",
+                "description": "the number of hours the telescope was used for the observation",
+            },
+            "priority": {
+                "type": "string",
+                "description": "the priority level of the observation (e.g. 'low', 'normal', 'high')",
+            },
+            "observer_name": {
+                "type": "string",
+                "description": "the name of the person who conducted the observation",
+            },                   
+        },
+        "required": ["event_name", "location", "telescope_tier", "hours", "priority", "observer_name"],
+        "additionalProperties": False,
+    },
+    strict=True,
+)
+</code></pre>
+  </li>
+</ol>
+
+<h2 id="create-the-agent-that-uses-the-function-tools">建立使用函式工具的 agent</h2>
+
+<p>定義好函式工具後，您就可以建立能使用這些工具完成任務的 agent。</p>
+
+<ol>
+  <li>
+    <p>找到註解 <strong>Create a new agent with the function tools</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Create a new agent with the function tools
+agent = project_client.agents.create_version(
+    agent_name="astronomy-agent",
+    definition=PromptAgentDefinition(
+        model=model_deployment,
+        instructions=
+            """You are an astronomy observations assistant that helps users find 
+            information about astronomical events and calculate telescope rental costs. 
+            Use the available tools to assist users with their inquiries.""",
+        tools=[event_tool, cost_tool, report_tool],
+    ),
+)
+</code></pre>
+  </li>
+</ol>
+
+<h2 id="send-a-message-to-the-agent-and-process-the-response">傳送訊息給 agent 並處理回應</h2>
+
+<p>建立具有函式工具的 agent 後，您就可以傳送訊息給 agent 並處理其回應。</p>
+
+<ol>
+  <li>
+    <p>找到註解 <strong>Create a thread for the chat session</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Create a thread for the chat session
+conversation = openai_client.conversations.create()
+</code></pre>
+
+    <p>此程式碼會建立與 agent 的聊天工作階段。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Create a list to hold function call outputs that will be sent back as input to the agent</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Create a list to hold function call outputs that will be sent back as input to the agent
+input_list: ResponseInputParam = []
+</code></pre>
+
+    <p>此清單會在聊天迴圈內建立，讓每一輪對話都從全新的一組函式呼叫輸出開始。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Send a prompt to the agent</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Send a prompt to the agent
+openai_client.conversations.items.create(
+    conversation_id=conversation.id,
+    items=[{"type": "message", "role": "user", "content": user_input}],
+)
+</code></pre>
+  </li>
+  <li>
+    <p>找到註解 <strong>Retrieve the agent’s response, which may include function calls</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Retrieve the agent's response, which may include function calls
+response = openai_client.responses.create(
+    conversation=conversation.id,
+    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+    input=input_list,
+)
+
+# Check the run status for failures
+if response.status == "failed":
+    print(f"Response failed: {response.error}")
+</code></pre>
+
+    <p>在此程式碼中，您會傳送使用者 prompt 給 agent 並擷取回應。您也會檢查回應是否指出失敗，若是，則印出錯誤。</p>
+  </li>
+</ol>
+
+<h2 id="process-function-calls-and-display-the-agents-response">處理函式呼叫並顯示 agent 的回應</h2>
+
+<ol>
+  <li>
+    <p>找到註解 <strong>Process function calls</strong> 並新增下列程式碼，處理 agent 發出的任何函式呼叫：</p>
+
+    <pre><code class="language-python"># Process function calls
+for item in response.output:
+    if item.type == "function_call":
+        # Retrieve the matching function tool
+        function_name = item.name
+        result = None
+        if item.name == "next_visible_event":
+            result = next_visible_event(**json.loads(item.arguments))
+        elif item.name == "calculate_observation_cost":
+            result = calculate_observation_cost(**json.loads(item.arguments))
+        elif item.name == "generate_observation_report":
+            result = generate_observation_report(**json.loads(item.arguments))
+
+        # Append the output text
+        input_list.append(
+            FunctionCallOutput(
+                type="function_call_output",
+                call_id=item.call_id,
+                output=result,
+            )
+        )
+</code></pre>
+
+    <p>此程式碼會逐一檢查 agent 回應中的項目，確認是否有函式呼叫。如果找到函式呼叫，就會擷取對應的函式工具，以提供的引數執行函式，並將結果附加至要傳回 agent 的輸入清單。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Send function call outputs back to the model and retrieve a response</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Send function call outputs back to the model and retrieve a response
+if input_list:
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        input=input_list,
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+    )
+# Display the agent's response
+print(f"AGENT: {response.output_text}")
+</code></pre>
+
+    <p>此程式碼會檢查輸入清單中是否有函式呼叫輸出；如果有，則將這些輸出作為輸入傳回 agent，以擷取更新後的回應。最後，它會印出 agent 的回應。</p>
+
+    <p>請注意，輸出會附加至相同的 <strong>conversation</strong>，因此函式呼叫會在 conversation 狀態中完成處理，並將 agent 的答案儲存至聊天記錄。若改用 <code>previous_response_id</code> 傳回這些輸出，則會使 <em>下一則</em> 訊息失敗，並出現 <em>「No tool output found for function call」</em>.</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Delete the agent when done</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Delete the agent when done
+project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+print("Deleted agent.")
+</code></pre>
+  </li>
+  <li>檢閱您新增至檔案的完整程式碼。現在應包含執行以下工作的區段：
+    <ul>
+      <li>匯入必要的程式庫</li>
+      <li>連線至 Foundry project 和 OpenAI client</li>
+      <li>定義供 agent 使用的函式工具</li>
+      <li>建立具有這些函式工具的 agent</li>
+      <li>傳送訊息給 agent 並擷取回應</li>
+      <li>處理 agent 發出的任何函式呼叫，並將輸出傳回 agent</li>
+      <li>顯示 agent 的回應</li>
+      <li>完成後刪除 agent</li>
+    </ul>
+  </li>
+  <li>完成後，儲存程式碼檔案（<em>CTRL+S</em>）。</li>
+</ol>
+
+<h2 id="run-the-agent-application">執行 agent 應用程式</h2>
+
+<ol>
+  <li>
+    <p>在整合式終端機中輸入下列命令，以執行應用程式：</p>
+
+    <pre><code>az login
+</code></pre>
+
+    <pre><code>python agent.py
+</code></pre>
+  </li>
+  <li>
+    <p>系統提示時，輸入 prompt，例如：</p>
+
+    <pre><code>Find me the next event I can see from South America and give me the cost for 5 hours of premium telescope time at normal priority.
+</code></pre>
+
+    <p>請注意，此 prompt 要求 agent 使用您定義的兩個函式工具： <code>next_visible_event</code> 和 <code>calculate_observation_cost</code>。agent 能在同一輪對話中呼叫這兩個函式，並使用這些函式呼叫的輸出，為使用者提供有用的回應。</p>
+
+    <blockquote>
+      <p><strong>提示</strong>：如果應用程式因超過 rate limit 而失敗，請稍等幾秒後再試一次。如果您的 subscription 沒有足夠的 quota，model 可能無法回應。</p>
+    </blockquote>
+
+    <p>您應該會看到類似下列內容的輸出：</p>
+
+    <pre><code class="language-output">AGENT: The next astronomical event you can observe from South America is the Jupiter-Venus Conjunction, taking place on May 1st.
+The cost for 5 hours of premium telescope time at normal priority for this observation will be $1,875. 
+</code></pre>
+  </li>
+  <li>
+    <p>輸入後續 prompt 以產生觀測報告，例如：</p>
+
+    <pre><code>Generate that information in a report for Bellows College.
+</code></pre>
+
+    <p>您應該會看到類似下列內容的回應：</p>
+
+    <pre><code class="language-output">AGENT: Here is your report for Bellows College:
+
+- Next visible astronomical event: Jupiter-Venus Conjunction
+- Date: May 1st
+- Visible from: South America
+- Observation details:
+    - Telescope tier: Premium
+    - Duration: 5 hours
+    - Priority: Normal
+- Observation cost: $1,875
+
+A formal report has been generated for Bellows College.
+</code></pre>
+
+    <p>在檔案總管中，您可以看到已建立名為 <code>report-&lt;event-type&gt;.txt</code> 的新檔案，其中包含產生的報告。您可以開啟此檔案以檢視報告內容。</p>
+  </li>
+  <li>
+    <p>輸入 <code>quit</code> 以結束應用程式。</p>
+
+    <p>您也可以使用 <code>deactivate</code> 以在終端機中離開 Python virtual environment。</p>
+  </li>
+</ol>
+
+<h2 id="clean-up">清理</h2>
+
+<p>完成探索 Foundry Toolkit for VS Code 擴充功能後，請清理資源，以避免產生不必要的 Azure 費用。</p>
+
+<h3 id="delete-your-model">刪除您的 model</h3>
+
+<ol>
+  <li>
+    <p>在 VS Code 中重新整理 <strong>Azure Resources</strong> 檢視。</p>
+  </li>
+  <li>
+    <p>展開 <strong>Models</strong> 子區段。</p>
+  </li>
+  <li>
+    <p>在已部署的 model 上按一下滑鼠右鍵，然後選取 <strong>Delete</strong>.</p>
+  </li>
+</ol>
+
+<h3 id="delete-the-resource-group">刪除 resource group</h3>
+
+<ol>
+  <li>
+    <p>開啟 <a href="https://portal.azure.com">Azure portal</a>.</p>
+  </li>
+  <li>
+    <p>瀏覽至包含 Microsoft Foundry 資源的 resource group。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Delete resource group</strong> 並確認刪除。</p>
+  </li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">消費者健康隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">使用條款 </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">商標 </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-agents" target="_blank" class="ml-2">
+                    原始碼
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://microsoftlearning.github.io/mslearn-ai-agents/assets/js/script.js?v=009131ab4938c06ec5f7b860c15a1164a8ed7d3e"></script>
+</body>
+
+
+</html>

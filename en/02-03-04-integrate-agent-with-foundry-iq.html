@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>
+        Integrate an AI agent with Foundry IQ |
+        
+        Develop AI Agents in Azure
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="/mslearn-ai-agents/assets/css/style.css?v=009131ab4938c06ec5f7b860c15a1164a8ed7d3e">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">Develop AI Agents in Azure</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-agents" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;Home
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-agents">
+                Develop AI Agents in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-agents" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="integrate-an-ai-agent-with-foundry-iq">Integrate an AI agent with Foundry IQ</h1>
+
+<p>In this exercise, you’ll use Microsoft Foundry portal to create an agent that integrates with Foundry IQ to search and retrieve information from knowledge bases. You’ll create a search resource, configure a knowledge base with sample data, build an agent in the portal, and then connect to it from Visual Studio Code to interact programmatically.</p>
+
+<blockquote>
+  <p><strong>Tip</strong>: The code used in this exercise is based on the Microsoft Foundry SDK for Python. You can develop similar solutions using the SDKs for Microsoft .NET, JavaScript, and Java. Refer to <a href="https://learn.microsoft.com/azure/ai-foundry/how-to/develop/sdk-overview">Microsoft Foundry SDK client libraries</a> for details.</p>
+</blockquote>
+
+<p>This exercise should take approximately <strong>45</strong> minutes to complete.</p>
+
+<blockquote>
+  <p><strong>Note</strong>: Some of the technologies used in this exercise are in preview or in active development. You may experience some unexpected behavior, warnings, or errors.</p>
+</blockquote>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>Before starting this exercise, ensure you have:</p>
+
+<ul>
+  <li>An <a href="https://azure.microsoft.com/free/">Azure subscription</a> with permissions to create AI resources</li>
+  <li><a href="https://code.visualstudio.com/">Visual Studio Code</a> installed on your local machine</li>
+  <li><a href="https://www.python.org/downloads/">Python 3.13</a> installed</li>
+  <li><a href="https://git-scm.com/downloads">Git</a> installed on your local machine</li>
+  <li>Basic familiarity with the Microsoft Foundry portal and Python programming</li>
+</ul>
+
+<blockquote>
+  <p>* Python 3.14 isn’t supported yet: some dependencies have no 3.14 build. This lab was tested with Python 3.13.12.</p>
+</blockquote>
+
+<h2 id="create-a-foundry-project">Create a Foundry project</h2>
+
+<p>Let’s start by creating a Foundry project with the new Foundry experience.</p>
+
+<ol>
+  <li>
+    <p>In a web browser, open the <a href="https://ai.azure.com">Foundry portal</a> at <code>https://ai.azure.com</code> and sign in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in.</p>
+
+    <blockquote>
+      <p><strong>Important</strong>: Make sure the <strong>New Foundry</strong> toggle is <em>On</em> for this lab to use the updated user interface.</p>
+    </blockquote>
+  </li>
+  <li>Once you toggle to the <strong>New Foundry</strong>, you’ll be asked to select a project. In the dropdown, select <strong>Create a new project</strong>.</li>
+  <li>In the <strong>Create a project</strong> dialog, enter a valid name for your project (for example, <em>agent-iq-lab</em>).</li>
+  <li>Confirm or configure the following settings for your project:
+    <ul>
+      <li><strong>Foundry resource</strong>: <em>Create a new Foundry resource or select an existing one</em></li>
+      <li><strong>Subscription</strong>: <em>Your Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>Create or select a resource group</em></li>
+      <li><strong>Location</strong>: <em>Select any available region</em>*</li>
+    </ul>
+
+    <blockquote>
+      <p>* Some Azure AI resources are constrained by regional model quotas. In the event of a quota limit being exceeded later in the exercise, there’s a possibility you may need to create another resource in a different region.</p>
+    </blockquote>
+  </li>
+  <li>Select <strong>Create</strong> and wait for your project to be created. This may take a few minutes.</li>
+  <li>When your project is created, you’ll see the project home page.</li>
+</ol>
+
+<h2 id="create-an-agent">Create an agent</h2>
+
+<ol>
+  <li>On the home page, select the <strong>Build</strong> tab, then on the <strong>Agents</strong> tab select <strong>Create agent</strong>.</li>
+  <li>Create your agent with a descriptive name, such as <code>product-expert-agent</code>.</li>
+</ol>
+
+<p>When creating an agent, it will deploy the default model (like <code>gpt-5</code>). Once your agent is created, you’ll see the agent playground with that default model automatically selected for you.</p>
+
+<h2 id="configure-your-data-and-foundry-iq">Configure your data and Foundry IQ</h2>
+
+<p>Now you’ll configure your agent that uses Foundry IQ to search the knowledge base.</p>
+
+<ol>
+  <li>
+    <p>First, give your agent the following instructions:</p>
+
+    <pre><code>You are a helpful AI assistant for Contoso, specializing in outdoor camping and hiking products. 
+You must ALWAYS search the knowledge base to answer questions about our products or product 
+catalog. Provide detailed, accurate information and always cite your sources.
+If you don't find relevant information in the knowledge base, say so clearly.
+</code></pre>
+  </li>
+  <li>Select <strong>Save</strong> to save your current agent configuration.</li>
+  <li>Then, in the <strong>Knowledge</strong> section, expand the <strong>Add</strong> dropdown, and select <strong>Connect to Foundry IQ</strong>.</li>
+  <li>In the Connect to Foundry IQ window, select <strong>Connect to an AI Search resource</strong> and then <strong>Create new resource</strong> which should open up a dialog to create the resource.</li>
+  <li>Create a search resource with the default settings:
+    <ul>
+      <li><strong>Resource name</strong>: <em>A globally unique name</em></li>
+      <li><strong>Subscription</strong>: <em>Your Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>Use the same resource group as your project</em></li>
+      <li><strong>Region</strong>: <em>The same location as your project</em></li>
+      <li><strong>Pricing tier</strong>: Free <em>if available, otherwise choose Basic</em></li>
+    </ul>
+
+    <blockquote>
+      <p><strong>Important</strong>: If you run into any problems creating the resource here or see a warning message saying <strong>This region is at capacity</strong>, select the link at the bottom of the form to create it from the Azure portal instead.</p>
+    </blockquote>
+  </li>
+</ol>
+
+<p>Now you’ll upload sample product information documents to connect to with Foundry IQ.</p>
+
+<ol>
+  <li>Download the sample product information files by opening a new browser tab and navigating to <code>https://github.com/MicrosoftLearning/mslearn-ai-agents/raw/main/Labfiles/04-integrate-agent-with-foundry-iq/data/contoso-products.zip</code></li>
+  <li>Extract the files from the zip, which should be 3 PDFs detailing the products from Contoso.</li>
+  <li>Open a new tab and navigate to the Azure portal at <code>https://portal.azure.com</code>. In the top search bar, search fo <strong>Storage accounts</strong> and select <strong>Storage accounts</strong> from the services section.</li>
+  <li>Create a storage account with the following settings:
+    <ul>
+      <li><strong>Subscription</strong>: <em>Your Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>Use the same resource group as your project</em></li>
+      <li><strong>Storage account name</strong>: <em>A unique storage account name</em></li>
+      <li><strong>Region</strong>: <em>The same location as your project</em></li>
+      <li><strong>Primary service</strong>: <em>Azure Blob Storage or Azure Data Lake Storage</em></li>
+      <li><strong>Performance</strong>: <em>Standard</em></li>
+      <li><strong>Redundancy</strong>: <em>Locally-redundant storage (LRS)</em></li>
+    </ul>
+  </li>
+  <li>Once created, go to the storage account you created and select <strong>Upload</strong> from the top bar.</li>
+  <li>In the <strong>Upload blob</strong> blade, create a new container named <code>contosoproducts</code>.</li>
+  <li>Browse for the files extracted from the zip file, select all 3 PDF files, and select <strong>Upload</strong>.</li>
+  <li>Once your files are uploaded, navigate to the search service you created.</li>
+  <li>On the left pane, under <strong>Security + networking</strong> &gt; <strong>Keys</strong>, select <strong>Both</strong> for API Access control and confirm the selection. Once complete, leave the Azure Portal tab open and navigate back to the Foundry portal tab and refresh the page.</li>
+  <li>Verify you are on the <strong>Knowledge</strong> page, select <strong>Create a knowledge base</strong>, choosing <strong>Azure Blob Storage</strong> as your knowledge source, then select <strong>Connect</strong>.</li>
+  <li>Configure your knowledge source with the following settings:
+    <ul>
+      <li><strong>Name</strong>: <code>ks-contosoproducts</code></li>
+      <li><strong>Description</strong>: <code>Contoso product catalog items</code></li>
+      <li><strong>Storage account name</strong>: <em>Select your storage account</em></li>
+      <li><strong>Container name</strong>: <code>contosoproducts</code></li>
+      <li><strong>Authentication type</strong>: <em>API Key</em></li>
+      <li><strong>Content extraction mode</strong>: <em>minimal</em></li>
+      <li><strong>Embedding model</strong>: <em>Select the available deployed model, likely text-embedding-3-small</em></li>
+      <li><strong>Chat completions model</strong>: <em>Select the available deployed model, likely gpt-5</em></li>
+    </ul>
+  </li>
+  <li>Select <strong>Create</strong>.</li>
+  <li>On the knowledge base creation page, select the <code>gpt-5</code> model from the <strong>Chat completions model</strong> dropdown, leaving the rest of the field defaults as is.</li>
+  <li>Select <strong>Save knowledge base</strong>, and then refresh your browser to verify the knowledge source status is <em>active</em>. If it isn’t yet, wait a minute and refresh your page until it is.</li>
+  <li>Select the back button to return to the <strong>Knowledge</strong> page, then select the <strong>Manage</strong> link next to the <em>Connection</em> drop-down.</li>
+  <li>Scroll down to the <strong>Connected resources</strong>, where you should see your search service. Select that row, find the <strong>Authentication</strong> section.</li>
+  <li>Select <strong>Key authentication</strong> and then select <strong>Edit authentication</strong>.</li>
+  <li>Leaving the dialog open, return to the Azure portal tab which should still be on your search service <strong>Keys</strong> page. Copy one of those keys into the dialog in Foundry and select <strong>Save</strong>.</li>
+</ol>
+
+<p>Your Foundry IQ settings should now be complete.</p>
+
+<h2 id="test-the-agent-in-the-playground">Test the Agent in the playground</h2>
+
+<p>Before connecting from code, test your agent in the portal playground.</p>
+
+<ol>
+  <li>Navigate back to your agent on the <strong>Build</strong> &gt; <strong>Agents</strong> page, and select the agent you created.</li>
+  <li>In the agent page, you should see a playground tab selected. Find the knowledge section and add Foundry IQ, selecting the connection and knowledge base you created.</li>
+  <li>Try the following test queries to verify the agent can retrieve information from the knowledge base:
+    <ul>
+      <li><code>What types of tents does Contoso offer?</code></li>
+      <li><code>Tell me about which backpacks are available in XL.</code></li>
+      <li><code>What camping accessories are available?</code></li>
+    </ul>
+  </li>
+  <li>Review the responses and notice:
+    <ul>
+      <li>The agent provides specific information from the knowledge base</li>
+      <li>Citations or references to the source documents may be included</li>
+      <li>The agent stays focused on product information</li>
+    </ul>
+  </li>
+  <li>
+    <p>You can also try interacting with your agent in the <strong>Preview agent</strong> for a more refined webapp experience.</p>
+  </li>
+  <li>In the agent details page, locate and copy the following information to a notepad (you’ll need these later):
+    <ul>
+      <li><strong>Agent name</strong>: This is the name you created (<code>product-expert-agent</code>)</li>
+      <li><strong>Project endpoint</strong>: Found in the project settings or home page</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="configure-the-agent-to-require-approval-for-tool-calls">Configure the agent to require approval for tool calls</h3>
+
+<p>When you create an agent in the portal, its Foundry IQ (knowledge) tool runs <strong>without</strong> asking for approval by default. To ensure your app can review and control each knowledge base lookup, you’ll change the agent to require approval before it uses tools with the Foundry Toolkit for VS Code extension.</p>
+
+<blockquote>
+  <p><strong>Note</strong>: The Foundry portal doesn’t currently expose a setting to change this approval behavior, so you’ll configure it from the Foundry Toolkit extension instead.</p>
+</blockquote>
+
+<ol>
+  <li>
+    <p>In Visual Studio Code, select <strong>Extensions</strong> from the left pane (or press <strong>Ctrl+Shift+X</strong>), then search the marketplace for the <code>Foundry Toolkit for VS Code</code> extension from Microsoft and select <strong>Install</strong> (if it isn’t already installed).</p>
+
+    <blockquote>
+      <p><strong>Note</strong>: The extension is currently listed as <strong>Foundry Toolkit</strong>, but some VS Code labels, commands, or older screenshots may still refer to <strong>AI Toolkit</strong>. In this lab, treat those names as referring to the same extension experience.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>Select the <strong>Foundry Toolkit</strong> icon in the sidebar, and sign in to your Azure account if you’re prompted.</p>
+
+    <blockquote>
+      <p><strong>Note</strong>: If you’re unable to sign in with the Foundry Toolkit extension, you my need to select the Azure extension. Sign in there, then navigate back to the Foundry Toolkit to access your resources.</p>
+    </blockquote>
+  </li>
+  <li>Under <strong>Microsoft Foundry Resources</strong>, choose <strong>Set Foundry Project</strong> and select the project you created earlier.</li>
+  <li>Select the <strong>Agents</strong> section. Under <strong>Prompt Agents</strong> tab on the page opened, select your <code>product-expert-agent</code> agent to open the <strong>Agent Builder</strong> window.</li>
+  <li>
+    <p>In the <strong>Tools</strong> section, you should already see a tool named with a <code>kb-knowledgebase</code> prefix followed by a unique ID (for example, <code>kb-knowledgebase677-7w5fj</code>). This is the Foundry IQ knowledge base tool, and it was added automatically when you connected Foundry IQ in the portal.</p>
+
+    <blockquote>
+      <p><strong>Note</strong>: The agent lists more than one tool. The Foundry portal adds a <strong>Web search</strong> tool to new agents by default, and you may also see a standalone <strong>Azure AI Search</strong> tool. The agent actually calls the <code>kb-knowledgebase...</code> tool when it searches your knowledge base, so setting approval on any other tool has no effect.</p>
+    </blockquote>
+  </li>
+  <li>Select the ellipsis (<strong>…</strong>) icon on the <code>kb-knowledgebase...</code> tool, then select <strong>Configure</strong> and select the <strong>Never auto-approve tools</strong>, and save your changes, on the top of the playground panel select <strong>Deploy</strong> to save your changes.</li>
+</ol>
+
+<p>Your agent will now request approval each time it uses Foundry IQ to search the knowledge base, which the client app you complete next will handle.</p>
+
+<h2 id="connect-to-your-agent-from-an-app">Connect to your agent from an app</h2>
+
+<p>Now you’ll create a Python application to interact with your agent programmatically. Starter files have been provided in the GitHub repository to help you get started quickly.</p>
+
+<h3 id="prepare-to-develop-an-app-in-visual-studio-code">Prepare to develop an app in Visual Studio Code</h3>
+
+<p>Now let’s use Visual Studio Code to develop an app. The code files for your app have been provided in a GitHub repo.</p>
+
+<ol>
+  <li>Start Visual Studio Code, and open the command palette (Shift+Ctrl+P). Then search for and run the <strong>Git: Clone</strong> command to clone the <code>https://github.com/MicrosoftLearning/mslearn-ai-agents</code> repo to a local folder (it doesn’t matter which folder).</li>
+  <li>
+    <p>When the repository has been cloned, open the folder in Visual Studio Code.</p>
+
+    <blockquote>
+      <p><strong>Note</strong>: If Visual Studio Code shows you a pop-up message prompting you to trust the code you are opening, click <strong>Yes, I trust the authors</strong> option to continue.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>Wait while additional files are installed to support the Python code projects in the repo (if prompted).</p>
+
+    <blockquote>
+      <p><strong>Note</strong>: If you are prompted to install required assets to build and debug, select <strong>Not Now</strong>.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>In the <strong>Explorer</strong> pane, expand the <strong>Labfiles/04-integrate-agent-with-foundry-iq/Python</strong> folder.</p>
+
+    <p>The provided files include application code, configuration settings, and the agent client starter code.</p>
+  </li>
+</ol>
+
+<h3 id="configure-the-application-settings">Configure the application settings</h3>
+
+<ol>
+  <li>In Visual Studio Code, in the <strong>Labfiles/04-integrate-agent-with-foundry-iq/Python</strong> folder, open the <strong>.env</strong> configuration file.</li>
+  <li>In the code file, replace the <strong>your_project_endpoint</strong> placeholder with the endpoint for your project (copied from the project <strong>Home</strong> page in the Foundry portal) and ensure that the AGENT_NAME variable is set to your agent name (which should be <em>product-expert-agent</em>).</li>
+  <li>After you’ve replaced the placeholder, save the file.</li>
+</ol>
+
+<h3 id="complete-the-agent-client-code">Complete the agent client code</h3>
+
+<blockquote>
+  <p><strong>Tip</strong>: As you add code, be sure to maintain the correct indentation. Use the comment indentation levels as a guide.</p>
+</blockquote>
+
+<ol>
+  <li>In Visual Studio Code, in the <strong>Labfiles/04-integrate-agent-with-foundry-iq/Python</strong> folder, open the <strong>agent_client.py</strong> code file.</li>
+  <li>Review the starter code that has been provided, including:
+    <ul>
+      <li>Import statements and configuration loading</li>
+      <li>The <code>send_message_to_agent()</code> function structure</li>
+      <li>The <code>display_conversation_history()</code> function</li>
+      <li>The main program loop</li>
+    </ul>
+  </li>
+  <li>
+    <p>Find the first <strong>TODO</strong> comment and add the following code to connect to the project, get the OpenAI client, retrieve the agent, and create a new conversation:</p>
+
+    <blockquote>
+      <p><strong>Tip</strong>: Be careful to maintain the correct indentation level.</p>
+    </blockquote>
+
+    <pre><code class="language-python"># Connect to the project and agent
+credential = DefaultAzureCredential(
+    exclude_environment_credential=True,
+    exclude_managed_identity_credential=True
+)
+project_client = AIProjectClient(
+    credential=credential,
+    endpoint=project_endpoint
+)
+
+# Get the OpenAI client
+openai_client = project_client.get_openai_client()
+
+# Get the agent
+agent = project_client.agents.get(agent_name=agent_name)
+print(f"Connected to agent: {agent.name} (id: {agent.id})\n")
+
+# Create a new conversation
+conversation = openai_client.conversations.create(items=[])
+print(f"Created conversation (id: {conversation.id})\n")
+</code></pre>
+  </li>
+  <li>
+    <p>Find the second <strong>TODO</strong> comment inside the <code>send_message_to_agent()</code> function and add the following code to send messages and handle responses, including MCP approval requests:</p>
+
+    <pre><code class="language-python"># Add user message to the conversation
+openai_client.conversations.items.create(
+    conversation_id=conversation.id,
+    items=[{"type": "message", "role": "user", "content": user_message}],
+)
+
+# Store in conversation history (client-side)
+conversation_history.append({
+    "role": "user",
+    "content": user_message
+})
+
+# Create a response using the agent
+response = openai_client.responses.create(
+    conversation=conversation.id,
+    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+    input=""
+)
+
+# Loop until a response has no pending approval requests (zero, one, or many)
+while True:
+    approval_requests = [
+        item for item in (getattr(response, "output", None) or [])
+        if getattr(item, "type", None) == "mcp_approval_request"
+    ]
+
+    if not approval_requests:
+        break
+
+    approval_items = []
+    for approval_request in approval_requests:
+        print(f"[Approval required for: {approval_request.name}]\n")
+        print(f"Server: {approval_request.server_label}")
+
+        # Show the tool call arguments for transparency
+        import json
+        try:
+            args = json.loads(approval_request.arguments)
+            print(f"Arguments: {json.dumps(args, indent=2)}\n")
+        except Exception:
+            print(f"Arguments: {approval_request.arguments}\n")
+
+        approval_input = input("Approve this action? (yes/no): ").strip().lower()
+        approved = approval_input in ['yes', 'y']
+        print("Approving action...\n" if approved else "Action denied.\n")
+
+        approval_items.append({
+            "type": "mcp_approval_response",
+            "approval_request_id": approval_request.id,
+            "approve": approved
+        })
+
+    # Send the approval decisions and fetch the next response
+    openai_client.conversations.items.create(
+        conversation_id=conversation.id,
+        items=approval_items
+    )
+
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+        input=""
+    )
+
+</code></pre>
+
+    <blockquote>
+      <p><strong>Note</strong>: The agent doesn’t always request approval, and it can occasionally request approval for more than one tool call in the same turn. Looping until <code>approval_requests</code> is empty handles both cases correctly.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>After you’ve added the code, save the file.</p>
+  </li>
+  <li>Review the code now uses the conversations API to manage interactions with your agent, where:
+    <ul>
+      <li>A conversation is created and tracked by its ID</li>
+      <li>User messages are added to the conversation using <code>conversations.items.create()</code></li>
+      <li>Responses are generated using <code>responses.create()</code> with an agent reference</li>
+      <li><strong>MCP approval handling</strong>: When the agent needs to access Foundry IQ, it requests approval by returning one or more <code>mcp_approval_request</code> items in the response output</li>
+      <li>The code loops, prompting you to approve or deny each pending request, until the agent returns a response with no outstanding approval requests (including the case where no approval was ever needed)</li>
+      <li>After each approval/denial, an <code>mcp_approval_response</code> is added to the conversation and a new response is generated</li>
+      <li>The agent retrieves information from Foundry IQ based on your approval decision</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="test-the-integration">Test the Integration</h2>
+
+<p>Now you’ll run your application and test the agent’s ability to retrieve information from the knowledge base.</p>
+
+<ol>
+  <li>In Visual Studio Code, open an integrated terminal for the <strong>Labfiles/04-integrate-agent-with-foundry-iq/Python</strong> folder by right-clicking the folder and selecting <strong>Open in Integrated Terminal</strong>.</li>
+  <li>
+    <p>First, create a virtual environment and install dependencies.</p>
+
+    <pre><code>python -m venv labenv
+./labenv/Scripts/activate
+pip install -r requirements.txt
+</code></pre>
+  </li>
+  <li>
+    <p>In the terminal pane, enter the following command to sign into Azure.</p>
+
+    <pre><code>az login
+</code></pre>
+
+    <blockquote>
+      <p><strong>Note</strong>: In most scenarios, just using <em>az login</em> will be sufficient. However, if you have subscriptions in multiple tenants, you may need to specify the tenant by using the <em>–tenant</em> parameter. See <a href="https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively">Sign into Azure interactively using the Azure CLI</a> for details.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>When prompted, follow the instructions to open the sign-in page in a new tab and enter the authentication code provided and your Azure credentials. Then complete the sign in process in the command line, selecting the subscription containing your Foundry resource if prompted.</p>
+  </li>
+  <li>
+    <p>In the terminal pane, run your application:</p>
+
+    <pre><code>python agent_client.py
+</code></pre>
+  </li>
+  <li>
+    <p>When the application starts, test the agent with the following queries:</p>
+
+    <p><strong>Query 1 - Product Categories:</strong></p>
+
+    <pre><code>What types of outdoor products does Contoso offer?
+</code></pre>
+
+    <p>When prompted for approval, type <strong>yes</strong> to allow the agent to search the knowledge base. Observe how the agent retrieves information from multiple documents in the knowledge base.</p>
+
+    <p><strong>Query 2 - Specific Product Details:</strong></p>
+
+    <pre><code>Tell me about the weatherproof features of your tents.
+</code></pre>
+
+    <p>Approve the request and notice how the agent provides specific details from the tents catalog.</p>
+
+    <p><strong>Query 3 - Product Comparisons:</strong></p>
+
+    <pre><code>What's the difference between your daypacks and expedition backpacks?
+</code></pre>
+
+    <p>Approve the request and see how the agent can synthesize information from the backpacks guide.</p>
+
+    <p><strong>Query 4 - Accessories and Add-ons:</strong></p>
+
+    <pre><code>What camping accessories would you recommend for a weekend hiking trip?
+</code></pre>
+
+    <p>Approve the request and observe the agent’s ability to provide recommendations based on the knowledge base.</p>
+
+    <p><strong>Query 5 - Follow-up Question:</strong></p>
+
+    <pre><code>How much do those items typically cost?
+</code></pre>
+
+    <p>Notice how the agent maintains conversation context from your previous query.</p>
+  </li>
+  <li>
+    <p>Type <code>history</code> to view the complete conversation history.</p>
+  </li>
+  <li>Type <code>quit</code> when you’re done testing.</li>
+</ol>
+
+<h3 id="review-the-results">Review the results</h3>
+
+<p>Consider the following aspects of the agent’s responses:</p>
+
+<ul>
+  <li><strong>MCP Approval Flow</strong>: Each time the agent needs to access the knowledge base, it requests approval, giving you control over external tool usage</li>
+  <li><strong>Accuracy</strong>: The agent provides information directly from the knowledge base documents</li>
+  <li><strong>Citations</strong>: The agent may include source references or document IDs</li>
+  <li><strong>Context awareness</strong>: The agent remembers previous messages in the conversation</li>
+  <li><strong>Grounding</strong>: The agent indicates when it cannot find relevant information in the knowledge base</li>
+  <li><strong>Error handling</strong>: The application gracefully handles errors and connection issues</li>
+</ul>
+
+<h2 id="summary">Summary</h2>
+
+<p>In this exercise, you:</p>
+
+<ul>
+  <li>Created a Foundry project and agent with the new Foundry UI</li>
+  <li>Built a knowledge base with product information documents</li>
+  <li>Configured an agent in the portal with Foundry IQ enabled</li>
+  <li>Connected to your agent from Visual Studio Code using the Python SDK</li>
+  <li>Implemented a client application with MCP approval handling, conversation history, and error handling</li>
+  <li>Tested the agent’s ability to retrieve and synthesize information from the knowledge base with user-controlled approval for external tool access</li>
+</ul>
+
+<p>This demonstrates how to integrate AI agents with Foundry IQ to create intelligent applications that can search and retrieve information from enterprise knowledge bases while maintaining conversational context.</p>
+
+<h2 id="clean-up">Clean up</h2>
+
+<p>If you’ve finished exploring Azure AI Agent Service and Foundry IQ, you should delete the resources you have created in this exercise to avoid incurring unnecessary Azure costs.</p>
+
+<ol>
+  <li>In a web browser, open the <a href="https://portal.azure.com">Azure portal</a> at <code>https://portal.azure.com</code>.</li>
+  <li>Navigate to the resource group containing your Foundry resource and AI Search resources.</li>
+  <li>On the toolbar, select <strong>Delete resource group</strong>.</li>
+  <li>Enter the resource group name and confirm that you want to delete it.</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">Trademarks </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-agents" target="_blank" class="ml-2">
+                    Source
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="/mslearn-ai-agents/assets/js/script.js?v=009131ab4938c06ec5f7b860c15a1164a8ed7d3e"></script>
+</body>
+
+
+</html>

@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <title>
+        使用 Model Context Protocol (MCP) 工具擴充 agent |
+        
+        在 Azure 中開發 AI agent
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="https://microsoftlearning.github.io/mslearn-ai-agents/assets/css/style.css?v=009131ab4938c06ec5f7b860c15a1164a8ed7d3e">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">在 Azure 中開發 AI agent</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-agents" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;首頁
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-agents">
+                Develop AI Agents in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-agents" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="extend-agents-with-model-context-protocol-mcp-tools">使用 Model Context Protocol (MCP) 工具擴充 agent</h1>
+
+<p>在本練習中，您將使用 Foundry Toolkit for VS Code 擴充功能建立 agent，讓它能使用 Model Context Protocol (MCP) server 工具存取外部資料來源和 API。agent 將能透過 MCP 工具擷取最新資訊，並與自訂服務互動。</p>
+
+<p>本練習大約需要 <strong>60</strong> 分鐘才能完成。</p>
+
+<blockquote>
+  <p><strong>注意</strong>：本練習使用的部分技術仍處於預覽階段或積極開發中。您可能會遇到非預期的行為、警告或錯誤。</p>
+</blockquote>
+
+<h2 id="prerequisites">必要條件</h2>
+
+<p>開始本練習之前，請確認您已具備以下條件：</p>
+
+<ul>
+  <li><a href="https://code.visualstudio.com/">Visual Studio Code</a> 已安裝於本機</li>
+  <li>有效的 <a href="https://azure.microsoft.com/free/">Azure subscription</a></li>
+  <li><a href="https://www.python.org/downloads/">Python 3.13</a> 已安裝</li>
+  <li><a href="https://git-scm.com/downloads">Git</a> 已安裝於本機</li>
+</ul>
+
+<blockquote>
+  <p>* 目前尚不支援 Python 3.14：部分相依套件沒有 3.14 的版本。本實驗已使用 Python 3.12 測試。</p>
+</blockquote>
+
+<h2 id="create-a-foundry-project-with-the-foundry-toolkit-for-vs-code-extension">使用 Foundry Toolkit for VS Code 擴充功能建立 Foundry project</h2>
+
+<p>身為開發人員，您可能會花一些時間在 Foundry portal 中操作，但也很可能會花大量時間使用 Visual Studio Code。Foundry Toolkit for VS Code 擴充功能可讓您不必離開開發環境，就能方便地使用 Foundry project 的資源。</p>
+
+<ol>
+  <li>
+    <p>開啟 Visual Studio Code。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Extensions</strong> （位於左側窗格），或按下 <strong>Ctrl+Shift+X</strong>).</p>
+  </li>
+  <li>
+    <p>在擴充功能市集中搜尋 Microsoft 提供的 <code>Foundry Toolkit</code> 擴充功能，然後選取 <strong>Install</strong>.</p>
+
+    <blockquote>
+      <p><strong>注意</strong>：此擴充功能目前列出的名稱為 <strong>Foundry Toolkit</strong>，但部分 VS Code 標籤、命令或較舊的螢幕擷取畫面可能仍使用 <strong>AI Toolkit</strong>這個名稱。在本實驗中，請將這些名稱視為同一個擴充功能體驗。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>安裝擴充功能後，選取側邊欄中的圖示，以開啟 Foundry Toolkit 檢視。</p>
+
+    <p>如果您尚未登入，系統應會提示您登入 Azure 帳戶。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Create Project</strong> ，位於 <strong>Microsoft Foundry Resources</strong>.</p>
+
+    <p>如果已有啟用中的預設 project，project 名稱會顯示在 <strong>My Resources</strong>下。您可以在目前啟用的 project 上按一下滑鼠右鍵，然後選取 <strong>Switch Default Project in Azure Resources</strong>.</p>
+  </li>
+  <li>
+    <p>選取您的 Azure subscription 和 resource group，然後輸入 Foundry project 的名稱，以建立本練習使用的新 project。</p>
+
+    <p>deployment 完成後，您應該會看到此 project 出現在 Foundry Toolkit 窗格中，並設為預設 project。</p>
+  </li>
+</ol>
+
+<h2 id="deploy-a-model">部署 model</h2>
+
+<p>每個 generative AI project 的核心都至少有一個 generative AI model。在此任務中，您將從 Model Catalog 部署一個 model，供 agent 使用。</p>
+
+<ol>
+  <li>
+    <p>當「Project deployed successfully」快顯視窗出現時，選取 <strong>Deploy a new model</strong> 按鈕。這會開啟 Model Catalog。</p>
+
+    <blockquote>
+      <p><strong>提示</strong>：您也可以選取 <strong>+</strong> 圖示（位於 Resources 區段的 <strong>Models</strong> 旁），或按下 <strong>F1</strong> 並執行命令 <strong>Foundry Toolkit: Show model catalog</strong>.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>在 Model Catalog 中找到 <strong>gpt-5</strong> model（您可以使用搜尋列快速找到它）。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Deploy</strong> （位於 gpt-5 model 旁）。</p>
+  </li>
+  <li>設定 deployment 選項：
+    <ul>
+      <li><strong>Deployment name</strong>：輸入名稱，例如「gpt-5」</li>
+      <li><strong>Deployment type</strong>：選取 <strong>Global Standard</strong> （或 <strong>Standard</strong> ，如果無法使用 Global Standard）</li>
+      <li><strong>Model version</strong>：保留預設值</li>
+      <li><strong>Tokens per minute</strong>：將 Tokens per Minute 上限提高至 150000 或更高。</li>
+    </ul>
+  </li>
+  <li>
+    <p>選取 <strong>Deploy to Microsoft Foundry</strong> （位於左下角）。</p>
+  </li>
+  <li>
+    <p>等待 deployment 完成。已部署的 model 會出現在 Resources 檢視中的 <strong>Models</strong> 區段。</p>
+  </li>
+  <li>
+    <p>在 project deployment 的名稱上按一下滑鼠右鍵，然後選取 <strong>Copy Project Endpoint</strong>。在後續步驟中，您需要使用這個 URL 將 agent 連線至 Foundry project。</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-agents/Instructions/Media/vs-code-endpoint.png" alt="在 Foundry Toolkit VS Code 擴充功能中複製 project endpoint 的螢幕擷取畫面。" /></p>
+  </li>
+</ol>
+
+<h2 id="clone-the-starter-code-repository">複製起始程式碼 repository</h2>
+
+<p>本練習將使用起始程式碼，協助您連線至 Foundry project，並建立使用 MCP server 工具的 agent。</p>
+
+<ol>
+  <li>
+    <p>在 VS Code 中開啟 Command Palette（<strong>Ctrl+Shift+P</strong> 或 <strong>View &gt; Command Palette</strong>).</p>
+  </li>
+  <li>
+    <p>輸入 <strong>Git: Clone</strong> 並從清單中選取該命令。</p>
+  </li>
+  <li>
+    <p>輸入 repository URL：</p>
+
+    <pre><code>https://github.com/MicrosoftLearning/mslearn-ai-agents.git
+</code></pre>
+  </li>
+  <li>
+    <p>選擇本機上的位置，以複製 repository。</p>
+  </li>
+  <li>
+    <p>系統提示時，選取 <strong>Open</strong> 以在 VS Code 中開啟已複製的 repository。</p>
+  </li>
+  <li>
+    <p>repository 開啟後，選取 <strong>File &gt; Open Folder</strong> 並瀏覽至 <code>mslearn-ai-agents/Labfiles/03-mcp-integration</code>，然後選擇 <strong>Select Folder</strong>.</p>
+  </li>
+  <li>
+    <p>在 Explorer 窗格中，展開 <strong>Python</strong> 資料夾，以檢視本練習的程式碼檔案。</p>
+  </li>
+  <li>
+    <p>在 <strong>requirements.txt</strong> 檔案上按一下滑鼠右鍵，然後選取 <strong>Open in Integrated Terminal</strong>.</p>
+  </li>
+  <li>
+    <p>在終端機中輸入下列命令，在 virtual environment 中安裝所需的 Python 套件：</p>
+
+    <pre><code>python -m venv labenv
+.\labenv\Scripts\Activate.ps1
+pip install -r requirements.txt
+</code></pre>
+  </li>
+  <li>
+    <p>開啟 <strong>.env</strong> 檔案，將 <strong>your_project_endpoint</strong> 預留位置替換為您 project 的 endpoint（從 Foundry Toolkit 擴充功能中的 project deployment 資源複製），並確認 MODEL_DEPLOYMENT_NAME 變數已設為您的 model deployment 名稱。使用 <strong>Ctrl+S</strong> 儲存修改後的檔案。</p>
+  </li>
+</ol>
+
+<p>現在，您已準備好建立使用 MCP server 工具來存取外部資料來源和 API 的 AI agent。</p>
+
+<h2 id="connect-an-azure-ai-agent-to-a-remote-mcp-server">將 Azure AI Agent 連線至遠端 MCP server</h2>
+
+<p>在此任務中，您將連線至遠端 MCP server、準備 AI agent，並執行使用者 prompt。</p>
+
+<ol>
+  <li>
+    <p>在程式碼編輯器中開啟 <strong>agent.py</strong> 檔案。</p>
+
+    <blockquote>
+      <p><strong>提示</strong>：新增程式碼時，請務必保持正確的縮排。請以註解的縮排層級作為參考。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>找到註解 <strong>Add references</strong> 並新增下列程式碼以匯入類別：</p>
+
+    <pre><code class="language-python"># Add references
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition, MCPTool
+from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
+</code></pre>
+  </li>
+  <li>
+    <p>找到註解 <strong>Connect to the agents client</strong> 並新增下列程式碼，使用目前的 Azure 認證連線至 Azure AI project。</p>
+
+    <pre><code class="language-python"># Connect to the agents client
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=project_endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+</code></pre>
+  </li>
+  <li>
+    <p>在註解 <strong>Initialize agent MCP tool</strong>下方新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Initialize agent MCP tool
+mcp_tool = MCPTool(
+    server_label="api-specs",
+    server_url="https://learn.microsoft.com/api/mcp",
+    require_approval="always",
+)
+</code></pre>
+
+    <p>此程式碼會連線至 Microsoft Learn Docs 遠端 MCP server。這是由雲端託管的服務，讓 client 能直接從 Microsoft 官方文件存取可信且最新的資訊。</p>
+  </li>
+  <li>
+    <p>在註解 <strong>Create a new agent with the MCP tool</strong> 下方新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Create a new agent with the MCP tool
+agent = project_client.agents.create_version(
+    agent_name="MyAgent",
+    definition=PromptAgentDefinition(
+        model=model_deployment,
+        instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
+        tools=[mcp_tool],
+    ),
+)
+print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+</code></pre>
+
+    <p>在此程式碼中，您會提供 agent 的指示，並為它提供 MCP 工具定義。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Create a conversation thread</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Create a conversation thread
+conversation = openai_client.conversations.create()
+print(f"Created conversation (id: {conversation.id})")
+</code></pre>
+  </li>
+  <li>
+    <p>找到註解 <strong>Send initial request that will trigger the MCP tool</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Send initial request that will trigger the MCP tool
+response = openai_client.responses.create(
+    conversation=conversation.id,
+    input="Give me the Azure CLI commands to create an Azure Container App with a managed identity.",
+   extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+)
+</code></pre>
+  </li>
+  <li>
+    <p>找到註解 <strong>Process any MCP approval requests that were generated</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Process any MCP approval requests that were generated
+# The agent may issue several tool calls, each needing its own approval,
+# so we loop until there are none left.
+while True:
+    # Collect any MCP approval requests from the latest response
+    input_list: ResponseInputParam = []
+    for item in response.output:
+        if item.type == "mcp_approval_request":
+            if item.server_label == "api-specs" and item.id:
+                # Automatically approve the MCP request to allow the agent to proceed
+                input_list.append(
+                    McpApprovalResponse(
+                        type="mcp_approval_response",
+                        approve=True,
+                        approval_request_id=item.id,
+                    )
+                )
+
+    # No more approvals needed -&gt; the agent has produced its final response
+    if not input_list:
+        break
+
+    # Send the approval response back and retrieve the next response
+    response = openai_client.responses.create(
+        input=input_list,
+        previous_response_id=response.id,
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+    )
+
+print(f"\nAgent response: {response.output_text}")
+</code></pre>
+
+    <p>此程式碼會監聽 agent 回應中的任何 MCP 核准要求，並自動核准它們。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Clean up resources by deleting the agent version</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Clean up resources by deleting the agent version
+project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+print("Agent deleted")
+</code></pre>
+  </li>
+  <li>
+    <p>完成後，儲存程式碼檔案（<em>CTRL+S</em>）。</p>
+  </li>
+</ol>
+
+<h2 id="test-the-connection-to-the-remote-mcp-server">測試與遠端 MCP server 的連線</h2>
+
+<p>現在，您已準備好執行應用程式，觀察 agent 如何使用 MCP 工具從 Microsoft Learn Docs 遠端 MCP server 擷取資訊。</p>
+
+<ol>
+  <li>
+    <p>在整合式終端機中輸入下列命令，以執行應用程式：</p>
+
+    <pre><code>az login
+</code></pre>
+
+    <pre><code>python agent.py
+</code></pre>
+  </li>
+  <li>
+    <p>等待 agent 處理 prompt，並利用 MCP server 找到適當的工具來擷取要求的資訊。您應該會看到類似下列內容的輸出：</p>
+
+    <pre><code>Agent created (id: MyAgent:2, name: MyAgent, version: 2)
+Created conversation (id: conv_086911ecabcbc05700BBHIeNRoPSO5tKPHiXRkgHuStYzy27BS)
+
+Agent response: Here are Azure CLI commands to create an Azure Container App with a managed identity:
+
+**1. For a System-assigned Managed Identity**
+ ```sh
+ az containerapp create \
+ --name &lt;CONTAINERAPP_NAME&gt; \
+ --resource-group &lt;RESOURCE_GROUP&gt; \
+ --environment &lt;CONTAINERAPPS_ENVIRONMENT&gt; \
+ --image &lt;CONTAINER_IMAGE&gt; \
+ --identity 'system'
+</code></pre>
+
+    <p>［後續內容省略……］</p>
+
+    <p>Agent deleted</p>
+
+    <p>```</p>
+
+    <p>請注意，agent 能呼叫 MCP 工具，自動完成要求。</p>
+  </li>
+  <li>
+    <p>您可以更新要求中的輸入，以詢問不同的資訊。在每種情況下，agent 都會嘗試使用 MCP 工具尋找技術文件。</p>
+  </li>
+</ol>
+
+<h2 id="create-an-mcp-server-with-custom-tools">建立具有自訂工具的 MCP server</h2>
+
+<p>除了連線至遠端 MCP server，您也可以建立自己的自訂 MCP server 工具，並將它們連線至 agent。Model Context Protocol (MCP) Server 是託管可呼叫工具的元件。這些工具是可提供給 AI agent 使用的 Python 函式。當工具加上 <code>@mcp.tool()</code>註記時，client 就能探索這些工具，讓 AI agent 在對話或任務期間自主呼叫它們。在此任務中，您將新增工具，讓 agent 能查詢庫存並提供建議。</p>
+
+<ol>
+  <li>
+    <p>在程式碼編輯器中開啟 <strong>server.py</strong> 檔案。</p>
+
+    <p>在此程式碼檔案中，您將定義 agent 可使用的工具，以模擬零售商店的後端服務。請注意檔案頂端的 server 設定程式碼。它使用 <code>FastMCP</code> 快速啟動名為「Inventory」的 MCP server 執行個體。此 server 將託管您定義的工具，讓 agent 在實驗期間能存取它們。</p>
+  </li>
+  <li>
+    <p>在註解 <strong>Add references</strong>下方新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Add references
+from fastmcp import FastMCP
+</code></pre>
+  </li>
+  <li>
+    <p>在註解 <strong>Create an MCP server</strong>下方新增下列程式碼，以建立新的 MCP server 執行個體：</p>
+
+    <pre><code class="language-python"># Create an MCP server
+mcp = FastMCP(name="Inventory")
+</code></pre>
+
+    <p>此程式碼會初始化標籤為「Inventory」的新 MCP server。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Add an inventory check mcp tool</strong> 並在函式定義上方新增下列 decorator，完成後應如下所示：</p>
+
+    <pre><code class="language-python"># Add an inventory check mcp tool
+@mcp.tool()
+def get_inventory_levels() -&gt; dict:
+   # continued...
+</code></pre>
+
+    <p>此 dictionary 代表範例庫存。 <code>@mcp.tool()</code> decorator 會將函式註冊為 MCP server 上的工具，讓 LLM 能探索您的函式。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Add a weekly sales mcp tool</strong> 並在函式定義上方新增下列 decorator，完成後應如下所示：</p>
+
+    <pre><code class="language-python"># Add a weekly sales mcp tool
+@mcp.tool()
+def get_weekly_sales() -&gt; dict:
+   # continued...
+</code></pre>
+  </li>
+  <li>
+    <p>找到註解 <strong>Run the MCP server</strong> 並新增下列程式碼以啟動 server：</p>
+
+    <pre><code class="language-python"># Run the MCP server
+mcp.run(show_banner=False)
+</code></pre>
+
+    <p>此程式碼會啟動 MCP server，讓 agent 能探索及使用您的工具。設定 <code>show_banner=False</code> 可防止啟動橫幅印至 stdout，避免破壞 MCP stdio protocol。</p>
+  </li>
+  <li>
+    <p>儲存檔案（<em>CTRL+S</em>).</p>
+  </li>
+</ol>
+
+<h2 id="implement-an-mcp-client-to-connect-to-the-custom-mcp-server">實作 MCP client 以連線至自訂 MCP server</h2>
+
+<p>MCP client 是連線至 MCP server 以探索並呼叫工具的元件。您可以將它視為 agent 與 server 託管函式之間的橋樑，讓 agent 能依據使用者 prompt 動態使用工具。</p>
+
+<ol>
+  <li>
+    <p>瀏覽至 <strong>client.py</strong> 檔案。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Add references</strong> 並新增下列程式碼以匯入類別：</p>
+
+    <pre><code class="language-python"># Add references
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+</code></pre>
+  </li>
+  <li>
+    <p>在 <strong>connect_to_server</strong> 方法中，找到註解 <strong>Start the MCP server</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Start the MCP server
+stdio_transport = await exit_stack.enter_async_context(stdio_client(server_params))
+stdio, write = stdio_transport
+</code></pre>
+
+    <p>在標準的正式環境設定中，server 會與 client 分開執行。不過，為了本實驗方便起見，client 會負責使用標準輸入／輸出傳輸來啟動 server。這會在兩個元件之間建立輕量的通訊通道，並簡化本機開發設定。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Create an MCP client session</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Create an MCP client session
+session = await exit_stack.enter_async_context(ClientSession(stdio, write))
+await session.initialize()
+</code></pre>
+
+    <p>這會使用上一個步驟的輸入和輸出串流，建立新的 client 工作階段。呼叫 <code>session.initialize</code> 會讓工作階段準備好探索並呼叫已註冊至 MCP server 的工具。</p>
+  </li>
+  <li>
+    <p>在註解 <strong>List available tools</strong>下方新增下列程式碼，以確認 client 已連線至 server：</p>
+
+    <pre><code class="language-python"># List available tools
+response = await session.list_tools()
+tools = response.tools
+print("\nConnected to server with tools:", [tool.name for tool in tools]) 
+</code></pre>
+
+    <p>現在，您的 client 工作階段已準備好搭配 Azure AI Agent 使用。</p>
+  </li>
+</ol>
+
+<h2 id="connect-the-mcp-tools-to-your-agent">將 MCP 工具連線至 agent</h2>
+
+<p>在此任務中，您將把 MCP server 工具連線至 agent，讓它能回應使用者 prompt 並呼叫這些工具。</p>
+
+<blockquote>
+  <p><strong>提示</strong>：新增程式碼時，請務必保持正確的縮排。請以註解的縮排層級作為參考。</p>
+</blockquote>
+
+<ol>
+  <li>
+    <p>在 <strong>chat_loop</strong> 方法中，找到註解 <strong>Build a function for each tool</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Build a function for each tool
+def make_tool_func(tool_name):
+    async def tool_func(**kwargs):
+        result = await session.call_tool(tool_name, kwargs)
+        return result
+
+    tool_func.__name__ = tool_name
+    return tool_func
+
+# Store the functions in a dictionary for easy access when processing function calls
+functions_dict = {tool.name: make_tool_func(tool.name) for tool in tools}
+</code></pre>
+
+    <p>此程式碼會動態包裝 MCP server 中可用的工具，讓 AI agent 能呼叫它們。每個工具都會轉換為 agent 可呼叫的 async 函式。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Create FunctionTool definitions for the agent</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Create FunctionTool definitions for the agent
+mcp_function_tools: FunctionTool = []
+for tool in tools:
+    function_tool = FunctionTool(
+        name=tool.name,
+        description=tool.description,
+        parameters={
+            "type": "object",
+            "properties": {},
+            "additionalProperties": False,
+        },
+        strict=True
+    )
+    mcp_function_tools.append(function_tool)
+</code></pre>
+  </li>
+  <li>
+    <p>找到註解 <strong>Create the agent</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Create the agent
+agent = project_client.agents.create_version(
+    agent_name="inventory-agent",
+    definition=PromptAgentDefinition(
+        model=model_deployment,
+        instructions="""
+        You are an inventory assistant. Here are some general guidelines:
+        - Recommend restock if item inventory &lt; 10  and weekly sales &gt; 15
+        - Recommend clearance if item inventory &gt; 20 and weekly sales &lt; 5
+        """,
+        tools=mcp_function_tools
+    ),
+)
+</code></pre>
+
+    <p>透過這些指示和工具，agent 能呼叫工具擷取庫存與銷售資料，然後使用這些資訊，為使用者提供有用的回應。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Process function calls</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Process function calls
+for item in response.output:
+    if item.type == "function_call":
+        # Retrieve the matching function tool
+        function_name = item.name
+        kwargs = json.loads(item.arguments)
+        required_function = functions_dict.get(function_name)
+
+        # Invoke the function
+        output = await required_function(**kwargs)
+
+        # Append the output text
+        input_list.append(
+           FunctionCallOutput(
+              type="function_call_output",
+              call_id=item.call_id,
+              output=output.content[0].text,
+           )
+        )
+</code></pre>
+
+    <p>此程式碼會監聽 agent 回應中的任何函式呼叫，呼叫對應的工具函式，並準備要傳回 agent 的輸出。</p>
+  </li>
+  <li>
+    <p>找到註解 <strong>Send function call outputs back to the model and retrieve a response</strong> 並新增下列程式碼：</p>
+
+    <pre><code class="language-python"># Send function call outputs back to the model and retrieve a response
+if input_list:
+   response = openai_client.responses.create(
+         input=input_list,
+         previous_response_id=response.id,
+         extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+   )
+print(f"Agent response: {response.output_text}")
+</code></pre>
+  </li>
+  <li>
+    <p>完成後，儲存程式碼檔案（<em>CTRL+S</em>）。</p>
+  </li>
+</ol>
+
+<h2 id="test-the-custom-mcp-tools-with-your-agent">使用 agent 測試自訂 MCP 工具</h2>
+
+<ol>
+  <li>
+    <p>在整合式終端機中輸入下列命令，以執行應用程式：</p>
+
+    <pre><code>python client.py
+</code></pre>
+  </li>
+  <li>
+    <p>系統提示時，輸入 prompt，例如：</p>
+
+    <pre><code>Show me the current inventory levels for all products.
+</code></pre>
+
+    <blockquote>
+      <p><strong>提示</strong>：如果應用程式因超過 rate limit 而失敗，請稍等幾秒後再試一次。如果您的 subscription 沒有足夠的 quota，model 可能無法回應。</p>
+    </blockquote>
+
+    <p>您應該會看到類似下列內容的輸出：</p>
+
+    <pre><code> MessageRole.AGENT:
+ Agent response: Here are the current inventory levels for all items:
+
+- Moisturizer: 6
+- Shampoo: 8
+- Body Spray: 28
+[continued ...]
+
+Would you like recommendations for restocking or clearance? If so, I can check the weekly sales to advise accordingly.
+</code></pre>
+
+    <p>請注意，agent 能呼叫 MCP 工具來擷取庫存與銷售資料，然後使用這些資訊，為使用者提供有用的回應。</p>
+  </li>
+  <li>
+    <p>您可以視需要繼續對話。此 thread 是 <em>有狀態的</em>，因此會保留對話記錄，也就是說，agent 在每次回應時都具有完整的 context。</p>
+
+    <p>嘗試輸入 prompt，例如：</p>
+
+    <pre><code>Are there any products that should be restocked?
+</code></pre>
+
+    <pre><code>Which products would you recommend for clearance?
+</code></pre>
+
+    <pre><code>What are the best sellers this week?
+</code></pre>
+  </li>
+  <li>
+    <p>輸入 <code>quit</code> 以結束應用程式。</p>
+
+    <p>您也可以使用 <code>deactivate</code> 以在終端機中離開 Python virtual environment。</p>
+  </li>
+</ol>
+
+<h2 id="clean-up">清理</h2>
+
+<p>完成探索 Foundry Toolkit for VS Code 擴充功能後，請清理資源，以避免產生不必要的 Azure 費用。</p>
+
+<h3 id="delete-your-model">刪除您的 model</h3>
+
+<ol>
+  <li>
+    <p>在 VS Code 中重新整理 <strong>Azure Resources</strong> 檢視。</p>
+  </li>
+  <li>
+    <p>展開 <strong>Models</strong> 子區段。</p>
+  </li>
+  <li>
+    <p>在已部署的 model 上按一下滑鼠右鍵，然後選取 <strong>Delete</strong>.</p>
+  </li>
+</ol>
+
+<h3 id="delete-the-resource-group">刪除 resource group</h3>
+
+<ol>
+  <li>
+    <p>開啟 <a href="https://portal.azure.com">Azure portal</a>.</p>
+  </li>
+  <li>
+    <p>瀏覽至包含 Microsoft Foundry 資源的 resource group。</p>
+  </li>
+  <li>
+    <p>選取 <strong>Delete resource group</strong> 並確認刪除。</p>
+  </li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">消費者健康隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">使用條款 </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">商標 </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-agents" target="_blank" class="ml-2">
+                    原始碼
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://microsoftlearning.github.io/mslearn-ai-agents/assets/js/script.js?v=009131ab4938c06ec5f7b860c15a1164a8ed7d3e"></script>
+</body>
+
+
+</html>

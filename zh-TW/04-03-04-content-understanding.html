@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <title>
+        使用 Azure Content Understanding 分析影像 |
+        
+        在 Azure 中開發電腦視覺解決方案
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="https://microsoftlearning.github.io/mslearn-ai-vision/assets/css/style.css?v=5d8e9d8a2ce43b41d9a987a6baf78dcab4fbca6d">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">在 Azure 中開發電腦視覺解決方案</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-vision" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;首頁
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-vision">
+                Develop computer vision solutions in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-vision" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="analyze-images-with-azure-content-understanding">使用 Azure Content Understanding 分析影像</h1>
+
+<p>Foundry Tools 中的 Azure Content Understanding 是 Microsoft AI Foundry 提供的功能，使用 generative AI 分析並解讀不同類型的非結構化內容，包括文件、影像、音訊和影片。透過將 AI model 套用至這些內容，此服務可產生符合使用者自訂 schema 的結構化輸出。這些結構化輸出讓擷取的資訊更容易整合至自動化、分析和搜尋工作流程。</p>
+
+<p>組織經常面臨的一項挑戰，是管理大量視覺內容。影像往往包含有價值的資訊，但若沒有描述性的 metadata，這些資訊可能難以搜尋或整理。Azure Content Understanding 可以分析影像並產生結構化描述，協助分類視覺內容並建立索引，讓相關影像更容易被找到，也更容易整合至搜尋系統。</p>
+
+<p>在本練習中，您將探索如何在 Content Understanding Studio 網頁介面中建立及使用影像 analyzer。您將針對範例影像執行 analyzer，並檢閱產生的描述，這些描述可作為建立索引和搜尋所需的 metadata。完成本實驗後，您將了解 AI 生成的影像描述如何讓視覺內容更容易搜尋，並在資料驅動的應用程式中發揮更大效益。</p>
+
+<p>本練習大約需要 <strong>30</strong> 分鐘。</p>
+
+<blockquote>
+  <p><strong>注意</strong>：本練習使用的部分技術仍處於預覽階段或積極開發中。您可能會遇到非預期的行為、警告或錯誤。視設定而定，影片生成可能需要 1 至 5 分鐘才能完成。</p>
+</blockquote>
+
+<h2 id="prerequisites">必要條件</h2>
+
+<p>若要完成本練習，您需要：</p>
+
+<ul>
+  <li>一個 <a href="https://azure.microsoft.com/free/">Azure 訂用帳戶</a> ，且具有建立 AI resource 的權限。</li>
+  <li><a href="https://code.visualstudio.com/">Visual Studio Code</a> 已安裝於本機電腦。</li>
+  <li><a href="https://www.python.org/downloads/">Python 3.13</a> 或更新版本已安裝於本機電腦。</li>
+  <li><a href="https://learn.microsoft.com/cli/azure/install-azure-cli">Azure CLI</a> 已安裝於本機電腦。</li>
+</ul>
+
+<h2 id="create-a-microsoft-foundry-project">建立 Microsoft Foundry project</h2>
+
+<p>Microsoft Foundry 使用 project 來組織開發 AI 解決方案所用的 model、resource、資料及其他資產。</p>
+
+<ol>
+  <li>
+    <p>在網頁瀏覽器中，開啟 <a href="https://ai.azure.com">Microsoft Foundry portal</a> ，網址為 <code>https://ai.azure.com</code> 以開始建置；請使用 Azure 認證登入。關閉首次登入時開啟的所有提示或快速入門窗格。</p>
+  </li>
+  <li>如果尚未啟用，請在頁面頂端的工具列啟用 <strong>New Foundry</strong> 選項。接著，如果出現提示，請建立名稱唯一的新 project；展開 <strong>Advanced options</strong> 區域，為 project 指定下列設定：
+    <ul>
+      <li><strong>Foundry resource</strong>: <em>使用 resource 的預設名稱（通常為 {project_name}-resource）</em></li>
+      <li><strong>Subscription</strong>: <em>您的 Azure 訂用帳戶</em></li>
+      <li><strong>Resource group</strong>: <em>建立或選取 resource group</em></li>
+      <li><strong>Region</strong>：選取任何可用的區域</li>
+    </ul>
+  </li>
+  <li>
+    <p>等待 project 建立完成。然後在 project 首頁上，檢視 project 詳細資料。</p>
+
+    <p>建立 Foundry project 時，也會在 Azure 中建立與 project 連結的 Foundry resource group。此 resource group 將連線至 Azure Content Understanding 服務，以及您選擇部署供 Foundry project 使用的其他 AI 服務。</p>
+  </li>
+</ol>
+
+<h2 id="create-an-azure-storage-account">建立 Azure storage account</h2>
+
+<p>您需要 Azure storage account，以儲存即將使用 Azure Content Understanding 分析的內容資產。</p>
+
+<ol>
+  <li>
+    <p>在新的瀏覽器索引標籤中，開啟 <a href="https://portal.azure.com">Azure portal</a> ，網址為 <code>https://portal.azure.com</code> ，並瀏覽至您建立 Foundry project resource 的 resource group。</p>
+
+    <p>此 resource group 應包含您的 Foundry resource 和已建立的 project。</p>
+  </li>
+  <li>在 resource group 中建立新的 <strong>Storage account</strong> resource，並使用下列設定：
+    <ul>
+      <li><strong>Subscription</strong>: <em>您的 Azure 訂用帳戶</em></li>
+      <li><strong>Resource group</strong>: <em>包含 Foundry resource 的 resource group</em></li>
+      <li><strong>Storage account name</strong>: <em>storage account 的唯一名稱</em></li>
+      <li><strong>Region</strong>: <em>與 Foundry resource 相同的區域</em></li>
+      <li><strong>Primary service</strong>：Azure Blob Storage 或 Azure Data Lake Storage Gen 2</li>
+      <li><strong>Performance</strong>：Standard</li>
+      <li><strong>Redundancy</strong>：Locally-redundant storage (LRS)</li>
+    </ul>
+  </li>
+  <li>等待 storage account 建立完成。</li>
+</ol>
+
+<h2 id="create-an-image-analyzer-in-azure-content-understanding">在 Azure Content Understanding 中建立影像 analyzer</h2>
+
+<p>既然已有 Foundry project，您便可以部署內容理解所需的 AI model。</p>
+
+<ol>
+  <li>在新的瀏覽器索引標籤中，瀏覽至 <a href="https://contentunderstanding.ai.azure.com/home">Content Understanding Studio</a> ，網址為 <code>https://contentunderstanding.ai.azure.com/home</code> ；如果出現提示，請使用 Azure 認證登入。</li>
+  <li>
+    <p>在右上角，選取 <strong>Settings</strong> 圖示，以檢視 Azure Content Understanding 的帳戶設定。</p>
+  </li>
+  <li>
+    <p>在 <strong>Setup Azure resource</strong> 頁面上，選取 <strong>Add resource</strong> 按鈕。</p>
+  </li>
+  <li>
+    <p>選取您的訂用帳戶，以及名稱與 Foundry project 相符的 Foundry resource。</p>
+  </li>
+  <li>
+    <p>勾選 <strong>Enable auto-deployment for required models if no default deployment available</strong>.</p>
+  </li>
+  <li>
+    <p>選取 <strong>Next</strong>，接著選取 <strong>Save</strong> 以部署必要的 model。</p>
+
+    <p>部署程序可能需要數分鐘。model 部署完成後，resource 將顯示於 <strong>Connected Azure AI Foundry Resources</strong>下方。記下 resource 名稱。</p>
+  </li>
+  <li>在功能表列上，選取 <strong>Build</strong>。接著使用 <strong>Create</strong> 按鈕，依下列設定建立新的 Content Understanding project。
+    <ul>
+      <li><strong>Project name</strong>: <em>影像分析 project 的唯一名稱</em></li>
+      <li><strong>Description</strong>：Image analysis project</li>
+      <li><strong>Type of project</strong>：Extract content and field with custom schema</li>
+      <li><strong>Advanced settings</strong>：確認已選取 Foundry resource 和 storage account、將建立新的 container，且已選取 gpt-5.2 等 chat completion model。</li>
+    </ul>
+  </li>
+  <li>
+    <p>project 建立完成後，在新的瀏覽器索引標籤中，下載 <a href="https://microsoftlearning.github.io/mslearn-ai-vision/Labfiles/content-understanding/lion.jpg">lion.jpg</a> 影像，來源為 <code>https://microsoftlearning.github.io/mslearn-ai-vision/Labfiles/content-understanding/lion.jpg</code> ，並將其儲存於本機資料夾。</p>
+
+    <p>接著返回 Content Understanding project，並上傳 <strong>lion.jpg</strong> 檔案至 project。</p>
+  </li>
+</ol>
+
+<p>1. 出現選擇範本的提示時，選取 <strong>Image Analysis</strong> ，並確認 schema 設為 <strong>Start from Scratch</strong>。接著儲存 project。</p>
+
+<ol>
+  <li>
+    <p>影像上傳完成後，在 <strong>Schema</strong> 窗格中，使用 <strong>Add new field</strong> 將下列欄位加入 schema：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Field Name</th>
+          <th>Field Descriptopn</th>
+          <th>Value type</th>
+          <th>Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Description</code></td>
+          <td><code>Image description</code></td>
+          <td>String</td>
+          <td>Generate</td>
+        </tr>
+        <tr>
+          <td><code>Tags</code></td>
+          <td><code>Image tags</code></td>
+          <td>List of Strings</td>
+          <td>Generate</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>儲存 schema 的變更。</li>
+  <li>選取 <strong>Run analysis</strong> 以針對影像執行 analyzer，並檢閱產生的欄位；這些欄位應包含準確的描述，以及與影像相關的標籤集合。</li>
+  <li>
+    <p>確認 analyzer 傳回的欄位值準確且符合需求後，使用 <strong>Build analyzer</strong> 按鈕，發佈具有唯一名稱和適當描述的 analyzer。</p>
+
+    <blockquote>
+      <p><strong>提示</strong>：稍後會需要此名稱，以在應用程式程式碼中識別 analyzer。</p>
+    </blockquote>
+  </li>
+  <li>analyzer 建置完成後，前往 analyzer 清單，並確認它已列在其中。</li>
+  <li>在清單中選取 analyzer 以開啟它，然後檢視 <strong>Code Example</strong> 索引標籤，查看使用 analyzer 所需的程式碼。</li>
+  <li>
+    <p>檢閱 Python 程式碼範例，留意 <strong>main</strong> 函式中 Content Understanding resource 的 <strong>endpoint</strong> ；其格式應類似下列範例：</p>
+
+    <pre><code>https://{your_foundry_resource}.services.ai.azure.com/
+</code></pre>
+  </li>
+  <li>在程式碼範例下方，留意您可以取得 <strong>resource key</strong> 。您 <em>可以</em> 在用戶端應用程式中使用此 key，驗證連線至 endpoint 的身分；但本練習將使用 Microsoft Entra ID 驗證。</li>
+</ol>
+
+<h2 id="create-an-image-analyzer-application">建立影像 analyzer 應用程式</h2>
+
+<p>既然已建立 analyzer，接下來建立使用它分析影像的 Python 應用程式。</p>
+
+<h3 id="get-application-files-from-github">從 GitHub 取得應用程式檔案</h3>
+
+<p>開發影像分析應用程式所需的初始應用程式檔案，已提供於 GitHub repo 中。</p>
+
+<ol>
+  <li>開啟 Visual Studio Code。</li>
+  <li>
+    <p>開啟命令選擇區（<em>Ctrl+Shift+P</em>），並使用 <code>Git:clone</code> 命令將 <code>https://github.com/microsoftlearning/mslearn-ai-vision</code> repo 複製到本機資料夾（任意資料夾皆可）。然後開啟它。</p>
+
+    <p>系統可能會提示您確認是否信任作者。</p>
+  </li>
+  <li>在 Visual Studio Code 中，檢視 <strong>Extensions</strong> 窗格；如果尚未安裝，請安裝 <strong>Python</strong> 擴充功能。</li>
+  <li>
+    <p>在 <strong>Command Palette</strong>中，使用命令 <code>python:select interpreter</code>。如果您已有環境，請選取現有環境，或根據已安裝的 Python 3.1x 建立新的 <strong>Venv</strong> 環境。</p>
+
+    <blockquote>
+      <p><strong>提示</strong>：如果系統提示您安裝相依套件，可以安裝 <em>requirements.txt</em> 檔案中列出的套件，此檔案位於 <em>/labfiles/content-understanding/python</em> 資料夾；不安裝也沒關係，稍後我們會進行安裝！</p>
+    </blockquote>
+  </li>
+</ol>
+
+<h3 id="prepare-the-application-configuration">準備應用程式設定</h3>
+
+<ol>
+  <li>
+    <p>複製 repo 後，在 VS Code 中開啟資料夾（<strong>File &gt; Open Folder</strong>），並瀏覽至 <code>/labfiles/content-understanding/python</code> 資料夾。</p>
+  </li>
+  <li>
+    <p>在 VS Code 的 Explorer 窗格中，檢閱資料夾內的檔案：</p>
+
+    <ul>
+      <li><code>.env</code> —應用程式設定的組態檔。</li>
+      <li><code>analyze-image.py</code> —影像 analyzer 應用程式的 Python 程式碼檔案。</li>
+      <li><code>requirements.txt</code> —列出相依套件的檔案。</li>
+      <li><code>images</code> —包含待分析影像的資料夾。</li>
+    </ul>
+  </li>
+  <li>
+    <p>在 <strong>Explorer</strong> 窗格中的 <strong>python</strong> 資料夾內，選取 <strong>.env</strong> 檔案以開啟它。接著更新檔案，填入 resource endpoint 的  <strong>endpoint</strong> 值（從 Content Understanding Studio 中的程式碼範例複製），以及 analyzer 的名稱。</p>
+
+    <blockquote>
+      <p><strong>重要</strong>：請務必加入 <code>https://{YOUR-RESOURCE-NAME}.services.ai.azure.com</code> Foundry resource endpoint， <u>而不是</u> project endpoint 或 Azure OpenAI endpoint！</p>
+    </blockquote>
+
+    <p>儲存修改後的組態檔。</p>
+  </li>
+  <li>
+    <p>在 <strong>Explorer</strong> 窗格中，以滑鼠右鍵按一下 <strong>python</strong> 資料夾（其中包含應用程式檔案），並選取 <strong>Open in integrated terminal</strong> （或在 <strong>Terminal</strong> 功能表中開啟終端機，然後瀏覽至 <em>/labfiles/content-understanding/python</em> 資料夾）。</p>
+
+    <blockquote>
+      <p><strong>注意</strong>：在 Visual Studio Code 中開啟終端機會自動啟用 Python 環境。您可能需要在系統上啟用 script 執行。</p>
+    </blockquote>
+  </li>
+  <li>確認終端機目前位於 <strong>/labfiles/content-understanding/python</strong>* 資料夾，且帶有前綴 <strong>(.venv)</strong> ，表示您建立的 Python 環境已啟用。</li>
+  <li>
+    <p>執行下列命令以安裝必要的 Python 套件：</p>
+
+    <pre><code> pip install -r requirements.txt
+</code></pre>
+  </li>
+</ol>
+
+<h3 id="write-code-to-analyze-images-and-generate-descriptions">撰寫程式碼以分析影像並產生描述</h3>
+
+<blockquote>
+  <p><strong>提示</strong>：加入程式碼時，請務必維持正確的縮排。</p>
+</blockquote>
+
+<ol>
+  <li>
+    <p>在 VS Code 中開啟 <code>analyze-image.py</code> 檔案。</p>
+  </li>
+  <li>
+    <p>找出註解 <strong>Add references</strong> ，並加入下列程式碼以匯入必要項目：</p>
+
+    <pre><code class="language-python"># Add references
+from azure.ai.contentunderstanding import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import AnalysisInput, AnalysisResult
+from azure.core.exceptions import AzureError
+from azure.identity import DefaultAzureCredential
+</code></pre>
+  </li>
+  <li>在 <strong>main</strong> 函式中，留意已提供從環境檔案取得設定值的程式碼。</li>
+  <li>
+    <p>找出註解 <strong>Set up Content Understanding client</strong> ，並加入下列程式碼：</p>
+
+    <pre><code class="language-python"># Set up Content Understanding client
+credential = DefaultAzureCredential()
+client = ContentUnderstandingClient(
+     endpoint=endpoint,
+     credential=credential,
+     api_version=api_version)
+</code></pre>
+  </li>
+  <li>留意已提供讓使用者輸入檔案編號或結束程式的程式碼。</li>
+  <li>
+    <p>找出註解 <strong>Analyze the file</strong> ，並加入下列程式碼：</p>
+
+    <pre><code class="language-python"># Analyze the file
+try:
+     poller = client.begin_analyze(
+         analyzer_id=analyzer_id,
+         inputs=[AnalysisInput(data=file_bytes)],
+     )
+     result: AnalysisResult = poller.result()
+except AzureError as err:
+     print(f"[Azure Error]: {err.message}")
+     sys.exit(1)
+except Exception as ex:
+     print(f"[Unexpected Error]: {ex}")
+     sys.exit(1)
+
+for field in result.contents[0].fields:
+     if field == "Description":
+         print(f"{field}:\n{result.contents[0].fields[field].value_string}\n")
+     elif field == "Tags":
+         print(f"{field}:")
+         for tag in result.contents[0].fields[field].value_array:
+             print("  -", tag.value_string)
+</code></pre>
+
+    <p>此程式碼會將選取的檔案資料提交至 analyzer、輪詢結果，然後顯示傳回的 <em>Description</em> 和 <em>Tags</em> 值。</p>
+  </li>
+  <li>儲存檔案（<strong>Ctrl+S</strong>).</li>
+</ol>
+
+<h3 id="test-the-app">測試應用程式</h3>
+
+<ol>
+  <li>
+    <p>在終端機窗格中，使用下列命令登入 Azure。</p>
+
+    <pre><code class="language-powershell"> az login
+</code></pre>
+
+    <blockquote>
+      <p><strong>注意</strong>：在大多數情況下，只要使用 <em>az login</em> 即可。不過，如果您的訂用帳戶分布於多個 tenant，可能需要使用 <em>–tenant</em> 參數指定 tenant。詳情請參閱 <a href="https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively">使用 Azure CLI 以互動方式登入 Azure</a> 。</p>
+    </blockquote>
+  </li>
+  <li>出現提示時，請依照指示登入 Azure。接著在命令列中完成登入程序，檢視（並視需要確認）包含 Foundry resource 的訂用帳戶詳細資料。</li>
+  <li>
+    <p>登入後，輸入下列命令以執行應用程式：</p>
+
+    <pre><code> python analyze-image.py
+</code></pre>
+  </li>
+  <li>
+    <p>出現提示時，輸入對應下列其中一張影像的編號：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th><img src="https://microsoftlearning.github.io/mslearn-ai-vision/Labfiles/content-understanding/python/images/image1.jpg" alt="一隻長頸鹿。" /></th>
+          <th><img src="https://microsoftlearning.github.io/mslearn-ai-vision/Labfiles/content-understanding/python/images/image2.jpg" alt="一隻大象。" /></th>
+          <th><img src="https://microsoftlearning.github.io/mslearn-ai-vision/Labfiles/content-understanding/python/images/image3.jpg" alt="一隻獅子。" /></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>2</td>
+          <td>3</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>觀察輸出，其中應包含選取影像的描述，以及適當的標籤集合。</li>
+  <li>完成後，輸入 1、2、3 以外的任意值以結束。</li>
+</ol>
+
+<h2 id="summary">摘要</h2>
+
+<p>在本練習中，您建立了 Foundry resource，並部署內容理解所需的 model。您探索了 Content Understanding Studio 中預先建置的影像 analyzer，接著建立 Python 應用程式，將影像傳送至 analyzer 並擷取生成的描述。做得很好！</p>
+
+<h2 id="clean-up">清理</h2>
+
+<p>完成 Foundry 內容理解的探索後，請刪除已建立的 resource，以避免產生不必要的 Azure 費用。</p>
+
+<ul>
+  <li>瀏覽至 <a href="https://portal.azure.com">Azure portal</a> ，網址為 <code>https://portal.azure.com</code>.</li>
+  <li>在 Azure portal 的 <strong>Home</strong> 頁面上，選取 <strong>Resource groups</strong>.</li>
+  <li>選取您為本練習建立的 resource group。</li>
+  <li>在 resource group 的 <strong>Overview</strong> 頁面頂端，選取 <strong>Delete resource group</strong>.</li>
+  <li>輸入 resource group 名稱以確認要將其刪除，並選取 <strong>Delete</strong>.</li>
+</ul>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">消費者健康資料隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">使用條款 </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">商標 </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-vision" target="_blank" class="ml-2">
+                    原始碼
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://microsoftlearning.github.io/mslearn-ai-vision/assets/js/script.js?v=5d8e9d8a2ce43b41d9a987a6baf78dcab4fbca6d"></script>
+</body>
+
+
+</html>

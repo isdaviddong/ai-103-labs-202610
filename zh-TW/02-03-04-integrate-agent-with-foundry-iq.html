@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <title>
+        將 AI agent 與 Foundry IQ 整合 |
+        
+        在 Azure 中開發 AI agent
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="https://microsoftlearning.github.io/mslearn-ai-agents/assets/css/style.css?v=009131ab4938c06ec5f7b860c15a1164a8ed7d3e">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">在 Azure 中開發 AI agent</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-agents" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;首頁
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-agents">
+                Develop AI Agents in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-agents" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="integrate-an-ai-agent-with-foundry-iq">將 AI agent 與 Foundry IQ 整合</h1>
+
+<p>在本練習中，您將使用 Microsoft Foundry portal 建立與 Foundry IQ 整合的 agent，以從 knowledge base 搜尋並擷取資訊。您將建立 search resource、使用範例資料設定 knowledge base、在 portal 中建置 agent，然後從 Visual Studio Code 連線至 agent，以程式方式與它互動。</p>
+
+<blockquote>
+  <p><strong>提示</strong>：本練習使用的程式碼以 Microsoft Foundry SDK for Python 為基礎。您也可以使用 Microsoft .NET、JavaScript 和 Java 的 SDK 開發類似的解決方案。請參閱 <a href="https://learn.microsoft.com/azure/ai-foundry/how-to/develop/sdk-overview">Microsoft Foundry SDK client libraries</a> 以取得詳細資訊。</p>
+</blockquote>
+
+<p>本練習大約需要 <strong>45</strong> 分鐘才能完成。</p>
+
+<blockquote>
+  <p><strong>注意</strong>：本練習使用的部分技術仍處於預覽階段或積極開發中。您可能會遇到非預期的行為、警告或錯誤。</p>
+</blockquote>
+
+<h2 id="prerequisites">必要條件</h2>
+
+<p>開始本練習之前，請確認您已具備以下條件：</p>
+
+<ul>
+  <li>具有 <a href="https://azure.microsoft.com/free/">Azure subscription</a> ，且有權限建立 AI 資源</li>
+  <li><a href="https://code.visualstudio.com/">Visual Studio Code</a> 已安裝於本機</li>
+  <li><a href="https://www.python.org/downloads/">Python 3.13</a> 已安裝</li>
+  <li><a href="https://git-scm.com/downloads">Git</a> 已安裝於本機</li>
+  <li>基本熟悉 Microsoft Foundry portal 與 Python 程式設計</li>
+</ul>
+
+<blockquote>
+  <p>* 目前尚不支援 Python 3.14：部分相依套件沒有 3.14 的版本。本實驗已使用 Python 3.13.12 測試。</p>
+</blockquote>
+
+<h2 id="create-a-foundry-project">建立 Foundry project</h2>
+
+<p>首先，使用新的 Foundry 體驗建立 Foundry project。</p>
+
+<ol>
+  <li>
+    <p>在網頁瀏覽器中開啟 <a href="https://ai.azure.com">Foundry portal</a> ，網址為 <code>https://ai.azure.com</code> ，並使用您的 Azure 認證登入。關閉首次登入時開啟的任何提示或快速入門窗格。</p>
+
+    <blockquote>
+      <p><strong>重要</strong>：請確認 <strong>New Foundry</strong> 切換開關已設為 <em>On</em> ，以便在本實驗中使用更新後的使用者介面。</p>
+    </blockquote>
+  </li>
+  <li>切換至 <strong>New Foundry</strong>後，系統會要求您選取 project。在下拉式清單中選取 <strong>Create a new project</strong>.</li>
+  <li>在 <strong>Create a project</strong> 對話方塊中，輸入有效的 project 名稱（例如 <em>agent-iq-lab</em>).</li>
+  <li>確認或設定 project 的下列選項：
+    <ul>
+      <li><strong>Foundry resource</strong>: <em>建立新的 Foundry resource，或選取現有的 resource</em></li>
+      <li><strong>Subscription</strong>: <em>您的 Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>建立或選取 resource group</em></li>
+      <li><strong>Location</strong>: <em>選取任何可用的 region</em>*</li>
+    </ul>
+
+    <blockquote>
+      <p>* 部分 Azure AI 資源受限於區域性的 model quota。如果在本練習後續步驟中超出 quota 上限，您可能需要在不同的 region 中建立另一個 resource。</p>
+    </blockquote>
+  </li>
+  <li>選取 <strong>Create</strong> 並等待 project 建立完成。這可能需要幾分鐘。</li>
+  <li>project 建立完成後，您會看到 project 首頁。</li>
+</ol>
+
+<h2 id="create-an-agent">建立 agent</h2>
+
+<ol>
+  <li>在首頁上選取 <strong>Build</strong> 索引標籤，然後在 <strong>Agents</strong> 索引標籤上選取 <strong>Create agent</strong>.</li>
+  <li>使用具描述性的名稱建立 agent，例如 <code>product-expert-agent</code>.</li>
+</ol>
+
+<p>建立 agent 時，系統會部署預設 model（例如 <code>gpt-5</code>）。agent 建立完成後，您會看到 agent playground，且系統已自動為您選取該預設 model。</p>
+
+<h2 id="configure-your-data-and-foundry-iq">設定您的資料與 Foundry IQ</h2>
+
+<p>現在，您將設定使用 Foundry IQ 搜尋 knowledge base 的 agent。</p>
+
+<ol>
+  <li>
+    <p>首先，為 agent 提供下列指示：</p>
+
+    <pre><code>You are a helpful AI assistant for Contoso, specializing in outdoor camping and hiking products. 
+You must ALWAYS search the knowledge base to answer questions about our products or product 
+catalog. Provide detailed, accurate information and always cite your sources.
+If you don't find relevant information in the knowledge base, say so clearly.
+</code></pre>
+  </li>
+  <li>選取 <strong>Save</strong> 以儲存目前的 agent 設定。</li>
+  <li>接著，在 <strong>Knowledge</strong> 區段中，展開 <strong>Add</strong> 下拉式清單，並選取 <strong>Connect to Foundry IQ</strong>.</li>
+  <li>在 Connect to Foundry IQ 視窗中選取 <strong>Connect to an AI Search resource</strong> ，然後選取 <strong>Create new resource</strong> ，這應會開啟建立 resource 的對話方塊。</li>
+  <li>使用下列預設設定建立 search resource：
+    <ul>
+      <li><strong>Resource name</strong>: <em>全域唯一的名稱</em></li>
+      <li><strong>Subscription</strong>: <em>您的 Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>使用與 project 相同的 resource group</em></li>
+      <li><strong>Region</strong>: <em>與 project 相同的位置</em></li>
+      <li><strong>Pricing tier</strong>：Free <em>（若可用；否則選擇 Basic）</em></li>
+    </ul>
+
+    <blockquote>
+      <p><strong>重要</strong>：如果您在此處建立 resource 時遇到任何問題，或看到警告訊息 <strong>This region is at capacity</strong>，請選取表單底部的連結，改從 Azure portal 建立。</p>
+    </blockquote>
+  </li>
+</ol>
+
+<p>現在，您將上傳產品資訊的範例文件，供 Foundry IQ 連線使用。</p>
+
+<ol>
+  <li>開啟新的瀏覽器索引標籤，並瀏覽至以下網址，下載產品資訊範例檔案： <code>https://github.com/MicrosoftLearning/mslearn-ai-agents/raw/main/Labfiles/04-integrate-agent-with-foundry-iq/data/contoso-products.zip</code></li>
+  <li>解壓縮 zip 檔案，應會得到 3 份 PDF，詳細說明 Contoso 的產品。</li>
+  <li>開啟新的索引標籤，並瀏覽至 Azure portal，網址為 <code>https://portal.azure.com</code>。在頂端搜尋列中搜尋 <strong>Storage accounts</strong> ，並選取 <strong>Storage accounts</strong> （位於服務區段）。</li>
+  <li>使用下列設定建立 storage account：
+    <ul>
+      <li><strong>Subscription</strong>: <em>您的 Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>使用與 project 相同的 resource group</em></li>
+      <li><strong>Storage account name</strong>: <em>唯一的 storage account 名稱</em></li>
+      <li><strong>Region</strong>: <em>與 project 相同的位置</em></li>
+      <li><strong>Primary service</strong>: <em>Azure Blob Storage or Azure Data Lake Storage</em></li>
+      <li><strong>Performance</strong>: <em>Standard</em></li>
+      <li><strong>Redundancy</strong>: <em>Locally-redundant storage (LRS)</em></li>
+    </ul>
+  </li>
+  <li>建立完成後，移至您建立的 storage account，並選取 <strong>Upload</strong> （位於頂端列）。</li>
+  <li>在 <strong>Upload blob</strong> 刀鋒視窗中，建立新的 container，名稱為 <code>contosoproducts</code>.</li>
+  <li>瀏覽至從 zip 檔案解壓縮出的檔案，選取全部 3 份 PDF 檔案，然後選取 <strong>Upload</strong>.</li>
+  <li>檔案上傳完成後，瀏覽至您建立的 search service。</li>
+  <li>在左側窗格中，於 <strong>Security + networking</strong> &gt; <strong>Keys</strong>下，選取 <strong>Both</strong> 作為 API Access control 的設定，並確認選取。完成後，讓 Azure Portal 索引標籤保持開啟，返回 Foundry portal 索引標籤並重新整理頁面。</li>
+  <li>確認您位於 <strong>Knowledge</strong> 頁面，選取 <strong>Create a knowledge base</strong>，選擇 <strong>Azure Blob Storage</strong> 作為 knowledge source，然後選取 <strong>Connect</strong>.</li>
+  <li>使用下列設定來設定 knowledge source：
+    <ul>
+      <li><strong>Name</strong>: <code>ks-contosoproducts</code></li>
+      <li><strong>Description</strong>: <code>Contoso product catalog items</code></li>
+      <li><strong>Storage account name</strong>: <em>選取您的 storage account</em></li>
+      <li><strong>Container name</strong>: <code>contosoproducts</code></li>
+      <li><strong>Authentication type</strong>: <em>API Key</em></li>
+      <li><strong>Content extraction mode</strong>: <em>minimal</em></li>
+      <li><strong>Embedding model</strong>: <em>選取可用的已部署 model，可能是 text-embedding-3-small</em></li>
+      <li><strong>Chat completions model</strong>: <em>選取可用的已部署 model，可能是 gpt-5</em></li>
+    </ul>
+  </li>
+  <li>選取 <strong>Create</strong>.</li>
+  <li>在 knowledge base 建立頁面上，選取 <code>gpt-5</code> model（位於 <strong>Chat completions model</strong> 下拉式清單），其他欄位保留預設值。</li>
+  <li>選取 <strong>Save knowledge base</strong>，然後重新整理瀏覽器，確認 knowledge source 狀態為 <em>active</em>。如果尚未變成此狀態，請稍等一分鐘，再重新整理頁面，直到狀態變更。</li>
+  <li>選取返回按鈕以返回 <strong>Knowledge</strong> 頁面，然後選取 <strong>Manage</strong> 連結（位於 <em>Connection</em> 下拉式清單旁）。</li>
+  <li>向下捲動至 <strong>Connected resources</strong>，您應該會在此看到 search service。選取該列，找到 <strong>Authentication</strong> 區段。</li>
+  <li>選取 <strong>Key authentication</strong> ，然後選取 <strong>Edit authentication</strong>.</li>
+  <li>讓對話方塊保持開啟，返回 Azure portal 索引標籤，此時應仍停留在 search service 的 <strong>Keys</strong> 頁面。將其中一個 key 複製到 Foundry 中的對話方塊，然後選取 <strong>Save</strong>.</li>
+</ol>
+
+<p>您的 Foundry IQ 設定現在應已完成。</p>
+
+<h2 id="test-the-agent-in-the-playground">在 playground 中測試 agent</h2>
+
+<p>從程式碼連線之前，請先在 portal playground 中測試 agent。</p>
+
+<ol>
+  <li>返回 <strong>Build</strong> &gt; <strong>Agents</strong> 頁面，並選取您建立的 agent。</li>
+  <li>在 agent 頁面中，您應該會看到已選取的 playground 索引標籤。找到 knowledge 區段並新增 Foundry IQ，選取您建立的 connection 和 knowledge base。</li>
+  <li>嘗試下列測試查詢，確認 agent 能從 knowledge base 擷取資訊：
+    <ul>
+      <li><code>What types of tents does Contoso offer?</code></li>
+      <li><code>Tell me about which backpacks are available in XL.</code></li>
+      <li><code>What camping accessories are available?</code></li>
+    </ul>
+  </li>
+  <li>檢閱回應，並注意：
+    <ul>
+      <li>agent 會提供來自 knowledge base 的具體資訊</li>
+      <li>回應可能包含來源文件的引文或參考資料</li>
+      <li>agent 會持續專注於產品資訊</li>
+    </ul>
+  </li>
+  <li>
+    <p>您也可以嘗試在 <strong>Preview agent</strong> 中與 agent 互動，以獲得更精緻的 webapp 體驗。</p>
+  </li>
+  <li>在 agent 詳細資訊頁面中，找到下列資訊並複製至記事本（稍後您將需要這些資訊）：
+    <ul>
+      <li><strong>Agent name</strong>：這是您建立時使用的名稱（<code>product-expert-agent</code>)</li>
+      <li><strong>Project endpoint</strong>：可在 project 設定或首頁中找到</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="configure-the-agent-to-require-approval-for-tool-calls">設定 agent，要求工具呼叫必須經過核准</h3>
+
+<p>當您在 portal 中建立 agent 時，其 Foundry IQ（knowledge）工具預設會 <strong>不經</strong> 核准就執行。為了確保應用程式能檢閱並控制每一次 knowledge base 查詢，您將使用 Foundry Toolkit for VS Code 擴充功能，將 agent 改為在使用工具前要求核准。</p>
+
+<blockquote>
+  <p><strong>注意</strong>：Foundry portal 目前未提供變更此核准行為的設定，因此您將改從 Foundry Toolkit 擴充功能進行設定。</p>
+</blockquote>
+
+<ol>
+  <li>
+    <p>在 Visual Studio Code 中選取 <strong>Extensions</strong> （位於左側窗格），或按下 <strong>Ctrl+Shift+X</strong>，然後在市集中搜尋 Microsoft 提供的 <code>Foundry Toolkit for VS Code</code> 擴充功能，並選取 <strong>Install</strong> （如果尚未安裝）。</p>
+
+    <blockquote>
+      <p><strong>注意</strong>：此擴充功能目前列出的名稱為 <strong>Foundry Toolkit</strong>，但部分 VS Code 標籤、命令或較舊的螢幕擷取畫面可能仍使用 <strong>AI Toolkit</strong>這個名稱。在本實驗中，請將這些名稱視為同一個擴充功能體驗。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>選取 <strong>Foundry Toolkit</strong> 圖示（位於側邊欄），若系統提示，請登入 Azure 帳戶。</p>
+
+    <blockquote>
+      <p><strong>注意</strong>：如果無法透過 Foundry Toolkit 擴充功能登入，您可能需要選取 Azure 擴充功能。在該處登入後，再返回 Foundry Toolkit 以存取您的資源。</p>
+    </blockquote>
+  </li>
+  <li>在 <strong>Microsoft Foundry Resources</strong>下，選擇 <strong>Set Foundry Project</strong> 並選取您先前建立的 project。</li>
+  <li>選取 <strong>Agents</strong> 區段。在開啟頁面上的 <strong>Prompt Agents</strong> 索引標籤下，選取您的 <code>product-expert-agent</code> agent，以開啟 <strong>Agent Builder</strong> 視窗。</li>
+  <li>
+    <p>在 <strong>Tools</strong> 區段中，您應該已能看到一個工具，其名稱由 <code>kb-knowledgebase</code> 前綴加上唯一 ID 組成（例如 <code>kb-knowledgebase677-7w5fj</code>）。這就是 Foundry IQ knowledge base 工具；當您在 portal 中連線至 Foundry IQ 時，系統會自動新增此工具。</p>
+
+    <blockquote>
+      <p><strong>注意</strong>：agent 會列出不只一個工具。Foundry portal 預設會為新 agent 新增 <strong>Web search</strong> 工具，您也可能看到獨立的 <strong>Azure AI Search</strong> 工具。當 agent 搜尋您的 knowledge base 時，實際呼叫的是 <code>kb-knowledgebase...</code> 工具，因此在其他工具上設定核准不會產生作用。</p>
+    </blockquote>
+  </li>
+  <li>選取省略號（<strong>…</strong>）圖示（位於 <code>kb-knowledgebase...</code> 工具上），然後選取 <strong>Configure</strong> 並選取 <strong>Never auto-approve tools</strong>，儲存變更後，在 playground 面板頂端選取 <strong>Deploy</strong> 以儲存您的變更。</li>
+</ol>
+
+<p>現在，agent 每次使用 Foundry IQ 搜尋 knowledge base 時都會要求核准，接下來您將完成的 client 應用程式會處理這些要求。</p>
+
+<h2 id="connect-to-your-agent-from-an-app">從應用程式連線至 agent</h2>
+
+<p>現在，您將建立 Python 應用程式，以程式方式與 agent 互動。GitHub repository 中已提供起始檔案，協助您快速開始。</p>
+
+<h3 id="prepare-to-develop-an-app-in-visual-studio-code">準備在 Visual Studio Code 中開發應用程式</h3>
+
+<p>現在，使用 Visual Studio Code 開發應用程式。應用程式的程式碼檔案已提供於 GitHub repo 中。</p>
+
+<ol>
+  <li>啟動 Visual Studio Code，並開啟 command palette（Shift+Ctrl+P）。接著搜尋並執行 <strong>Git: Clone</strong> 命令，將 <code>https://github.com/MicrosoftLearning/mslearn-ai-agents</code> repo 複製至本機資料夾（可選擇任何資料夾）。</li>
+  <li>
+    <p>repository 複製完成後，在 Visual Studio Code 中開啟該資料夾。</p>
+
+    <blockquote>
+      <p><strong>注意</strong>：如果 Visual Studio Code 顯示快顯訊息，要求您信任正在開啟的程式碼，請按一下 <strong>Yes, I trust the authors</strong> 選項以繼續。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>若系統提示，請等待支援 repo 中 Python 程式碼 project 的其他檔案安裝完成。</p>
+
+    <blockquote>
+      <p><strong>注意</strong>：如果系統提示您安裝建置與偵錯所需的資產，請選取 <strong>Not Now</strong>.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>在 <strong>Explorer</strong> 窗格中，展開 <strong>Labfiles/04-integrate-agent-with-foundry-iq/Python</strong> 資料夾。</p>
+
+    <p>提供的檔案包含應用程式程式碼、組態設定，以及 agent client 的起始程式碼。</p>
+  </li>
+</ol>
+
+<h3 id="configure-the-application-settings">設定應用程式選項</h3>
+
+<ol>
+  <li>在 Visual Studio Code 中，於 <strong>Labfiles/04-integrate-agent-with-foundry-iq/Python</strong> 資料夾中開啟 <strong>.env</strong> 組態檔案。</li>
+  <li>在程式碼檔案中，將 <strong>your_project_endpoint</strong> 預留位置替換為您 project 的 endpoint（從 Foundry portal 中 project 的 <strong>Home</strong> 頁面複製），並確認 AGENT_NAME 變數已設為您的 agent 名稱（應為 <em>product-expert-agent</em>).</li>
+  <li>替換預留位置後，儲存檔案。</li>
+</ol>
+
+<h3 id="complete-the-agent-client-code">完成 agent client 程式碼</h3>
+
+<blockquote>
+  <p><strong>提示</strong>：新增程式碼時，請務必保持正確的縮排。請以註解的縮排層級作為參考。</p>
+</blockquote>
+
+<ol>
+  <li>在 Visual Studio Code 中，於 <strong>Labfiles/04-integrate-agent-with-foundry-iq/Python</strong> 資料夾中開啟 <strong>agent_client.py</strong> 程式碼檔案。</li>
+  <li>檢閱已提供的起始程式碼，包括：
+    <ul>
+      <li>import 陳述式與組態載入</li>
+      <li>以下的 <code>send_message_to_agent()</code> 函式結構</li>
+      <li>以下的 <code>display_conversation_history()</code> 函式</li>
+      <li>主程式迴圈</li>
+    </ul>
+  </li>
+  <li>
+    <p>找到第一個 <strong>TODO</strong> 註解，並新增下列程式碼，以連線至 project、取得 OpenAI client、擷取 agent，並建立新的 conversation：</p>
+
+    <blockquote>
+      <p><strong>提示</strong>：請注意維持正確的縮排層級。</p>
+    </blockquote>
+
+    <pre><code class="language-python"># Connect to the project and agent
+credential = DefaultAzureCredential(
+    exclude_environment_credential=True,
+    exclude_managed_identity_credential=True
+)
+project_client = AIProjectClient(
+    credential=credential,
+    endpoint=project_endpoint
+)
+
+# Get the OpenAI client
+openai_client = project_client.get_openai_client()
+
+# Get the agent
+agent = project_client.agents.get(agent_name=agent_name)
+print(f"Connected to agent: {agent.name} (id: {agent.id})\n")
+
+# Create a new conversation
+conversation = openai_client.conversations.create(items=[])
+print(f"Created conversation (id: {conversation.id})\n")
+</code></pre>
+  </li>
+  <li>
+    <p>找到第二個 <strong>TODO</strong> 註解（位於 <code>send_message_to_agent()</code> 函式內），並新增下列程式碼，以傳送訊息及處理回應，包括 MCP 核准要求：</p>
+
+    <pre><code class="language-python"># Add user message to the conversation
+openai_client.conversations.items.create(
+    conversation_id=conversation.id,
+    items=[{"type": "message", "role": "user", "content": user_message}],
+)
+
+# Store in conversation history (client-side)
+conversation_history.append({
+    "role": "user",
+    "content": user_message
+})
+
+# Create a response using the agent
+response = openai_client.responses.create(
+    conversation=conversation.id,
+    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+    input=""
+)
+
+# Loop until a response has no pending approval requests (zero, one, or many)
+while True:
+    approval_requests = [
+        item for item in (getattr(response, "output", None) or [])
+        if getattr(item, "type", None) == "mcp_approval_request"
+    ]
+
+    if not approval_requests:
+        break
+
+    approval_items = []
+    for approval_request in approval_requests:
+        print(f"[Approval required for: {approval_request.name}]\n")
+        print(f"Server: {approval_request.server_label}")
+
+        # Show the tool call arguments for transparency
+        import json
+        try:
+            args = json.loads(approval_request.arguments)
+            print(f"Arguments: {json.dumps(args, indent=2)}\n")
+        except Exception:
+            print(f"Arguments: {approval_request.arguments}\n")
+
+        approval_input = input("Approve this action? (yes/no): ").strip().lower()
+        approved = approval_input in ['yes', 'y']
+        print("Approving action...\n" if approved else "Action denied.\n")
+
+        approval_items.append({
+            "type": "mcp_approval_response",
+            "approval_request_id": approval_request.id,
+            "approve": approved
+        })
+
+    # Send the approval decisions and fetch the next response
+    openai_client.conversations.items.create(
+        conversation_id=conversation.id,
+        items=approval_items
+    )
+
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+        input=""
+    )
+
+</code></pre>
+
+    <blockquote>
+      <p><strong>注意</strong>：agent 不一定每次都要求核准，有時也可能在同一輪對話中要求核准多個工具呼叫。持續執行迴圈，直到 <code>approval_requests</code> 為空，就能正確處理這兩種情況。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>新增程式碼後，儲存檔案。</p>
+  </li>
+  <li>檢閱目前使用 conversations API 管理與 agent 互動的程式碼，其中：
+    <ul>
+      <li>conversation 會被建立，並透過其 ID 追蹤</li>
+      <li>使用者訊息會透過以下方式新增至 conversation： <code>conversations.items.create()</code></li>
+      <li>回應會透過以下方式產生： <code>responses.create()</code> ，並附帶 agent 參考</li>
+      <li><strong>MCP 核准處理</strong>：當 agent 需要存取 Foundry IQ 時，會要求核准，並在回應輸出中傳回一個或多個 <code>mcp_approval_request</code> 項目</li>
+      <li>程式碼會持續執行迴圈，提示您核准或拒絕每個待處理的要求，直到 agent 傳回沒有未完成核准要求的回應（也涵蓋從未需要核准的情況）</li>
+      <li>每次核准／拒絕後，都會將一個 <code>mcp_approval_response</code> 新增至 conversation，並產生新的回應</li>
+      <li>agent 會根據您的核准決定，從 Foundry IQ 擷取資訊</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="test-the-integration">測試整合</h2>
+
+<p>現在，您將執行應用程式，並測試 agent 從 knowledge base 擷取資訊的能力。</p>
+
+<ol>
+  <li>在 Visual Studio Code 中，為 <strong>Labfiles/04-integrate-agent-with-foundry-iq/Python</strong> 資料夾開啟整合式終端機：在資料夾上按一下滑鼠右鍵，然後選取 <strong>Open in Integrated Terminal</strong>.</li>
+  <li>
+    <p>首先，建立 virtual environment 並安裝相依套件。</p>
+
+    <pre><code>python -m venv labenv
+./labenv/Scripts/activate
+pip install -r requirements.txt
+</code></pre>
+  </li>
+  <li>
+    <p>在終端機窗格中輸入下列命令，以登入 Azure。</p>
+
+    <pre><code>az login
+</code></pre>
+
+    <blockquote>
+      <p><strong>注意</strong>：在大多數情況下，僅使用 <em>az login</em> 就足夠了。不過，如果您在多個 tenant 中擁有 subscription，可能需要使用 <em>–tenant</em> 參數指定 tenant。請參閱 <a href="https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively">使用 Azure CLI 以互動方式登入 Azure</a> 以取得詳細資訊。</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>系統提示時，請依照指示在新索引標籤中開啟登入頁面，並輸入提供的驗證碼與您的 Azure 認證。接著在命令列完成登入程序；若系統提示，請選取包含 Foundry resource 的 subscription。</p>
+  </li>
+  <li>
+    <p>在終端機窗格中執行應用程式：</p>
+
+    <pre><code>python agent_client.py
+</code></pre>
+  </li>
+  <li>
+    <p>應用程式啟動後，使用下列查詢測試 agent：</p>
+
+    <p><strong>查詢 1－產品類別：</strong></p>
+
+    <pre><code>What types of outdoor products does Contoso offer?
+</code></pre>
+
+    <p>系統提示核准時，輸入 <strong>yes</strong> 以允許 agent 搜尋 knowledge base。觀察 agent 如何從 knowledge base 中的多份文件擷取資訊。</p>
+
+    <p><strong>查詢 2－特定產品詳細資訊：</strong></p>
+
+    <pre><code>Tell me about the weatherproof features of your tents.
+</code></pre>
+
+    <p>核准要求，並注意 agent 如何從帳篷目錄提供具體詳細資訊。</p>
+
+    <p><strong>查詢 3－產品比較：</strong></p>
+
+    <pre><code>What's the difference between your daypacks and expedition backpacks?
+</code></pre>
+
+    <p>核准要求，並觀察 agent 如何綜合背包指南中的資訊。</p>
+
+    <p><strong>查詢 4－配件與加購品：</strong></p>
+
+    <pre><code>What camping accessories would you recommend for a weekend hiking trip?
+</code></pre>
+
+    <p>核准要求，並觀察 agent 根據 knowledge base 提供建議的能力。</p>
+
+    <p><strong>查詢 5－後續問題：</strong></p>
+
+    <pre><code>How much do those items typically cost?
+</code></pre>
+
+    <p>請注意 agent 如何保留先前查詢的對話 context。</p>
+  </li>
+  <li>
+    <p>輸入 <code>history</code> 以檢視完整的對話記錄。</p>
+  </li>
+  <li>輸入 <code>quit</code> 以結束測試。</li>
+</ol>
+
+<h3 id="review-the-results">檢閱結果</h3>
+
+<p>請考量 agent 回應的下列面向：</p>
+
+<ul>
+  <li><strong>MCP 核准流程</strong>：agent 每次需要存取 knowledge base 時，都會要求核准，讓您能控制外部工具的使用</li>
+  <li><strong>正確性</strong>：agent 會直接提供來自 knowledge base 文件的資訊</li>
+  <li><strong>引文</strong>：agent 可能包含來源參考或文件 ID</li>
+  <li><strong>context 感知能力</strong>：agent 會記住對話中先前的訊息</li>
+  <li><strong>Grounding</strong>：當 agent 無法在 knowledge base 中找到相關資訊時，會明確指出</li>
+  <li><strong>錯誤處理</strong>：應用程式能妥善處理錯誤與連線問題</li>
+</ul>
+
+<h2 id="summary">摘要</h2>
+
+<p>在本練習中，您已：</p>
+
+<ul>
+  <li>使用新的 Foundry UI 建立 Foundry project 和 agent</li>
+  <li>使用產品資訊文件建置 knowledge base</li>
+  <li>在 portal 中設定啟用 Foundry IQ 的 agent</li>
+  <li>使用 Python SDK，從 Visual Studio Code 連線至 agent</li>
+  <li>實作具備 MCP 核准處理、對話記錄和錯誤處理功能的 client 應用程式</li>
+  <li>測試 agent 從 knowledge base 擷取並綜合資訊的能力，並由使用者控制外部工具存取的核准</li>
+</ul>
+
+<p>這示範了如何將 AI agent 與 Foundry IQ 整合，建立能從企業 knowledge base 搜尋並擷取資訊，同時保留對話 context 的智慧應用程式。</p>
+
+<h2 id="clean-up">清理</h2>
+
+<p>如果您已完成探索 Azure AI Agent Service 和 Foundry IQ，請刪除本練習中建立的資源，以避免產生不必要的 Azure 費用。</p>
+
+<ol>
+  <li>在網頁瀏覽器中開啟 <a href="https://portal.azure.com">Azure portal</a> ，網址為 <code>https://portal.azure.com</code>.</li>
+  <li>瀏覽至包含 Foundry resource 和 AI Search 資源的 resource group。</li>
+  <li>在工具列上選取 <strong>Delete resource group</strong>.</li>
+  <li>輸入 resource group 名稱，並確認要刪除它。</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">消費者健康隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">使用條款 </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">商標 </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-agents" target="_blank" class="ml-2">
+                    原始碼
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://microsoftlearning.github.io/mslearn-ai-agents/assets/js/script.js?v=009131ab4938c06ec5f7b860c15a1164a8ed7d3e"></script>
+</body>
+
+
+</html>

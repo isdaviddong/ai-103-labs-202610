@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>
+        Develop a Voice Live agent |
+        
+        Develop AI Language and Speech solutions on Azure
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="/mslearn-ai-language/assets/css/style.css?v=cea9917802480634f7e437d83201e30f3431ad2a">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">Develop AI Language and Speech solutions on Azure</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-language" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;Home
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-language">
+                Develop AI Language and Speech solutions on Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-language" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="develop-a-voice-live-agent">Develop a Voice Live agent</h1>
+<p>Speech-capable AI agents enable users to interact conversationally - using spoken command and questions that generate vocal responses.</p>
+<p>In this exercise, you'll the Voice Live capability of Azure Speech in Microsoft Foundry Tools to create a real-time voice-based agent.</p>
+<p>This exercise takes approximately <strong>30</strong> minutes.</p>
+<blockquote>
+<p><strong>Note</strong>: Some of the technologies used in this exercise are in preview or in active development. You may experience some unexpected behavior, warnings, or errors.</p>
+</blockquote>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Before starting this exercise, ensure you have:</p>
+<ul>
+<li>An active <a href="https://azure.microsoft.com/pricing/purchase-options/azure-account">Azure subscription</a></li>
+<li><a href="https://code.visualstudio.com/">Visual Studio Code</a> installed</li>
+<li><a href="https://www.python.org/downloads/release/python-31312/">Python version <strong>3.13.xx</strong></a> installed*</li>
+<li><a href="https://git-scm.com/install/">Git</a> installed and configured</li>
+<li><a href="https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest">Azure CLI</a> installed</li>
+</ul>
+<blockquote>
+<p>* Python 3.14 is available, but some dependencies are not yet compiled for that release. The lab has been successfully tested with Python 3.13.12.</p>
+</blockquote>
+<h2 id="create-a-microsoft-foundry-project">Create a Microsoft Foundry project</h2>
+<p>Microsoft Foundry uses projects to organize models, resources, data, and other assets used to develop an AI solution.</p>
+<ol>
+<li>
+<p>In a web browser, open <a href="https://ai.azure.com">Microsoft Foundry</a> at <code>https://ai.azure.com</code> and sign in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in, and if necessary use the Foundry logo at the top left to navigate to the home page.</p>
+</li>
+<li>
+<p>If it is not already enabled, in the tool bar the top of the page, enable the <strong>New Foundry</strong> option. Then, if prompted, create a new project with a unique name; expanding the  <strong>Advanced options</strong> area to specify the following settings for your project:</p>
+<ul>
+<li><strong>Foundry resource</strong>: <em>Enter a valid name for your AI Foundry resource.</em></li>
+<li><strong>Subscription</strong>: <em>Your Azure subscription</em></li>
+<li><strong>Resource group</strong>: <em>Create or select a resource group</em></li>
+<li><strong>Region</strong>: Select any available region</li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Use a recommended Microsoft Foundry region. Model and feature availability may vary by region.</p>
+</blockquote>
+</li>
+<li>
+<p>Select <strong>Create</strong>. Wait for your project to be created. Then view its home page.</p>
+</li>
+</ol>
+<h2 id="create-an-agent">Create an agent</h2>
+<p>Now let's create an agent.</p>
+<ol>
+<li>
+<p>Now you're ready to <strong>Start building</strong>. Select <strong>Create agents</strong> (or on the <strong>Build</strong> page, select the <strong>Agents</strong> tab); and create a new agent named <code>chat-agent</code>.</p>
+<p>When ready, your agent opens in the agent playground.</p>
+</li>
+<li>
+<p>In the model drop-down list, ensure that a <strong>gpt-5</strong> model has been deployed and selected for your agent.</p>
+</li>
+<li>
+<p>Assign your agent the following <strong>Instructions</strong>:</p>
+<pre><code>You are an AI assistant that helps people find information about AI and related topics. You answer questions concisely and precisely.
+</code></pre></li>
+<li>
+<p>Use the <strong>Save</strong> button to save the changes.</p>
+</li>
+<li>
+<p>Test the agent by entering the following prompt in the <strong>Chat</strong> pane:</p>
+<pre><code>What can you help me with?
+</code></pre>
+<p>The agent should respond with an appropriate answer based on its instructions.</p>
+</li>
+</ol>
+<h2 id="configure-azure-speech-voice-live">Configure Azure Speech Voice Live</h2>
+<p>Enabling speech mode for a Foundry agent integrates Azure Speech Voice Live - adding speech capabilities to the agent.</p>
+<ol>
+<li>
+<p>In the pane on the left, under the model selection list, enable <strong>Voice mode</strong>.</p>
+<p>If the <strong>Configuration</strong> pane does not open automatically, use the &quot;cog&quot; icon above the chat interface to open it.</p>
+</li>
+<li>
+<p>In the <strong>Configuration</strong> pane, under <strong>Voice Live</strong>, review the default speech input and output configuration. You can try different voices, previewing them until you decide which one to use.</p>
+</li>
+<li>
+<p>Close the <strong>Configuration</strong> pane and use the <strong>Save</strong> button to save the agent.</p>
+</li>
+</ol>
+<h2 id="use-speech-to-interact-with-the-agent">Use speech to interact with the agent</h2>
+<p>Now you're ready to chat with the agent.</p>
+<ol>
+<li>
+<p>In the Chat pane, use the <strong>Start session</strong> button to start a conversation with the agent. If prompted, allow access to the system microphone.</p>
+<p>The agent will start a speech session, and listen for your prompt.</p>
+</li>
+<li>
+<p>When the app status is <strong>Listening…</strong>, say something like &quot;<em>How does speech recognition work?</em>&quot; and wait for a response.</p>
+</li>
+<li>
+<p>Verify that the app status changes to <strong>Processing…</strong>. The app will process the spoken input.</p>
+<blockquote>
+<p><strong>Tip</strong>: The processing speed may be so fast that you do not actually see the status before it changes back to <em>Speaking</em>.</p>
+</blockquote>
+</li>
+<li>
+<p>When the status changes to <strong>Speaking…</strong>, the app uses text-to-speech to vocalize the response from the model. To see the original prompt and the response as text, select the <strong>cc</strong> button on the bottom of the chat screen.</p>
+<blockquote>
+<p><strong>Tip</strong>: The follow-on prompt is submitted just by speaking. You can even interrupt the agent to keep the interaction focused on what you need done. You can also use the <strong>Stop generation</strong> button in the chat pane to stop long-running responses. The button will end the conversation. You will need to start a new conversation to continue using the agent.</p>
+</blockquote>
+</li>
+<li>
+<p>To continue the conversation, just ask another question, such as &quot;<em>How does speech synthesis work?</em>&quot;, and review the response.</p>
+</li>
+<li>
+<p>When you have finished chatting with the agent, use the <strong>X</strong> icon to end the session. A transcript of the conversation will be displayed.</p>
+</li>
+</ol>
+<h2 id="create-a-client-application">Create a client application</h2>
+<p>To use your agent in a custom application, you need to write code that uses the Azure Speech Voice Live SDK to initiate and manage a conversation session.</p>
+<h3 id="get-the-application-files-from-github">Get the application files from GitHub</h3>
+<ol>
+<li>
+<p>Open Visual Studio Code.</p>
+</li>
+<li>
+<p>Open the command palette (<em>Ctrl+Shift+P</em>) and use the <code>Git:clone</code> command to clone the <code>https://github.com/microsoftlearning/mslearn-ai-language</code> repo to a local folder (it doesn't matter which one). Then open it.</p>
+<p>You may be prompted to confirm you trust the authors.</p>
+</li>
+<li>
+<p>After the repo has been cloned, in the Explorer pane, navigate to the folder containing the application code files at <strong>/Labfiles/06-voice-live/Python/chat-client</strong>. The application files include:</p>
+<ul>
+<li><strong>.env</strong> (the application configuration file)</li>
+<li><strong>requirements.txt</strong> (the Python package dependencies that need to be installed)</li>
+<li><strong>chat-client.py</strong> (the code file for the application)</li>
+</ul>
+</li>
+</ol>
+<h3 id="configure-the-application">Configure the application</h3>
+<ol>
+<li>
+<p>In Visual Studio Code, view the <strong>Extensions</strong> pane; and if it is not already installed, install the <strong>Python</strong> extension.</p>
+</li>
+<li>
+<p>In the <strong>Command Palette</strong>, use the command <code>python:select interpreter</code>. Then select an existing environment if you have one, or create a new <strong>Venv</strong> environment based on your Python 3.13.xx installation.</p>
+<blockquote>
+<p><strong>Tip</strong>: If you are prompted to install dependencies, you can install the ones in the <em>requirements.txt</em> file in the <em>/Labfiles/06-voice-live/Python/chat-client</em> folder; but it's OK if you - don't we'll install them later!</p>
+</blockquote>
+<blockquote>
+<p><strong>Tip</strong>: If you prefer to use the terminal, you can create your <strong>Venv</strong> environment with <code>python -m venv labenv</code>, then activate it with <code>\labenv\Scripts\activate</code>.</p>
+</blockquote>
+</li>
+<li>
+<p>In the <strong>Explorer</strong> pane, right-click the <strong>chat-client</strong> folder containing the application files, and select <strong>Open in integrated terminal</strong> (or open a terminal in the <strong>Terminal</strong> menu and navigate to the <em>/Labfiles/06-voice-live/Python/chat-client</em> folder.)</p>
+<blockquote>
+<p><strong>Note</strong>: Opening the terminal in Visual Studio Code will automatically activate the Python environment. You may need to enable running scripts on your system.</p>
+</blockquote>
+</li>
+<li>
+<p>Ensure that the terminal is open in the <strong>chat-client</strong> folder with the prefix <strong>(.venv)</strong> to indicate that the Python environment you created is active.</p>
+</li>
+<li>
+<p>Install the Foundry SDK package, the Azure Identity package, and other required packages by running the following command:</p>
+<pre><code>pip install -r requirements.txt azure-identity azure-ai-voicelive==1.2.0b4 --pre azure-ai-projects==2.0.0b4
+</code></pre></li>
+<li>
+<p>In the <strong>Explorer</strong> pane, in the <strong>chat-client</strong> folder, select the <strong>.env</strong> file to open it. Then update the configuration values to include your Foundry resource <strong>endpoint</strong> (get the project endpoint from the project home page in Foundry Portal, but use only the base URL up to the <em>.com</em> domain), your project name, and the name of your agent (which should be <strong>Chat-Agent</strong> - note that this name is case-sensitive).</p>
+</li>
+</ol>
+<blockquote>
+<p><strong>Important</strong>: Modify the pasted endpoint to remove the &quot;/api/projects/{project_name}&quot; suffix - the endpoint should be <em>https://{your-foundry-resource-name}.services.ai.azure.com</em>.</p>
+</blockquote>
+<ol>
+<li>Save the modified configuration file.</li>
+</ol>
+<h3 id="implement-application-code">Implement application code</h3>
+<ol>
+<li>
+<p>In the <strong>Explorer</strong> pane, in the <strong>chat-client</strong> folder,  open the <strong>chat-client.py</strong> file.</p>
+</li>
+<li>
+<p>Review the existing code. Most of the application scaffolding has been provided - you must implement the key steps required to use the Voice Live SDK to manage a conversation with your agent.</p>
+<blockquote>
+<p><strong>Tip</strong>: As you add code to the code file, be sure to maintain the correct indentation.</p>
+</blockquote>
+</li>
+<li>
+<p>At the top of the code file, under the existing namespace references, find the comment <strong>Import namespaces</strong> and add the following code to import the namespaces you will need:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># import namespaces
+</span><span class="kn">from</span> <span class="nn">azure.identity.aio</span> <span class="kn">import</span> <span class="n">AzureCliCredential</span>
+<span class="kn">from</span> <span class="nn">azure.ai.voicelive.aio</span> <span class="kn">import</span> <span class="n">connect</span>
+<span class="kn">from</span> <span class="nn">azure.ai.voicelive.models</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InputAudioFormat</span><span class="p">,</span>
+    <span class="n">Modality</span><span class="p">,</span>
+    <span class="n">OutputAudioFormat</span><span class="p">,</span>
+    <span class="n">RequestSession</span><span class="p">,</span>
+    <span class="n">ServerEventType</span><span class="p">,</span>
+    <span class="n">AudioNoiseReduction</span><span class="p">,</span>
+    <span class="n">AudioEchoCancellation</span><span class="p">,</span>
+    <span class="n">AzureSemanticVadMultilingual</span><span class="p">,</span>
+    <span class="n">AgentConfig</span>
+<span class="p">)</span> 
+</code></pre></div></div>
+</li>
+<li>
+<p>In the <strong>main</strong> function, note that code to load the endpoint from the configuration file has already been provided, as has code to get an authentication credential and to create and run a <strong>VoiceAssistant</strong> object.</p>
+<p>The <strong>VoiceAssistant</strong> class encapsulates the logic to manage the Voice Live conversation.</p>
+</li>
+<li>
+<p>Under the <strong>main</strong> function, find the <strong>VoiceAssistant</strong> class definition.</p>
+<p>The <strong>init</strong> function to initialize an object based on the class has already been implemented.</p>
+<p>You must implement the <strong>start</strong> function, which is the core function to establish the conversation session.</p>
+</li>
+<li>
+<p>Find the comment <strong>STEP 1: Connect Azure VoiceLive to the agent</strong>, and add the following code (being careful to indent it one level in under the <strong>try:</strong> statement):</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># STEP 1: Connect Azure VoiceLive to the agent
+</span><span class="k">async</span> <span class="k">with</span> <span class="n">connect</span><span class="p">(</span>
+    <span class="n">endpoint</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">endpoint</span><span class="p">,</span>
+    <span class="n">credential</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">credential</span><span class="p">,</span>
+    <span class="n">api_version</span><span class="o">=</span><span class="s">"2026-01-01-preview"</span><span class="p">,</span>
+    <span class="n">agent_config</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">agent_config</span>
+<span class="p">)</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+</code></pre></div></div>
+<p>This step creates a connection to your agent so the Voice Live SDK can establish a conversation with it.</p>
+</li>
+<li>
+<p>Find the comment <strong>STEP 2: Initialize audio processor</strong>, and add the following code (being careful to indent it <em>another level in</em> under the step 1 code you just added):</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># STEP 2: Initialize audio processor
+</span><span class="bp">self</span><span class="p">.</span><span class="n">audio_processor</span> <span class="o">=</span> <span class="n">AudioProcessor</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+</code></pre></div></div>
+<p>This code attaches an AudioProcessor object based on the class definition further down in the code file. The AudioProcessor is a utlility class to manage audio hardware I/O.</p>
+</li>
+<li>
+<p>Find the comment <strong>STEP 3: Configure the session</strong>, and add the following code (being careful to maintain the same indentation as the step 2 code above):</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># STEP 3: Configure the session
+</span><span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">setup_session</span><span class="p">()</span>
+</code></pre></div></div>
+<p>This code configures the session with the appropriate audio formats, conversational turn-detection semantics, and options to handle echos and background noise.</p>
+</li>
+<li>
+<p>Find the comment <strong>STEP 4: Start audio systems</strong>, and add the following code (being careful to maintain the same indentation as the step 3 code above):</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># STEP 4: Start audio systems
+</span><span class="bp">self</span><span class="p">.</span><span class="n">audio_processor</span><span class="p">.</span><span class="n">start_playback</span><span class="p">()</span>
+        
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">✅ Ready! Start speaking..."</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Press Ctrl+C to exit</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+<p>This code starts the audio processor so that it monitors the microphone for audio input and plays back audio output.</p>
+</li>
+<li>
+<p>Find the comment <strong>STEP 5: Process events</strong>, and add the following code (being careful to maintain the same indentation as the step 4 code above):</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># STEP 5: Process events
+</span><span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">process_events</span><span class="p">()</span>
+</code></pre></div></div>
+<p>This code runs the main loop to process events such as speech input, response output, and interruptions.</p>
+</li>
+<li>
+<p>Save the changes to the code file.</p>
+<p>The completed function should look like this:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""Start the voice assistant."""</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span> <span class="o">+</span> <span class="s">"="</span> <span class="o">*</span><span class="mi">60</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"🎙️   </span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">agent_config</span><span class="p">[</span><span class="s">'agent_name'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"="</span><span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+
+        <span class="c1"># Add your code in this try block!
+</span>        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># STEP 1: Connect Azure VoiceLive to the agent
+</span>            <span class="k">async</span> <span class="k">with</span> <span class="n">connect</span><span class="p">(</span>
+                <span class="n">endpoint</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">endpoint</span><span class="p">,</span>
+                <span class="n">credential</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">credential</span><span class="p">,</span>
+                <span class="n">api_version</span><span class="o">=</span><span class="s">"2026-01-01-preview"</span><span class="p">,</span>
+                <span class="n">agent_config</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">agent_config</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+                    
+                <span class="c1"># STEP 2: Initialize audio processor
+</span>                <span class="bp">self</span><span class="p">.</span><span class="n">audio_processor</span> <span class="o">=</span> <span class="n">AudioProcessor</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+                                  
+                <span class="c1"># STEP 3: Configure the session
+</span>                <span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">setup_session</span><span class="p">()</span>
+                
+                <span class="c1"># STEP 4: Start audio systems
+</span>                <span class="bp">self</span><span class="p">.</span><span class="n">audio_processor</span><span class="p">.</span><span class="n">start_playback</span><span class="p">()</span>
+        
+                <span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">✅ Ready! Start speaking..."</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">"Press Ctrl+C to exit</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+                
+                <span class="c1"># STEP 5: Process events
+</span>                <span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">process_events</span><span class="p">()</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">'audio_processor'</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">audio_processor</span><span class="p">.</span><span class="n">shutdown</span><span class="p">()</span>
+</code></pre></div></div>
+</li>
+</ol>
+<h2 id="run-the-application">Run the application</h2>
+<p>Now you're ready to run your application, and have a conversation with your agent.</p>
+<blockquote>
+<p><strong>TIP</strong>: The application works best when using a headset. When using speakers, there's a risk that the agent can &quot;hear&quot; its own responses and process them as new user input.</p>
+</blockquote>
+<ol>
+<li>
+<p>In the Visual Studio Code terminal, enter the following command to sign into Azure</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="n">az</span><span class="w"> </span><span class="nx">login</span><span class="w">
+</span></code></pre></div></div>
+<p>When prompted, sign into Azure using your credentials.</p>
+<blockquote>
+<p><strong>Note</strong>: In most scenarios, just using <em>az login</em> will be sufficient. However, if you have subscriptions in multiple tenants, you may need to specify the tenant by using the <em>--tenant</em> parameter. See <em><a href="https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively">Sign into Azure interactively using the Azure CLI</a></em> for details.</p>
+</blockquote>
+</li>
+<li>
+<p>In the Visual Studio Code terminal, confirm the details of your Azure subscription; and then enter the following command to run the client application:</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">python</span><span class="w"> </span><span class="nx">chat-client.py</span><span class="w">
+</span></code></pre></div></div>
+</li>
+<li>
+<p>When prompted, begin a conversation with the agent by asking a question such as &quot;<em>How is computer speech used in AI?</em>&quot;.</p>
+</li>
+<li>
+<p>Listen to the response and then continue the conversation - note that you can interrupt the agent to ask new questions.</p>
+</li>
+<li>
+<p>When you're finished, press <strong>CTRL+C</strong> to end the conversation and stop the program.</p>
+</li>
+</ol>
+<h2 id="clean-up">Clean up</h2>
+<p>If you have finished exploring Microsoft Foundry, delete any resources that you no longer need. This avoids accruing any unnecessary costs.</p>
+<ol>
+<li>Open the <strong>Azure portal</strong> at <a href="https://portal.azure.com">https://portal.azure.com</a> and select the resource group that contains the resources you created.</li>
+<li>Select <strong>Delete resource group</strong> and then <strong>enter the resource group name</strong> to confirm. The resource group is then deleted.</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">Trademarks </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-language" target="_blank" class="ml-2">
+                    Source
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="/mslearn-ai-language/assets/js/script.js?v=cea9917802480634f7e437d83201e30f3431ad2a"></script>
+</body>
+
+
+</html>

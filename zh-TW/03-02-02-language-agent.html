@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <title>
+        開發文字分析 agent |
+        
+        在 Azure 上開發 AI 語言與語音解決方案
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="https://microsoftlearning.github.io/mslearn-ai-language/assets/css/style.css?v=cea9917802480634f7e437d83201e30f3431ad2a">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">在 Azure 上開發 AI 語言與語音解決方案</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-language" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;首頁
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-language">
+                Develop AI Language and Speech solutions on Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-language" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="develop-a-text-analysis-agent">開發文字分析 agent</h1>
+<p><strong>Azure Language in Foundry Tools</strong> 支援文字分析，包括 language detection、entity recognition 與 PII redaction。</p>
+<p>您可以透過 REST API 及多種語言專屬的 SDK，在應用程式中直接使用此服務。您也可以使用 <strong>Azure Language in Foundry Tools MCP server</strong> ，將其功能整合至 AI agent，這正是您在本練習中要完成的工作。</p>
+<p>本練習所用的程式碼以 Microsoft Foundry SDK for Python 為基礎。您可以使用 Microsoft .NET、JavaScript 與 Java 的 SDK 開發類似的解決方案。請參閱 <a href="https://learn.microsoft.com/azure/ai-foundry/how-to/develop/sdk-overview">Microsoft Foundry SDK client libraries</a> 以取得詳細資訊。</p>
+<p>本練習約需 <strong>30</strong> 分鐘。</p>
+<blockquote>
+<p><strong>注意</strong>：本練習使用的部分技術仍處於預覽階段或積極開發中。您可能會遇到非預期的行為、警告或錯誤。</p>
+</blockquote>
+<h2 id="prerequisites">必要條件</h2>
+<p>開始本練習之前，請確認您已具備：</p>
+<ul>
+<li>有效的 <a href="https://azure.microsoft.com/pricing/purchase-options/azure-account">Azure subscription</a></li>
+<li><a href="https://code.visualstudio.com/">Visual Studio Code</a> 已安裝</li>
+<li><a href="https://www.python.org/downloads/release/python-31312/">Python 版本 <strong>3.13.xx</strong></a> 已安裝*</li>
+<li><a href="https://git-scm.com/install/">Git</a> 已安裝並完成設定</li>
+<li><a href="https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest">Azure CLI</a> 已安裝</li>
+</ul>
+<blockquote>
+<p>* Python 3.14 已推出，但部分相依套件尚未針對該版本完成編譯。本實驗已使用 Python 3.13.12 成功測試。</p>
+</blockquote>
+<h2 id="create-a-microsoft-foundry-project">建立 Microsoft Foundry project</h2>
+<p>Microsoft Foundry 使用 project 來整理開發 AI 解決方案所需的 model、resource、資料及其他資產。</p>
+<ol>
+<li>
+<p>在網頁瀏覽器中開啟 <a href="https://ai.azure.com">Microsoft Foundry portal</a> ，網址為 <code>https://ai.azure.com</code> ，並使用您的 Azure 認證登入。關閉首次登入時開啟的任何提示或快速入門窗格，必要時使用左上角的 Foundry 標誌導覽至首頁。</p>
+</li>
+<li>
+<p>如果尚未啟用，請在頁面頂端的工具列啟用 <strong>New Foundry</strong> 選項。接著，如果出現提示，請建立名稱唯一的新 project；展開 <strong>Advanced options</strong> 區域，為 project 指定下列設定：</p>
+<ul>
+<li><strong>Foundry resource</strong>: <em>使用 resource 的預設名稱（通常為 {project_name}-resource）</em></li>
+<li><strong>Subscription</strong>: <em>您的 Azure subscription</em></li>
+<li><strong>Resource group</strong>: <em>建立或選取 resource group</em></li>
+<li><strong>Region</strong>：選取任何可用的 region</li>
+</ul>
+<blockquote>
+<p><strong>注意</strong>：請使用建議的 Microsoft Foundry region。可用的 model 可能因 region 而異。</p>
+</blockquote>
+<blockquote>
+<p><strong>提示</strong>：請記住（或記下）Foundry resource 名稱，稍後您將需要它！</p>
+</blockquote>
+</li>
+<li>
+<p>選取 <strong>Create</strong>。等待 project 建立完成。</p>
+</li>
+<li>
+<p>在 project 首頁上，請注意此處顯示了 API key、project endpoint 及 OpenAI endpoint。</p>
+<blockquote>
+<p><strong>提示</strong>：將 project key 複製到剪貼簿，稍後您將需要它！</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="create-an-agent">建立 agent</h2>
+<p>您已具備 Foundry project，現在可以建立 agent。</p>
+<ol>
+<li>
+<p>現在您已準備好 <strong>Start building</strong>。選取 <strong>Create agents</strong> （或在 <strong>Build</strong> 頁面選取 <strong>Agents</strong> 索引標籤），並建立新 agent，名稱為 <code>Text-Analysis-Agent</code>.</p>
+<p>準備完成後，您的 agent 會在 agent playground 中開啟。</p>
+</li>
+<li>
+<p>在 model 下拉式清單中，確認已部署並為 agent 選取 <strong>gpt-5</strong> model。</p>
+<blockquote>
+<p><strong>注意</strong>：Instant Inference quota 初始化可能需要一些時間。如果您看到 <code>deployment_disabled</code> ，並伴隨 &quot;Instant inference quota is still being initialized for this subscription&quot;，可以稍候再試，或部署 model 以繼續本練習。在側邊窗格選取 <strong>Models</strong> ，搜尋 <strong>gpt-5</strong>，然後選取 <strong>Custom deploy</strong>。保留預設設定並部署，記下 deployment 名稱以供稍後使用。deployment 完成後，在 agent 的 model 下拉式清單中選取它，儲存並重新嘗試您的 prompt。</p>
+</blockquote>
+</li>
+<li>
+<p>為 agent 設定以下 <strong>Instructions</strong>:</p>
+<pre><code>You are an AI agent that assists users by helping them analyze text.
+</code></pre></li>
+<li>
+<p>使用 <strong>Save</strong> 按鈕儲存變更。</p>
+</li>
+<li>
+<p>在 <strong>Chat</strong> 窗格中輸入下列 prompt，以測試 agent：</p>
+<pre><code>What can you help me with?
+</code></pre>
+<p>agent 應根據其指示提供適當的回答。</p>
+</li>
+</ol>
+<h2 id="create-an-azure-language-in-foundry-tools-connection">建立 Azure Language in Foundry Tools 連線</h2>
+<p>Foundry 包含 Azure Language in Foundry Tools 的 MCP server，您可以將它連線至 project，並在 agent 中使用。</p>
+<ol>
+<li>
+<p>在左側導覽窗格中，選取 <strong>Tools</strong> 頁面。</p>
+</li>
+<li>
+<p>在 Tools 頁面中，選取 <strong>Tools</strong> 索引標籤。</p>
+</li>
+<li>
+<p>連線至工具：選取 <strong>Azure Language in Foundry Tools</strong> （位於 <strong>Catalog</strong> 中），並將它連線至 endpoint，指定下列設定：</p>
+<ul>
+<li><strong>Name</strong>：工具的唯一名稱/</li>
+<li><strong>Remote MCP Server endpoint</strong>: <code>https://{foundry-resource-name}.cognitiveservices.azure.com/language/mcp?api-version=2025-11-15-preview</code></li>
+<li><strong>Parameters</strong>：foundry-resource-name： <em>您的 Foundry resource 名稱</em></li>
+<li><strong>Authentication</strong>：Key-based：</li>
+<li><strong>Ocp-Apim-Subscription-Key</strong>: <em>您的 Foundry project 的 API Key</em></li>
+</ul>
+<blockquote>
+<p><strong>注意</strong>：如果 Azure subscription 中的原則停用了 key-based authentication，您可以使用 Entra ID authentication，將 agent 連線至 Azure Language 服務。</p>
+</blockquote>
+</li>
+<li>
+<p>等待 MCP 工具連線建立完成，然後檢視其詳細資料頁面。</p>
+</li>
+<li>
+<p>在 Azure Language in Foundry Tools 連線的詳細資料頁面上，選取 <strong>Use in an agent</strong>，然後選取先前建立的 <strong>Text-Analysis-Agent</strong> agent。</p>
+<p>agent 應在 playground 中開啟，並已連線至 Azure Language in Foundry Tools 工具。</p>
+<blockquote>
+<p><strong>注意</strong>：在某些情況下，MCP 工具不會自動新增至 agent。請確認 <strong>Azure Language in Foundry Tools</strong> 出現在 agent 的工具清單中。如果沒有，請從 agent 的可用工具中手動新增它。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="test-the-azure-language-tool-in-the-playground">在 playground 中測試 Azure Language 工具</h2>
+<p>接下來測試 agent 使用您所連線工具的能力。</p>
+<ol>
+<li>
+<p>在 <strong>Text-Analysis-Agent</strong> agent 的 agent playground 中，依下列內容修改指示：</p>
+<pre><code>You are an AI agent that assists users by helping them analyze text. Use the Azure Language tool to perform text analysis tasks.
+</code></pre></li>
+<li>
+<p>使用 <strong>Save</strong> 按鈕儲存變更。</p>
+</li>
+<li>
+<p>在 <strong>Chat</strong> 窗格中輸入下列 prompt，以測試 agent：</p>
+<pre><code>Identify the PII entities in this article, and generate a redacted version:
+
+Microsoft was founded on April 4, 1975, by childhood friends Bill Gates (then 19) and Paul Allen (22) after they were inspired by the Altair 8800, one of the first personal computers, featured on the cover of Popular Electronics. They contacted the Altair’s maker, MITS, and successfully developed a version of the BASIC programming language, despite initially not owning the machine themselves. The pair formed a partnership called “Micro‑Soft” in Albuquerque, New Mexico, close to MITS’s headquarters, with the goal of writing software for emerging microcomputers.
+
+In the late 1970s, Microsoft grew by supplying programming languages to multiple hardware vendors, then relocated to the Seattle area in 1979. A pivotal moment came in 1980 when Microsoft partnered with IBM to provide an operating system for the IBM PC, leading to MS‑DOS and establishing the company’s dominance in personal computing. Gates guided the company’s long-term strategy as CEO, while Allen contributed key technical vision in its early years, setting Microsoft on a path that would reshape the software industry.
+</code></pre></li>
+<li>
+<p>出現提示時，選取 <strong>Always approve all Azure Language in Foundry Tools tools</strong> 以核准使用 Azure Language 工具（由於 prompt 要求兩項不同的文字分析工作，您可能需要執行此操作兩次）。</p>
+<blockquote>
+<p><strong>注意</strong>：視環境而定，核准工具後偶爾可能出現 403、502 或其他暫時性錯誤。這些錯誤通常不會阻止您繼續。請重新整理頁面，並重試相同的 prompt。</p>
+</blockquote>
+</li>
+<li>
+<p>檢閱回應；它應識別關於 Microsoft 創立過程文章中的任何可識別個人身分資訊，並建立遮蔽這些資訊的文章版本。</p>
+</li>
+<li>
+<p>檢閱聊天的 <strong>Logs</strong> ，確認 agent 已使用 Azure Language 工具處理 prompt。</p>
+</li>
+</ol>
+<h2 id="configure-tool-approval">設定工具核准方式</h2>
+<p>如同您在 playground 中所見，agent 需要取得核准才能使用工具。</p>
+<ol>
+<li>在 playground 中，找到 <strong>Tools</strong> 清單（位於 <strong>Instructions</strong>下方），在您新增的 Azure Language 工具選單中選取 <strong>Configure</strong>.</li>
+<li>確認 <strong>Approval setting for tools in this MCP server for this agent</strong> 設定為 <strong>Always auto-approve all tools</strong> （若不是，請變更設定並新增）。</li>
+<li>儲存 agent 的所有變更。</li>
+</ol>
+<h2 id="create-a-client-application">建立 client 應用程式</h2>
+<p>您已具備可運作的 agent，現在可以建立使用它的 client 應用程式。</p>
+<h3 id="get-the-application-files-from-github">從 GitHub 取得應用程式檔案</h3>
+<ol>
+<li>
+<p>開啟 Visual Studio Code。</p>
+</li>
+<li>
+<p>開啟命令選擇區（<em>Ctrl+Shift+P</em>），並使用 <code>Git:clone</code> 命令將 <code>https://github.com/microsoftlearning/mslearn-ai-language</code> repo 複製到本機資料夾（任一資料夾皆可），然後開啟它。</p>
+<p>系統可能會要求您確認是否信任作者。</p>
+</li>
+<li>
+<p>複製 repo 後，在 Explorer 窗格中導覽至應用程式程式碼檔案所在的資料夾： <strong>/Labfiles/02-language-agent/Python/text-agent</strong>。應用程式檔案包括：</p>
+<ul>
+<li><strong>.env</strong> （應用程式設定檔）</li>
+<li><strong>requirements.txt</strong> （需要安裝的 Python 套件相依性）</li>
+<li><strong>text-agent.py</strong> （應用程式的程式碼檔案）</li>
+</ul>
+</li>
+</ol>
+<h3 id="configure-the-application">設定應用程式</h3>
+<ol>
+<li>
+<p>在 Visual Studio Code 中檢視 <strong>Extensions</strong> 窗格；如果尚未安裝，請安裝 <strong>Python</strong> 擴充功能。</p>
+</li>
+<li>
+<p>在 <strong>Command Palette</strong>中使用命令 <code>python:select interpreter</code>。接著，若已有環境，請選取現有環境；或根據已安裝的 Python 3.1x 建立新的 <strong>Venv</strong> 環境。</p>
+<blockquote>
+<p><strong>提示</strong>：若系統提示您安裝相依套件，可以安裝 <em>requirements.txt</em> 檔案中列出的套件，該檔案位於 <em>/Labfiles/02-language-agent/Python/text-agent</em> 資料夾；但即使現在不安裝也沒關係，我們稍後會安裝。</p>
+</blockquote>
+<blockquote>
+<p><strong>提示</strong>：如果您偏好使用終端機，可以建立 <strong>Venv</strong> 環境，使用 <code>python -m venv labenv</code>，然後使用以下命令啟用它： <code>\labenv\Scripts\activate</code>.</p>
+</blockquote>
+</li>
+<li>
+<p>在 <strong>Explorer</strong> 窗格中，以滑鼠右鍵按一下 <strong>text-agent</strong> 資料夾（其中包含應用程式檔案），然後選取 <strong>Open in integrated terminal</strong> （或從 <strong>Terminal</strong> 選單開啟終端機，並導覽至 <em>/Labfiles/02-language-agent/Python/text-agent</em> 資料夾）。</p>
+<blockquote>
+<p><strong>注意</strong>：在 Visual Studio Code 中開啟終端機會自動啟用 Python 環境。您可能需要允許系統執行 script。</p>
+</blockquote>
+</li>
+<li>
+<p>確認終端機已在 <strong>text-agent</strong> 資料夾中開啟，且顯示前綴 <strong>(.venv)</strong> ，表示您建立的 Python 環境已啟用。</p>
+</li>
+<li>
+<p>執行下列命令，安裝 Foundry SDK 套件、Azure Identity 套件及其他必要套件：</p>
+<pre><code>pip install -r requirements.txt
+</code></pre></li>
+<li>
+<p>在 <strong>Explorer</strong> 窗格的 <strong>text-agent</strong> 資料夾中，選取 <strong>.env</strong> 檔案以開啟它。接著更新設定值，填入 project 的 <strong>endpoint</strong> （可從 Foundry Portal 的 project 首頁取得）及 agent 名稱（應為 <strong>Text-Analysis-Agent</strong> ；請注意此名稱區分大小寫）。</p>
+</li>
+<li>
+<p>儲存修改後的設定檔。</p>
+</li>
+</ol>
+<h3 id="implement-application-code">實作應用程式程式碼</h3>
+<ol>
+<li>
+<p>在 <strong>Explorer</strong> 窗格的 <strong>text-agent</strong> 資料夾中，開啟 <strong>text-agent.py</strong> 檔案。</p>
+</li>
+<li>
+<p>檢閱現有程式碼。您將新增向 agent 提交 prompt 的程式碼。</p>
+<blockquote>
+<p><strong>提示</strong>：將程式碼新增至程式碼檔案時，請務必維持正確的縮排。</p>
+</blockquote>
+</li>
+<li>
+<p>在程式碼檔案頂端、現有 namespace 參考下方，找出註解 <strong>Import namespaces</strong> ，然後新增下列程式碼，以匯入所需的 namespace：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># import namespaces
+</span><span class="kn">from</span> <span class="nn">azure.identity</span> <span class="kn">import</span> <span class="n">DefaultAzureCredential</span>
+<span class="kn">from</span> <span class="nn">azure.ai.projects</span> <span class="kn">import</span> <span class="n">AIProjectClient</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>在 <strong>main</strong> 函式中，請注意已提供從設定檔載入 endpoint 的程式碼。接著找出註解 <strong>Get project client</strong>，並新增下列程式碼，以建立 Foundry project 的 client：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Get project client
+</span><span class="n">project_client</span> <span class="o">=</span> <span class="n">AIProjectClient</span><span class="p">(</span>
+    <span class="n">endpoint</span><span class="o">=</span><span class="n">foundry_endpoint</span><span class="p">,</span>
+    <span class="n">credential</span><span class="o">=</span><span class="n">DefaultAzureCredential</span><span class="p">(),</span>
+<span class="p">)</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>找出註解 <strong>Get an OpenAI client</strong>，並新增下列程式碼，以取得用來呼叫 agent 的 OpenAI client。</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Get an OpenAI client
+</span><span class="n">openai_client</span> <span class="o">=</span> <span class="n">project_client</span><span class="p">.</span><span class="n">get_openai_client</span><span class="p">()</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>找出註解 <strong>Use the agent to get a response</strong>，並新增下列程式碼，向 agent 提交使用者 prompt 並顯示回應。</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Use the agent to get a response
+</span><span class="n">prompt</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s">"User prompt: "</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">openai_client</span><span class="p">.</span><span class="n">responses</span><span class="p">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="nb">input</span><span class="o">=</span><span class="p">[{</span><span class="s">"role"</span><span class="p">:</span> <span class="s">"user"</span><span class="p">,</span> <span class="s">"content"</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}],</span>
+    <span class="n">extra_body</span><span class="o">=</span><span class="p">{</span><span class="s">"agent_reference"</span><span class="p">:</span> <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="n">agent_name</span><span class="p">,</span> <span class="s">"type"</span><span class="p">:</span> <span class="s">"agent_reference"</span><span class="p">}},</span>
+<span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">agent_name</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">response</span><span class="p">.</span><span class="n">output_text</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>儲存對程式碼檔案所做的變更。</p>
+</li>
+</ol>
+<h2 id="test-the-client-application">測試 client 應用程式</h2>
+<p>現在讓我們在 Python 環境中執行應用程式，並驗證連線至 project 的身分，以測試應用程式。</p>
+<ol>
+<li>
+<p>在 Visual Studio Code 終端機中，輸入下列命令以登入 Azure</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="n">az</span><span class="w"> </span><span class="nx">login</span><span class="w">
+</span></code></pre></div></div>
+<blockquote>
+<p><strong>注意</strong>：在大多數情況下，僅使用 <em>az login</em> 即可。不過，如果您的 subscription 分屬多個 tenant，可能需要使用 <em>--tenant</em> 參數指定 tenant。請參閱 <a href="https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively">使用 Azure CLI 以互動方式登入 Azure</a> 以取得詳細資訊。</p>
+</blockquote>
+</li>
+<li>
+<p>出現提示時，請依照指示登入 Azure。接著在命令列完成登入程序，檢視包含 Foundry resource 的 subscription 詳細資料（必要時進行確認）。</p>
+</li>
+<li>
+<p>登入後，輸入下列命令以執行應用程式：</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">python</span><span class="w"> </span><span class="nx">text-agent.py</span><span class="w">
+</span></code></pre></div></div>
+</li>
+<li>
+<p>出現提示時，輸入下列 prompt：</p>
+<pre><code>Extract named entities from the following text: &quot;Pierre and I went to Paris on July 14th.&quot;
+</code></pre></li>
+<li>
+<p>檢閱回應；它應識別具名人物、地點及日期。</p>
+</li>
+</ol>
+<h2 id="view-tool-details">檢視工具詳細資料</h2>
+<p>Azure Language in Foundry Tools 工具提供多種功能，agent 必須選擇適當的函式來呼叫。我們可以在 agent 的回應中查看可用選項。</p>
+<ol>
+<li>
+<p>在 <strong>text-agent.py</strong> 程式碼檔案中，緊接著先前新增的 <em>print(f&quot;{agent_name}: {response.output_text}&quot;)</em> 那一行之後（ <em>except Exception as ex:</em> 那一行之前），新增以下一行：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="se">\n</span><span class="s">Response Details: </span><span class="si">{</span><span class="n">response</span><span class="p">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+</li>
+<li>
+<p>儲存程式碼檔案的變更。</p>
+</li>
+<li>
+<p>在終端機中，重新輸入執行應用程式的命令（<code>python text-agent.py</code>).</p>
+</li>
+<li>
+<p>出現提示時，輸入下列命令：</p>
+<pre><code>Tell me what entities and dates are mentioned in this review, and whether it is positive or negative: &quot;I booked my flight to Paris in July with Margie's Travel, and it was fantastic!&quot;
+</code></pre></li>
+<li>
+<p>檢閱回應（您可能需要向上捲動很長一段距離才能看到）；它應識別 entity 及日期，並判斷文字的 sentiment。</p>
+</li>
+<li>
+<p>檢閱 JSON 回應詳細資料，其中列出 agent 可用的各項工具。在此案例中，它應已使用 <strong>extract_named_entities_from_text</strong> 和 <strong>detect_sentiment_from_text</strong> 這兩個 Azure Language in Foundry Tools 工具。</p>
+</li>
+</ol>
+<h2 id="clean-up-resources">清理資源</h2>
+<p>如果您已完成 Azure Language 服務的探索，可以刪除在本練習中建立的 resource。步驟如下：</p>
+<ol>
+<li>在 Azure portal 中，瀏覽至您在本實驗中建立的 Foundry resource。</li>
+<li>在 resource 頁面上選取 <strong>Delete</strong> ，並依照指示刪除 resource。</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">消費者健康隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">使用條款 </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">商標 </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-language" target="_blank" class="ml-2">
+                    原始碼
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://microsoftlearning.github.io/mslearn-ai-language/assets/js/script.js?v=cea9917802480634f7e437d83201e30f3431ad2a"></script>
+</body>
+
+
+</html>

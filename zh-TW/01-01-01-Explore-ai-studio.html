@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <title>
+        準備 AI 開發專案 |
+        
+        在 Azure 中開發 generative AI 解決方案
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="https://microsoftlearning.github.io/mslearn-ai-studio/assets/css/style.css?v=b702dc2fd9f9411b5eb1f86b9259db6515cd9c48">
+</head>
+<body data-spy="scroll" data-target="#linksMenu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gray">
+        <div class="container d-flex justify-content-between">
+            <!-- <img src="https://github.com/MicrosoftLearning/Jekyll-Theme/raw/master/assets/microsoft-gray.png" alt="Microsoft logo" style="width:100px;height:21px;"/>-->
+            <span class="my-1 title text-black">在 Azure 中開發 generative AI 解決方案</span>
+            <span class="ml-2">
+                <a href="https://microsoftlearning.github.io/mslearn-ai-studio" class="d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                    </svg>
+                    &nbsp;首頁
+                </a>
+            </span>
+        </div>
+        <!--
+        <div class="container d-flex justify-content-between">
+            <a class="my-1 title text-azure text-uppercase" href="https://microsoftlearning.github.io/mslearn-ai-studio">
+                Develop generative AI solutions in Azure
+            </a>
+            <a href="https://github.com/MicrosoftLearning/mslearn-ai-studio" target="_blank" class="btn btn-sm btn-outline-secondary text-light">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="ml-2">GitHub</span>
+            </a>
+        </div>
+        -->
+    </nav>
+    <hr color-"gray"/>
+    <div class="container">
+        <main class="row extra-padding">
+            <aside class="col-sm-2">       
+                <nav id="linksMenu" class="toc sticky-top">
+                    <ul class="nav navbar-nav flex-column">
+                    </ul>
+                </nav>         
+            </aside>
+            <hr class="" />
+            <article class="col-sm-10 mb-5">
+                <h1 id="prepare-for-an-ai-development-project">準備 AI 開發專案</h1>
+
+<p>在此練習中，您將使用 Microsoft Foundry portal 建立專案，為建置 AI 解決方案做好準備。</p>
+
+<p>此練習大約需要 <strong>30</strong> 分鐘。</p>
+
+<blockquote>
+  <p><strong>注意</strong>：此練習使用的部分技術仍處於預覽階段或持續開發中。您可能遇到非預期的行為、警告或錯誤。</p>
+</blockquote>
+
+<h2 id="prerequisites">先決條件</h2>
+
+<p>開始此練習之前，請確認您具備下列項目：</p>
+
+<ul>
+  <li>有效的 <a href="https://azure.microsoft.com/pricing/purchase-options/azure-account">Azure subscription</a></li>
+  <li><a href="https://code.visualstudio.com/">Visual Studio Code</a> 已安裝</li>
+  <li><a href="https://www.python.org/downloads/release/python-31312/">Python 版本 <strong>3.13.xx</strong></a> 已安裝*</li>
+  <li><a href="https://git-scm.com/install/">Git</a> 已安裝並完成設定</li>
+  <li><a href="https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest">Azure CLI</a> 已安裝</li>
+</ul>
+
+<blockquote>
+  <p>* Python 3.14 已推出，但部分相依套件尚未針對此版本編譯。此實驗已使用 Python 3.13.12 成功測試。</p>
+</blockquote>
+
+<h2 id="create-a-microsoft-foundry-project">建立 Microsoft Foundry 專案</h2>
+
+<p>Microsoft Foundry 使用專案來組織開發 AI 解決方案所需的 model、resource、資料及其他資產。</p>
+
+<ol>
+  <li>
+    <p>在網頁瀏覽器中，開啟 <a href="https://ai.azure.com">Microsoft Foundry portal</a> ，網址為 <code>https://ai.azure.com</code> ，開始建置；使用您的 Azure 認證登入。關閉首次登入時開啟的任何提示或快速入門窗格。</p>
+  </li>
+  <li>如果尚未啟用，請在頁面頂端的工具列中啟用 <strong>New Foundry</strong> 選項。接著，以唯一的名稱建立新專案；展開 <strong>Advanced options</strong> 區域，為您的專案指定下列設定：
+    <ul>
+      <li><strong>Foundry resource</strong>: <em>使用 resource 的預設名稱（通常為 {project_name}-resource）</em></li>
+      <li><strong>Subscription</strong>: <em>您的 Azure subscription</em></li>
+      <li><strong>Resource group</strong>: <em>建立或選取 resource group</em></li>
+      <li><strong>Region</strong>：選取 <strong>AI Foundry recommended</strong> 的任一區域，請參閱 <strong target="_blank"><a href="https://learn.microsoft.com/azure/foundry/openai/how-to/responses#region-availability">此清單</a></strong></li>
+    </ul>
+
+    <blockquote>
+      <p><strong>提示</strong>：記下您選取的區域，稍後會用到！</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>選取 <strong>Create</strong>。等候專案建立完成。</p>
+
+    <p>專案準備就緒時，會開啟專案首頁。</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/media/foundry-portal-home.png" alt="Foundry 專案首頁的螢幕擷取畫面。" /></p>
+  </li>
+</ol>
+
+<h2 id="deploy-and-test-a-model">部署並測試 model</h2>
+
+<p>每個 generative AI 專案的核心都至少包含一個 generative AI model。</p>
+
+<ol>
+  <li>
+    <p>現在您已準備好探索 model。在 <strong>Discover</strong> 頁面中，選取 <strong>Models</strong> 索引標籤，檢視 Microsoft Foundry model catalog。</p>
+  </li>
+  <li>
+    <p>搜尋 <code>gpt-5.2</code> model，然後在搜尋結果中選取它，檢視其 model card。</p>
+
+    <p>Model card 提供 model 的相關資訊，協助您瞭解其功能與限制，並判斷是否符合您的需求。</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/media/gpt5.2-details.png" alt="gpt-5.2 model card 的螢幕擷取畫面。" /></p>
+  </li>
+  <li>
+    <p>選取 <strong>Deploy</strong> ，使用預設設定建立此 model 的 deployment。</p>
+
+    <p>Model deployment 可讓您在專案中使用 model。</p>
+
+    <p>Model 部署完成後，model playground 會自動開啟，讓您測試 model：</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/media/ai-foundry-model-playground.png" alt="Foundry 專案 model playground 的螢幕擷取畫面。" /></p>
+  </li>
+  <li>
+    <p>在 <strong>Instructions</strong> 方塊中，輸入下列指示：</p>
+
+    <pre><code class="language-text"> You are an AI assistant that can provide information and advice about AI software development.
+</code></pre>
+  </li>
+  <li>
+    <p>在聊天視窗中，輸入查詢，例如 <code>Describe three key considerations for working with Large Language Models for AI application development.</code> ，並檢視回應：</p>
+
+    <p>希望 model 已提供一些值得您思考的重要考量！</p>
+  </li>
+</ol>
+
+<h2 id="view-foundry-azure-resource-and-project-endpoints">檢視 Foundry Azure resource 與專案 endpoint</h2>
+
+<ol>
+  <li>
+    <p>在 Foundry portal 的頂端功能表列中，選取 <strong>Manage</strong>.</p>
+
+    <p>您可以在管理中心檢視及管理專案與其父層 resource。</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/media/ai-foundry-manage.png" alt="Foundry portal 中 Manage 索引標籤的螢幕擷取畫面。" /></p>
+
+    <ul>
+      <li>其中， <em>resource</em> 層級對應到在 Azure 中建立、用來支援專案的 <strong>Foundry</strong> resource。此 resource 包含 Foundry Services 與 model 的連線，並提供集中管理 AI 開發專案使用者存取權的位置。</li>
+      <li>而 <em>project</em> 層級對應到您的個別專案，您可以在其中新增及管理專案專用的 resource。一個 resource 可支援多個專案（首先建立的專案是該 resource 的 <em>預設</em> 專案）。</li>
+    </ul>
+  </li>
+  <li>
+    <p>選取與此專案關聯的 <strong>Parent resource</strong> 連結。</p>
+
+    <p>應會顯示 resource 的設定詳細資料。</p>
+
+    <p>請注意，Foundry resource 具有 <em>endpoint</em>，用戶端應用程式可透過它存取 resource 層級的功能（例如該 resource 中所有專案共用的 Foundry Tools）。</p>
+  </li>
+  <li>在頂端功能表列中，選取 <strong>Home</strong> ，返回專案首頁。</li>
+  <li>
+    <p>記下 key、project endpoint 及 Azure OpenAI endpoint。</p>
+
+    <p>用戶端應用程式會使用這些資訊連線到您的專案層級 resource。</p>
+
+    <ul>
+      <li>其中， <em>key</em> 用於對 model 與工具進行 key-based authentication（不過，在大多數正式環境中，您應考慮使用 Microsoft Entra ID authentication，依據已驗證的使用者與應用程式身分進行驗證）。</li>
+      <li>而 <em>project endpoint</em> 用於透過 OpenAI <strong>Responses</strong> API 存取 Foundry 直接提供的 model（包括 OpenAI model），以及存取 Foundry 專用 API（例如 Foundry Agent service）。</li>
+      <li>另外， <em>OpenAI endpoint</em> 用於透過 OpenAI API 存取 model，包括 <strong>Chat Completions</strong> API 與 <strong>Responses</strong> API。</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="install-the-foundry-toolkit-extension-for-visual-studio-code">安裝適用於 Visual Studio Code 的 Foundry Toolkit 擴充功能</h2>
+
+<p>身為開發人員，您可能會花一些時間在 Foundry portal 中工作，但也可能會花很多時間使用 Visual Studio Code。Foundry Toolkit 擴充功能提供便利的方式，讓您不必離開開發環境就能使用 Foundry 專案 resource。</p>
+
+<ol>
+  <li>啟動 Visual Studio Code</li>
+  <li>在左側導覽列中，檢視 <strong>Extensions</strong> 頁面。</li>
+  <li>
+    <p>在擴充功能市集中搜尋 <code>Foundry Toolkit</code>，並安裝 <strong>Foundry Toolkit for VS Code</strong> 擴充功能。</p>
+
+    <p>安裝擴充功能可能需要約一分鐘。</p>
+  </li>
+  <li>
+    <p>安裝擴充功能後，在左側導覽列中選取 <strong>Foundry Toolkit</strong> 頁面，並等候載入完成。</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/media/foundry-vs-extension.png" alt="Visual Studio Code 中 Foundry Toolkit 擴充功能的螢幕擷取畫面。" /></p>
+  </li>
+  <li>
+    <p>在 Foundry Toolkit 窗格中，展開 <strong>Microsoft Foundry Resources</strong> ，然後連線至 Azure（使用您的認證登入），並選取先前建立的 Foundry 專案，將其設為預設專案。</p>
+  </li>
+  <li>
+    <p>設定預設專案後，展開專案，再展開 <strong>Models</strong>，並選取先前部署的 <strong>gpt-5.2</strong> model。</p>
+
+    <p>您可以在此檢視 model deployment 的詳細資料。</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/media/vscode-extension-model.png" alt="Visual Studio Code 的 Foundry Toolkit 擴充功能中 model 的螢幕擷取畫面。" /></p>
+  </li>
+  <li>
+    <p>在 Foundry Toolkit 窗格的 <strong>Developer Tools</strong> 區段中，展開 <strong>Build</strong> 並選取 <strong>Model playground</strong>。接著選取 <strong>gpt-5.2</strong> model（如果尚未選取）。</p>
+
+    <p>Visual Studio Code 中會開啟互動式 playground，讓您測試 model。</p>
+
+    <p><img src="https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/media/vscode-model-playground.png" alt="Visual Studio Code 中 model playground 的螢幕擷取畫面。" /></p>
+  </li>
+</ol>
+
+<h2 id="summary">摘要</h2>
+
+<p>在此練習中，您已建立 Microsoft Foundry 專案，並在 Foundry portal 中探索它。您也已探索 Visual Studio Code 中的 Foundry Toolkit 擴充功能；此擴充功能讓開發人員能便利地使用 Foundry 專案及其資產。</p>
+
+<h2 id="clean-up">清理</h2>
+
+<p>如果您已完成 Foundry portal 的探索，請刪除此練習中建立的 resource，避免產生不必要的 Azure 費用。</p>
+
+<ol>
+  <li>在 <a href="https://portal.azure.com">Azure portal</a> （網址為 <code>https://portal.azure.com</code>）中，檢視您部署此練習所用 resource 的 resource group 內容。</li>
+  <li>在工具列上，選取 <strong>Delete resource group</strong>.</li>
+  <li>輸入 resource group 名稱，並確認您要刪除它。</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <footer class="fixed-bottom d-print-none">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-around">
+            <span class="navbar-text">
+                &copy; 2025 Microsoft &nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">消費者健康隱私權 </a>&nbsp;|&nbsp;
+                  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">使用條款 </a>&nbsp;|&nbsp;
+                  <a href="https://www.microsoft.com/trademarks">商標 </a>&nbsp;|&nbsp;
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <a href="https://github.com/MicrosoftLearning/mslearn-ai-studio" target="_blank" class="ml-2">
+                    原始碼
+                </a>
+            </span>
+        </nav>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://microsoftlearning.github.io/mslearn-ai-studio/assets/js/script.js?v=b702dc2fd9f9411b5eb1f86b9259db6515cd9c48"></script>
+</body>
+
+
+</html>
