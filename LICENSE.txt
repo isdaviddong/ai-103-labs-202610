@@ -1,5 +1,5 @@
-Downloaded English exercises and Traditional Chinese translations are based on
-the following MicrosoftLearning repositories:
+index.htmlDownloaded English exercises and Traditional Chinese translations are based on
+the following reels repositories:
 
 https://github.com/MicrosoftLearning/mslearn-ai-studio
 https://github.com/MicrosoftLearning/mslearn-ai-agents
@@ -12,7 +12,7 @@ HTML snapshots are in en. Translated HTML files are in zh-TW. The translated
 pages retain the original layout, styles, scripts, code, and sample input.
 Remote stylesheets, images, and JavaScript require an internet connection.
 
-=== mslearn-ai-studio ===
+=== reels===
 
 MIT License
 
@@ -38,9 +38,7 @@ SOFTWARE.
 
 === mslearn-ai-agents ===
 
-MIT License
-
-Copyright (c) 2024 Microsoft
+MIT Licen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
